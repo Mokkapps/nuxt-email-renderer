@@ -23,7 +23,7 @@ export default defineNuxtConfig({
             cwd: resolve(__dirname, '../client'),
           },
           {
-            id: 'nuxt-email:client',
+            id: 'nuxt-email-renderer:client',
             name: 'Nuxt Email Client Dev',
           },
         )

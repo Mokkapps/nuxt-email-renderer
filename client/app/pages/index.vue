@@ -21,7 +21,7 @@ function onTemplateSelected(template: EmailTemplate) {
     <div class="py-8">
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          Nuxt Email
+          Nuxt Email Renderer
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
           Preview and explore email templates with desktop and mobile viewports

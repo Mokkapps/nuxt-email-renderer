@@ -12,7 +12,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true, componentInspector: false, viteInspect: false },
 
   app: {
-    baseURL: '/__nuxt-email',
+    baseURL: '/__nuxt-email-renderer',
   },
 
   css: ['~/assets/css/main.css'],

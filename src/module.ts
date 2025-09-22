@@ -17,7 +17,7 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'nuxt-email',
+    name: 'nuxt-email-renderer',
     configKey: 'nuxtEmail',
   },
   // Default configuration options of the Nuxt module
@@ -83,7 +83,7 @@ export default defineNuxtModule<ModuleOptions>({
     )
 
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
-      '#nuxt-email': resolve('./runtime/server/nitro'),
+      '#nuxt-email-renderer': resolve('./runtime/server/nitro'),
     })
 
     nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []

@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import type { Nuxt } from 'nuxt/schema'
 import type { Resolver } from '@nuxt/kit'
 
-const DEVTOOLS_UI_ROUTE = '/__nuxt-email'
+const DEVTOOLS_UI_ROUTE = '/__nuxt-email-renderer'
 const DEVTOOLS_UI_LOCAL_PORT = 3300
 
 export function setupDevToolsUI(nuxt: Nuxt, resolver: Resolver) {
@@ -36,9 +36,9 @@ export function setupDevToolsUI(nuxt: Nuxt, resolver: Resolver) {
   nuxt.hook('devtools:customTabs', (tabs) => {
     tabs.push({
       // unique identifier
-      name: 'nuxt-email',
+      name: 'nuxt-email-renderer',
       // title to display in the tab
-      title: 'Nuxt Email',
+      title: 'Nuxt Email Renderer',
       // any icon from Iconify, or a URL to an image
       icon: 'twemoji:incoming-envelope',
       // iframe view

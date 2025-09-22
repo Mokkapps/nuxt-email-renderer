@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`<EFont> component > renders correctly 1`] = `
+"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><style>
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        mso-font-alt: 'Verdana';
+        
+      }
+
+      * {
+        font-family: 'Roboto', Verdana;
+      }
+    </style>"
+`;
+
+exports[`<EFont> component > renders with webFont prop 1`] = `
+"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><style>
+      @font-face {
+        font-family: 'Arial';
+        font-style: normal;
+        font-weight: 400;
+        mso-font-alt: 'Helvetica';
+        src: url(example.com/font.woff) format('woff');
+      }
+
+      * {
+        font-family: 'Arial', Helvetica;
+      }
+    </style>"
+`;

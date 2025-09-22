@@ -12,4 +12,32 @@ describe('<EContainer> component', () => {
     const html = await render(component)
     expect(html).toContain(testMessage)
   })
+
+  it('passes style and other props correctly', async () => {
+    const style = { backgroundColor: 'red' }
+
+    const component = {
+      render() {
+        return h(EContainer, { 'data-testid': 'container-test', style }, {
+          default: () => 'TEST',
+        })
+      },
+    }
+    const html = await render(component)
+
+    expect(html).toContain('style="max-width:37.5em;background-color:red;"')
+    expect(html).toContain('data-testid="container-test"')
+  })
+
+  it('renders correctly', async () => {
+    const component = {
+      render() {
+        return h(EContainer, {}, {
+          default: () => 'Lorem ipsum',
+        })
+      },
+    }
+    const html = await render(component)
+    expect(html).toMatchSnapshot()
+  })
 })

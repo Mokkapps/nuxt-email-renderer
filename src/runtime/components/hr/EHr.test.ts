@@ -17,4 +17,14 @@ describe('<EHr> component', () => {
     expect(html).toContain('border-color:black')
     expect(html).toContain('data-testid="hr-test"')
   })
+
+  it('renders correctly', async () => {
+    const component = {
+      render() {
+        return h(EHr)
+      },
+    }
+    const html = await render(component)
+    expect(html).toMatchSnapshot()
+  })
 })

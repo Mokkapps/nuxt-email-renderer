@@ -12,4 +12,32 @@ describe('<EColumn> component', () => {
     const html = await render(component)
     expect(html).toContain(testMessage)
   })
+
+  it('passes style and other props correctly', async () => {
+    const style = { backgroundColor: 'red' }
+
+    const component = {
+      render() {
+        return h(EColumn, { 'data-testid': 'column-test', style }, {
+          default: () => 'TEST',
+        })
+      },
+    }
+    const html = await render(component)
+
+    expect(html).toContain('style="background-color:red;"')
+    expect(html).toContain('data-testid="column-test"')
+  })
+
+  it('renders correctly', async () => {
+    const component = {
+      render() {
+        return h(EColumn, {}, {
+          default: () => 'Lorem ipsum',
+        })
+      },
+    }
+    const html = await render(component)
+    expect(html).toMatchSnapshot()
+  })
 })

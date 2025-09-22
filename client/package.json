@@ -1,4 +1,9 @@
 {
   "private": true,
-  "name": "nuxt-email-client"
+  "name": "nuxt-email-client",
+  "dependencies": {
+    "@nuxt/devtools-ui-kit": "^2.6.5",
+    "@nuxt/icon": "^2.0.0",
+    "@nuxt/ui": "4.0.0-alpha.2"
+  }
 }

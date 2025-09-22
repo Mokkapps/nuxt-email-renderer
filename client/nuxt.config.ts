@@ -1,10 +1,11 @@
 import { resolve } from 'pathe'
 
 export default defineNuxtConfig({
-
   modules: [
+    '@nuxt/ui',
     '@nuxt/devtools-ui-kit',
   ],
+
   ssr: false,
 
   devtools: {
@@ -14,6 +15,8 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/__nuxt-email',
   },
+
+  css: ['~/assets/css/main.css'],
 
   compatibilityDate: '2024-08-21',
 

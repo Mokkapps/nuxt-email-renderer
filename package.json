@@ -1,6 +1,6 @@
 {
   "name": "nuxt-email",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Nuxt email module for rendering HTML emails with Vue components",
   "repository": "mokkapps/nuxt-email",
   "license": "MIT",
@@ -36,6 +36,8 @@
   "dependencies": {
     "@nuxt/kit": "^4.1.2",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/compiler-sfc": "^3.5.21",
+    "@vue/compiler-dom": "^3.5.21",
     "html-to-text": "^9.0.5",
     "js-beautify": "^1.15.4",
     "zod": "^4.1.11"
@@ -56,5 +58,5 @@
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.7"
   },
-  "packageManager": "pnpm@9.15.5+sha512.845196026aab1cc3f098a0474b64dfbab2afe7a1b4e91dd86895d8e4aa32a7a6d03049e2d0ad770bbe4de023a7122fb68c1a1d6e0d033c7076085f9d5d4800d4"
+  "packageManager": "pnpm@10.16.1"
 }

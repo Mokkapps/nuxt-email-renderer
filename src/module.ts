@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { existsSync } from 'node:fs'
 import { defu } from 'defu'
 import vue from '@vitejs/plugin-vue'
-import { defineNuxtModule, createResolver, addComponentsDir } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addComponentsDir, addServerHandler } from '@nuxt/kit'
 
 export interface ModuleOptions {
   emailsDir: string
@@ -32,16 +32,17 @@ export default defineNuxtModule<ModuleOptions>({
       template: {
         compilerOptions: {
           // Ensure compatibility with email clients
-          whitespace: 'preserve'
-        }
-      }
+          whitespace: 'preserve',
+        },
+      },
     })
 
     // Ensure plugins is an array and add the Vue plugin
     if (Array.isArray(nuxt.options.nitro.rollupConfig.plugins)) {
-      nuxt.options.nitro.rollupConfig.plugins.push(vuePlugin)
-    } else {
-      nuxt.options.nitro.rollupConfig.plugins = [vuePlugin]
+      nuxt.options.nitro.rollupConfig.plugins.push(vuePlugin as never)
+    }
+    else {
+      nuxt.options.nitro.rollupConfig.plugins = [vuePlugin as never]
     }
 
     nuxt.options.runtimeConfig.public.nuxtEmail = defu(
@@ -90,13 +91,25 @@ export default defineNuxtModule<ModuleOptions>({
     addComponentsDir({
       // TODO: add options to add a custom path and indicate if is absolute or relative
       // for example (absolute o relative):
-      // path: options?.absolutePath ? resolve('emails') : tempaltesDir ,
+      // path: options?.absolutePath ? resolve('emails') : templatesDir ,
       //
       // custom:
-      // path: options?.emailsDir || tempaltesDir,
+      // path: options?.emailsDir || templatesDir,
       path: templatesDir,
       extensions: ['vue'],
       global: true,
+    })
+
+    // Add server handler for email rendering
+    addServerHandler({
+      route: '/api/emails/render',
+      handler: resolve('./runtime/server/api/emails/render')
+    })
+
+    // Add server handler for listing email templates
+    addServerHandler({
+      route: '/api/emails/list',
+      handler: resolve('./runtime/server/api/emails/list')
     })
   },
 })

@@ -4,6 +4,7 @@ export { default as EText } from './text/EText.vue'
 export { default as EBody } from './body/EBody.vue'
 export { default as EButton } from './button/EButton.vue'
 export { default as EColumn } from './column/EColumn.vue'
+export { default as ECodeBlock } from './code-block/ECodeBlock.vue'
 export { default as EContainer } from './container/EContainer.vue'
 export { default as EFont } from './font/EFont.vue'
 export { default as EHead } from './head/EHead.vue'
@@ -21,7 +22,7 @@ export { default as ECodeInline } from './code-inline/ECodeInline.vue'
 export const emailComponents = {
   EBody: () => import('./body/EBody.vue'),
   EButton: () => import('./button/EButton.vue'),
-  // TODO: CodeBlock
+  ECodeBlock: () => import('./code-block/ECodeBlock.vue'),
   ECodeInline: () => import('./code-inline/ECodeInline.vue'),
   EColumn: () => import('./column/EColumn.vue'),
   EContainer: () => import('./container/EContainer.vue'),
@@ -32,11 +33,9 @@ export const emailComponents = {
   EHtml: () => import('./html/EHtml.vue'),
   EImg: () => import('./img/EImg.vue'),
   ELink: () => import('./link/ELink.vue'),
-  // TODO: Markdown
   EPreview: () => import('./preview/EPreview.vue'),
   ERow: () => import('./row/ERow.vue'),
   ESection: () => import('./section/ESection.vue'),
   EStyle: () => import('./style/EStyle.vue'),
-  // TODO: Tailwind
   EText: () => import('./text/EText.vue'),
 }

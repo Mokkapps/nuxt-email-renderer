@@ -3,6 +3,10 @@
 
 ## v0.1.1
 
+[compare changes](https://github.com/mokkapps/nuxt-email/compare/v0.1.1...v0.1.1)
+
+## v0.1.1
+
 
 ### 🚀 Enhancements
 

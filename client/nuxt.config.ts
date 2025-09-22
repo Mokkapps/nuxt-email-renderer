@@ -4,13 +4,12 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/ui',
     '@nuxt/devtools-ui-kit',
+    '@vueuse/nuxt',
   ],
 
   ssr: false,
 
-  devtools: {
-    enabled: false,
-  },
+  devtools: { enabled: true, componentInspector: false, viteInspect: false },
 
   app: {
     baseURL: '/__nuxt-email',
@@ -23,6 +22,12 @@ export default defineNuxtConfig({
   nitro: {
     output: {
       publicDir: resolve(__dirname, '../dist/client'),
+    },
+    storage: {
+      'assets:emails': {
+        driver: 'fs',
+        base: '../playground/emails',
+      },
     },
   },
 

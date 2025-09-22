@@ -22,4 +22,3 @@ export const EText = defineComponent({
 
 export default EText
 </script>
-

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   if (!emailName) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Email name is required. Use ?name=EmailName'
+      statusMessage: 'Email name is required. Use ?name=EmailName',
     })
   }
 
@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
     if (!source) {
       throw createError({
         statusCode: 404,
-        statusMessage: `Email template "${emailName}" not found`
+        statusMessage: `Email template "${emailName}" not found`,
       })
     }
 
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     if (!templateMatch) {
       throw createError({
         statusCode: 500,
-        statusMessage: `Email template "${emailName}" has no template block`
+        statusMessage: `Email template "${emailName}" has no template block`,
       })
     }
 
@@ -46,19 +46,20 @@ export default defineEventHandler(async (event) => {
       setup() {
         // Basic setup function
         return {}
-      }
+      },
     }
 
     // Render the email component
     return await render(component)
-  } catch (error: any) {
+  }
+  catch (error: any) {
     if (error.statusCode) {
       throw error
     }
 
     throw createError({
       statusCode: 500,
-      statusMessage: `Failed to render email: ${error.message || 'Unknown error'}`
+      statusMessage: `Failed to render email: ${error.message || 'Unknown error'}`,
     })
   }
 })

@@ -23,12 +23,6 @@ export default defineNuxtConfig({
     output: {
       publicDir: resolve(__dirname, '../dist/client'),
     },
-    storage: {
-      'assets:emails': {
-        driver: 'fs',
-        base: '../playground/emails',
-      },
-    },
   },
 
   vite: {

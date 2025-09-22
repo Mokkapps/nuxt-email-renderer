@@ -1,16 +1,4 @@
 {
   "private": true,
-  "name": "nuxt-email-playground",
-  "type": "module",
-  "scripts": {
-    "dev": "nuxi dev",
-    "build": "nuxi build",
-    "generate": "nuxi generate"
-  },
-  "dependencies": {
-    "nuxt": "4.1.0"
-  },
-  "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.14.0"
-  }
+  "name": "nuxt-email-playground"
 }

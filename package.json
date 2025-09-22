@@ -23,17 +23,21 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "nuxt-module-build build",
-    "dev": "npm run dev:prepare && nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "prepack": "nuxt-module-build && npm run client:build",
+    "client:build": "nuxi generate client",
+    "client:dev": "nuxi dev client --port 3300",
+    "dev": "npm run play:dev",
+    "dev:prepare": "nuxt-module-build --stub && nuxi prepare client",
+    "prepare": "nuxi prepare client",
+    "play:dev": "nuxi dev playground",
+    "play:prod": "npm run prepack && nuxi dev playground",
     "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:watch": "vitest watch"
   },
   "dependencies": {
+    "@nuxt/devtools-kit": "^2.6.5",
     "@nuxt/kit": "^4.1.2",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/compiler-dom": "^3.5.21",
@@ -45,6 +49,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "^2.6.5",
+    "@nuxt/devtools-ui-kit": "^2.6.5",
     "@nuxt/eslint-config": "^1.9.0",
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.1.2",
@@ -55,7 +60,7 @@
     "changelogen": "^0.6.2",
     "eslint": "^9.36.0",
     "jsdom": "^27.0.0",
-    "nuxt": "4.1.0",
+    "nuxt": "4.1.2",
     "typescript": "~5.9.2",
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.7"

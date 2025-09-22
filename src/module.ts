@@ -3,9 +3,16 @@ import { existsSync } from 'node:fs'
 import { defu } from 'defu'
 import vue from '@vitejs/plugin-vue'
 import { defineNuxtModule, createResolver, addComponentsDir, addServerHandler } from '@nuxt/kit'
+import { setupDevToolsUI } from './devtools'
 
 export interface ModuleOptions {
   emailsDir: string
+  /**
+   * Enable Nuxt Devtools integration
+   *
+   * @default true
+   */
+  devtools: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -17,9 +24,11 @@ export default defineNuxtModule<ModuleOptions>({
   defaults() {
     return {
       emailsDir: '/emails',
+      devtools: true,
     }
   },
   setup(options, nuxt) {
+    const resolver = createResolver(import.meta.url)
     const { resolve } = createResolver(import.meta.url)
 
     // Configure Nitro to handle Vue components properly
@@ -103,13 +112,16 @@ export default defineNuxtModule<ModuleOptions>({
     // Add server handler for email rendering
     addServerHandler({
       route: '/api/emails/render',
-      handler: resolve('./runtime/server/api/emails/render')
+      handler: resolve('./runtime/server/api/emails/render.get'),
     })
 
     // Add server handler for listing email templates
     addServerHandler({
       route: '/api/emails/list',
-      handler: resolve('./runtime/server/api/emails/list')
+      handler: resolve('./runtime/server/api/emails/list.get'),
     })
+
+    if (options.devtools)
+      setupDevToolsUI(nuxt, resolver)
   },
 })

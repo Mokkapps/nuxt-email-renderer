@@ -22,10 +22,10 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: npx nypm@latest i
+        run: pnpm install
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
@@ -40,10 +40,10 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: npx nypm@latest i
+        run: pnpm install && pnpm dev:prepare
 
       - name: Playground prepare
-        run: npm run dev:prepare
+        run: pnpm dev:prepare
 
       - name: Test
-        run: npm run test
+        run: pnpm test

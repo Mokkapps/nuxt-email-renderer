@@ -82,7 +82,7 @@ importers:
         specifier: ^1.55.0
         version: 1.55.0
       typescript:
-        specifier: ~5.9.2
+        specifier: ^5.9.2
         version: 5.9.2
       vitest:
         specifier: ^3.2.4

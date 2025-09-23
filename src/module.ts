@@ -18,7 +18,7 @@ export interface ModuleOptions {
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-email-renderer',
-    configKey: 'nuxtEmail',
+    configKey: 'nuxtEmailRenderer',
   },
   // Default configuration options of the Nuxt module
   defaults() {

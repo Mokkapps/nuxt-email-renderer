@@ -35,7 +35,7 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2025-09-19',
 
-  nuxtEmail: {
+  nuxtEmailRenderer: {
     emailsDir: '/playground/emails',
   },
 })

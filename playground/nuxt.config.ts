@@ -5,6 +5,9 @@ import { startSubprocess } from '@nuxt/devtools-kit'
 export default defineNuxtConfig({
   modules: [
     '../src/module',
+    '@nuxt/ui',
+    '@nuxt/devtools-ui-kit',
+    '@vueuse/nuxt',
     /**
      * Start a sub Nuxt Server for developing the client
      *
@@ -32,6 +35,8 @@ export default defineNuxtConfig({
   ],
 
   devtools: { enabled: true },
+
+  css: ['~/assets/css/main.css'],
 
   compatibilityDate: '2025-09-19',
 

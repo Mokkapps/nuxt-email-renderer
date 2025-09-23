@@ -14,6 +14,8 @@ const selectedTemplate = ref<EmailTemplate | null>(null)
 function onTemplateSelected(template: EmailTemplate) {
   selectedTemplate.value = template
 }
+
+await $fetch('/api/emails/list')
 </script>
 
 <template>

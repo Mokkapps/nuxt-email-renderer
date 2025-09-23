@@ -6,6 +6,11 @@ import { defineNuxtModule, createResolver, addComponentsDir, addServerHandler } 
 import { setupDevToolsUI } from './devtools'
 
 export interface ModuleOptions {
+  /**
+   * Folder where email templates are stored. Can be either an absolute path or relative to the project root.
+   *
+   * @default /emails
+   */
   emailsDir: string
   /**
    * Enable Nuxt Devtools integration
@@ -54,8 +59,8 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.nitro.rollupConfig.plugins = [vuePlugin as never]
     }
 
-    nuxt.options.runtimeConfig.public.nuxtEmail = defu(
-      nuxt.options.runtimeConfig.public.nuxtEmail,
+    nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
+      nuxt.options.runtimeConfig.public.nuxtEmailRenderer,
       options,
     )
 
@@ -70,7 +75,7 @@ export default defineNuxtModule<ModuleOptions>({
       templatesDir = templatePath
       break
     }
-    nuxt.options.runtimeConfig.public.nuxtEmail.emailsDir = templatesDir
+    nuxt.options.runtimeConfig.public.nuxtEmailRenderer.emailsDir = templatesDir
 
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.externals = defu(
@@ -83,7 +88,7 @@ export default defineNuxtModule<ModuleOptions>({
     )
 
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
-      '#nuxt-email-renderer': resolve('./runtime/server/nitro'),
+      '#nuxt-email-renderer': resolve('./runtime/server/utils'),
     })
 
     nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
@@ -98,12 +103,6 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addComponentsDir({
-      // TODO: add options to add a custom path and indicate if is absolute or relative
-      // for example (absolute o relative):
-      // path: options?.absolutePath ? resolve('emails') : templatesDir ,
-      //
-      // custom:
-      // path: options?.emailsDir || templatesDir,
       path: templatesDir,
       extensions: ['vue'],
       global: true,

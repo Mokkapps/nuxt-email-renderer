@@ -2,6 +2,7 @@ import { resolve } from 'pathe'
 
 export default defineNuxtConfig({
   modules: [
+    '../src/module',
     '@nuxt/ui',
     '@nuxt/devtools-ui-kit',
     '@vueuse/nuxt',
@@ -32,5 +33,9 @@ export default defineNuxtConfig({
         clientPort: +(process.env.PORT || 3300),
       },
     },
+  },
+
+  nuxtEmailRenderer: {
+    devtools: false,
   },
 })

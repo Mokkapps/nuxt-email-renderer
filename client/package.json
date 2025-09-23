@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "nuxt-email-devtools",
+  "name": "nuxt-email-renderer-devtools",
   "type": "module",
   "scripts": {
     "dev": "nuxt dev",

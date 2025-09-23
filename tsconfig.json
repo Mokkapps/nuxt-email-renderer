@@ -4,5 +4,9 @@
     "dist",
     "node_modules",
     "playground",
+    "client",
+    "dist",
+    ".nuxt",
+    ".output"
   ]
 }

@@ -1,7 +1,0 @@
-ignoredBuiltDependencies:
-  - '@parcel/watcher'
-  - esbuild
-  - vue-demi
-
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'

@@ -1,4 +1,12 @@
+packages:
+  - playground
+  - client
+
 ignoredBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
   - unrs-resolver
+  - vue-demi
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'

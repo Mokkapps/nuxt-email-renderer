@@ -2,7 +2,12 @@ import { join } from 'node:path'
 import { existsSync } from 'node:fs'
 import { defu } from 'defu'
 import vue from '@vitejs/plugin-vue'
-import { defineNuxtModule, createResolver, addComponentsDir, addServerHandler } from '@nuxt/kit'
+import {
+  defineNuxtModule,
+  createResolver,
+  addComponentsDir,
+  addServerHandler,
+} from '@nuxt/kit'
 import { setupDevToolsUI } from './devtools'
 
 export interface ModuleOptions {
@@ -60,7 +65,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
-      nuxt.options.runtimeConfig.public.nuxtEmailRenderer,
+      nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
       options,
     )
 
@@ -70,12 +75,13 @@ export default defineNuxtModule<ModuleOptions>({
       const templatePath = join(layer.cwd, '/emails')
       const pathFound = existsSync(templatePath)
 
-      if (!pathFound)
-        continue
+      if (!pathFound) continue
       templatesDir = templatePath
       break
     }
-    nuxt.options.runtimeConfig.public.nuxtEmailRenderer.emailsDir = templatesDir
+    (
+      nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions
+    ).emailsDir = templatesDir
 
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     nuxt.options.nitro.externals = defu(
@@ -120,7 +126,6 @@ export default defineNuxtModule<ModuleOptions>({
       handler: resolve('./runtime/server/api/emails/list.get'),
     })
 
-    if (options.devtools)
-      setupDevToolsUI(nuxt, resolver)
+    if (options.devtools) setupDevToolsUI(nuxt, resolver)
   },
 })

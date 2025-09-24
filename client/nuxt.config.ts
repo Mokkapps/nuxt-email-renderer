@@ -37,5 +37,6 @@ export default defineNuxtConfig({
 
   nuxtEmailRenderer: {
     devtools: false,
+    emailsDir: '/playground/emails',
   },
 })

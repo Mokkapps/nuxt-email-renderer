@@ -9,6 +9,11 @@ interface EmailTemplate {
   component: Component
 }
 
+const url = useRequestURL()
+const { data: templates } = useFetch(`${url.origin}/api/emails/list`, {
+  default: () => [],
+})
+
 const selectedTemplate = ref<EmailTemplate | null>(null)
 
 function onTemplateSelected(template: EmailTemplate) {
@@ -29,11 +34,14 @@ function onTemplateSelected(template: EmailTemplate) {
       </div>
 
       <div class="grid gap-8 lg:grid-cols-12">
-        <div class="lg:col-span-3">
+        <div :class="templates.length > 0 ? 'lg:col-span-3' : 'lg:col-span-12'">
           <EmailTemplateSelector @template-selected="onTemplateSelected" />
         </div>
 
-        <div class="lg:col-span-9">
+        <div
+          v-if="templates.length > 0"
+          class="lg:col-span-9"
+        >
           <EmailTemplateViewer :template="selectedTemplate" />
         </div>
       </div>

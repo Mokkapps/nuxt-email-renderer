@@ -1,5 +1,6 @@
-import { useStorage } from '#imports'
 import { defineEventHandler, getQuery, createError } from 'h3'
+// @ts-expect-error no idea why this is necessary
+import { useStorage } from '#imports'
 import { render } from '../../utils/render'
 
 export default defineEventHandler(async (event) => {
@@ -38,7 +39,7 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const templateContent = templateMatch[1].trim()
+    const templateContent = templateMatch[1]?.trim()
 
     // Create a simple component object
     const component = {

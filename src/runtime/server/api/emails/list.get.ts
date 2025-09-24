@@ -1,4 +1,5 @@
 import { defineEventHandler } from 'h3'
+// @ts-expect-error no idea why this is necessary
 import { useStorage } from '#imports'
 
 export default defineEventHandler(async () => {
@@ -13,7 +14,10 @@ export default defineEventHandler(async () => {
       .map(file => ({
         name: file.replace('.vue', ''),
         filename: file,
-        displayName: file.replace('.vue', '').replace(/([A-Z])/g, ' $1').trim(),
+        displayName: file
+          .replace('.vue', '')
+          .replace(/([A-Z])/g, ' $1')
+          .trim(),
       }))
       .sort((a, b) => a.displayName.localeCompare(b.displayName))
 

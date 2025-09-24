@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
+import { useFetch, useRequestURL, ref } from '#imports'
 
 interface EmailTemplate {
   name: string
@@ -9,26 +10,8 @@ interface EmailTemplate {
   component: Component
 }
 
-// Dynamically import all email templates
-const templateModules = import.meta.glob('../../../playground/emails/*.vue', {
-  eager: true,
-})
-
-// Generate templates array from imported modules
-const templates: EmailTemplate[] = Object.entries(templateModules)
-  .map(([path, moduleExports]) => {
-    const filename = path.split('/').pop() || ''
-    const name = filename.replace('.vue', '')
-
-    return {
-      name,
-      filename,
-      description: '',
-      icon: '',
-      component: (moduleExports as { default: Component }).default,
-    }
-  })
-  .sort((a, b) => a.name.localeCompare(b.name))
+const url = useRequestURL()
+const { data } = useFetch(`${url.origin}/api/emails/list`, { default: () => [] })
 
 const emit = defineEmits<{
   'template-selected': [template: EmailTemplate]
@@ -52,13 +35,13 @@ function selectTemplate(template: EmailTemplate) {
         variant="soft"
         color="primary"
       >
-        {{ templates.length }} templates
+        {{ data.length }} templates
       </UBadge>
     </div>
 
     <div class="grid gap-3">
       <UCard
-        v-for="template in templates"
+        v-for="template in data"
         :key="template.filename"
         class="cursor-pointer transition-all hover:shadow-md"
         :class="{

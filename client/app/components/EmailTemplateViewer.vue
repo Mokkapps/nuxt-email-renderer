@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import { render } from '../../../src/runtime/server/utils/render'
 
 interface EmailTemplate {
   name: string
@@ -22,6 +21,8 @@ const renderedHtml = ref('')
 const sourceCode = ref('')
 const isLoading = ref(false)
 
+const url = useRequestURL()
+
 // Watch for template changes and render the email
 watch(
   () => props.template,
@@ -30,8 +31,7 @@ watch(
       isLoading.value = true
       try {
         // Render the email template to HTML
-        const html = await render(newTemplate.component)
-        renderedHtml.value = html
+        renderedHtml.value = await $fetch(`${url.origin}/api/emails/render?name=${newTemplate.filename}`)
 
         // Load source code (for now, we'll use a placeholder)
         sourceCode.value = `// Source code for ${newTemplate.filename}\n// This would contain the actual Vue component source`

@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.0.4
+
+[compare changes](https://github.com/mokkapps/nuxt-email/compare/v0.0.2...v0.0.4)
+
+### 🚀 Enhancements
+
+- Add custom module and configure nuxtEmailRenderer settings ([08e3bf0](https://github.com/mokkapps/nuxt-email/commit/08e3bf0))
+- **playground:** Implement email template selection and preview functionality ([177c2d0](https://github.com/mokkapps/nuxt-email/commit/177c2d0))
+- **playground:** Implement email template selection and preview functionality ([527f27c](https://github.com/mokkapps/nuxt-email/commit/527f27c))
+- Add empty state & fix TS errors ([b3c4504](https://github.com/mokkapps/nuxt-email/commit/b3c4504))
+
+### 🩹 Fixes
+
+- **devtools:** Fetch email templates and render them dynamically from API ([5a9f977](https://github.com/mokkapps/nuxt-email/commit/5a9f977))
+
+### 🏡 Chore
+
+- **release:** V0.0.3 ([8290a14](https://github.com/mokkapps/nuxt-email/commit/8290a14))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.3
 
 [compare changes](https://github.com/mokkapps/nuxt-email/compare/v0.0.2...v0.0.3)

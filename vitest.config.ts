@@ -10,6 +10,12 @@ export default defineConfig({
           name: 'module',
         },
       }),
+      await defineVitestProject({
+        test: {
+          include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+          name: 'module-e2e',
+        },
+      }),
     ],
   },
 })

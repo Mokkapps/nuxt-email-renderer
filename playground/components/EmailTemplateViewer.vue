@@ -232,7 +232,7 @@ const viewPortRadioGroupItems = ref([{
             variant="soft"
             size="xs"
           >
-            {{ template.filename }}
+            {{ template?.filename ?? '-' }}
           </UBadge>
         </div>
 

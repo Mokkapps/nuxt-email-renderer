@@ -2,7 +2,7 @@
   "name": "nuxt-email-renderer-docs",
   "scripts": {
     "dev": "nuxt dev --extends docus",
-    "build": "nuxt build --extends docus"
+    "build": "nuxt build --extends docus --preset github_pages"
   },
   "dependencies": {
     "docus": "^5.0.0",

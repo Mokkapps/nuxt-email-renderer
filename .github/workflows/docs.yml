@@ -16,11 +16,11 @@ jobs:
           node-version: lts/-1
           cache: "pnpm"
       - run: pnpm install
-      - run: npx nuxt build --preset github_pages
+      - run: pnpm docs:build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./.output/public
+          path: ./docs/.output/public
   # Deployment job
   deploy:
     # Add a dependency to the build job

@@ -30,7 +30,12 @@ watch(
       isLoading.value = true
       try {
         // Render the email template to HTML
-        renderedHtml.value = await $fetch(`/api/emails/render?name=${newTemplate.filename}`)
+        renderedHtml.value = await $fetch(`/api/emails/render`, {
+          method: 'POST',
+          body: {
+            name: newTemplate.filename,
+          },
+        })
 
         // Load source code (for now, we'll use a placeholder)
         sourceCode.value = `// Source code for ${newTemplate.filename}\n// This would contain the actual Vue component source`

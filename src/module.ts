@@ -117,7 +117,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Add server handler for email rendering
     addServerHandler({
       route: '/api/emails/render',
-      handler: resolve('./runtime/server/api/emails/render.get'),
+      handler: resolve('./runtime/server/api/emails/render.post'),
     })
 
     // Add server handler for listing email templates

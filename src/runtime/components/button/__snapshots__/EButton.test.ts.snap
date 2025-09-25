@@ -1,7 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`EButton Component > renders correctly  with padding values from style prop 1`] = `"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><a style="line-height:100%;text-decoration:none;display:inline-block;max-width:100%;padding:12px 20px;" href="https://example.com"><span></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:0;">TEST</span><span></span></a>"`;
-
 exports[`EButton Component > renders correctly with padding values from style prop 1`] = `"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><a style="line-height:100%;text-decoration:none;display:inline-block;max-width:100%;padding:12px 20px;" href="https://example.com"><span></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:0;">TEST</span><span></span></a>"`;
 
 exports[`EButton Component > renders the <EButton> component with no padding value 1`] = `"<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><a style="line-height:100%;text-decoration:none;display:inline-block;max-width:100%;padding:0px 0px 0px 0px;" href="https://example.com"><span></span><span style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:0;"></span><span></span></a>"`;

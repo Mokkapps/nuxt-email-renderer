@@ -1,33 +1,16 @@
 import { defineEventHandler } from 'h3'
-// @ts-expect-error no idea why this is necessary
-import { useStorage } from '#imports'
-
-interface EmailTemplate {
-  name: string
-  filename: string
-  displayName: string
-}
+import { getAllEmailTemplates } from '../../utils/template-resolver'
 
 export default defineEventHandler(async () => {
   try {
-    const storage = useStorage('assets:emails')
-    const files = await storage.getKeys()
+    const templates = await getAllEmailTemplates()
 
-    // Filter only .vue files and clean up the names
-    const emailTemplates = files
-      .map((file: any) => typeof file === 'string' ? file : Buffer.from(file).toString('utf8'))
-      .filter((file: string) => file.endsWith('.vue'))
-      .map((file: string) => ({
-        name: file.replace('.vue', ''),
-        filename: file,
-        displayName: file
-          .replace('.vue', '')
-          .replace(/([A-Z])/g, ' $1')
-          .trim(),
-      }))
-      .sort((a: EmailTemplate, b: EmailTemplate) => a.displayName.localeCompare(b.displayName))
-
-    return emailTemplates
+    // Transform to match the expected API format
+    return templates.map(template => ({
+      name: template.name,
+      filename: template.filename,
+      displayName: template.displayName,
+    }))
   }
   catch (error: any) {
     return {

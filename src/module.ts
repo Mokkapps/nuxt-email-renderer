@@ -9,6 +9,10 @@ import {
   addServerHandler,
 } from '@nuxt/kit'
 import { setupDevToolsUI } from './devtools'
+import {
+  generateTemplateMapping,
+  generateVirtualModule,
+} from './runtime/server/utils/virtual-templates'
 
 export interface ModuleOptions {
   /**
@@ -95,6 +99,35 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
       '#nuxt-email-renderer': resolve('./runtime/server/utils'),
+    })
+
+    // Generate virtual module for email templates during build
+    nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
+      try {
+        // Generate template mapping at build time
+        const templateMapping = await generateTemplateMapping(templatesDir)
+        const virtualModuleContent = generateVirtualModule(templateMapping)
+
+        // Add virtual module to Nitro
+        nitroConfig.virtual = nitroConfig.virtual || {}
+        nitroConfig.virtual['#email-templates'] = virtualModuleContent
+
+        // Also create alias for easier importing
+        nitroConfig.alias = nitroConfig.alias || {}
+        nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
+
+        console.log(
+          `[nuxt-email-renderer] Generated virtual module for ${
+            Object.keys(templateMapping).length
+          } email templates`,
+        )
+      }
+      catch (error) {
+        console.error(
+          '[nuxt-email-renderer] Failed to generate virtual module:',
+          error,
+        )
+      }
     })
 
     nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []

@@ -1,6 +1,7 @@
 packages:
   - playground
   - client
+  - docs
 
 ignoredBuiltDependencies:
   - '@parcel/watcher'
@@ -10,3 +11,5 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
+  - better-sqlite3
+  - sharp

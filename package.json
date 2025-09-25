@@ -29,6 +29,8 @@
     "client:dev": "nuxi dev client --port 3300",
     "dev": "npm run play:dev",
     "dev:prepare": "nuxt-module-build --stub && nuxi prepare && nuxi prepare client",
+    "docs:dev": "cd docs && pnpm dev",
+    "docs:build": "cd docs && pnpm build",
     "prepare": "nuxi prepare client",
     "play:dev": "nuxi dev playground",
     "play:prod": "npm run prepack && nuxi dev playground",

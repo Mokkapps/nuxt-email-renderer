@@ -1,0 +1,12 @@
+{
+  "name": "nuxt-email-renderer-docs",
+  "scripts": {
+    "dev": "nuxt dev --extends docus",
+    "build": "nuxt build --extends docus"
+  },
+  "dependencies": {
+    "docus": "^5.0.0",
+    "better-sqlite3": "^12.2.0",
+    "nuxt": "^4.1.2"
+  }
+}

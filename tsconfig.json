@@ -5,6 +5,7 @@
     "node_modules",
     "playground",
     "client",
+    "docs",
     "dist",
     ".nuxt",
     ".output"

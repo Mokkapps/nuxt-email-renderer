@@ -12,6 +12,7 @@ export default createConfigForNuxt({
   dirs: {
     src: [
       './playground',
+      './docs',
     ],
   },
 })
@@ -29,12 +30,16 @@ export default createConfigForNuxt({
         '@typescript-eslint/no-explicit-any': 'off',
       },
     },
-  )
-  .append(
     {
       files: ['**/server/api/**/*.ts'],
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+    {
+      files: ['docs/**'],
+      rules: {
+        'vue/multi-word-component-names': 'off',
       },
     },
   )

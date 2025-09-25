@@ -11,11 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: "20"
-      # Pick your own package manager and build script
-      - run: npm install
+          node-version: lts/-1
+          cache: "pnpm"
+      - run: pnpm install
       - run: npx nuxt build --preset github_pages
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

@@ -33,6 +33,19 @@ describe('E2E', async () => {
       expect(response).toMatchSnapshot()
     })
 
+    it('returns the rendered email with props as HTML', async () => {
+      const response = await $fetch('/api/emails/render', {
+        method: 'POST',
+        body: {
+          name: 'Test',
+          props: {
+            heading: 'Test Heading',
+          },
+        },
+      })
+      expect(response).toMatchSnapshot()
+    })
+
     it('returns the rendered email as formatted HTML', async () => {
       const response = await $fetch('/api/emails/render', {
         method: 'POST',
@@ -44,7 +57,7 @@ describe('E2E', async () => {
       expect(response).toMatchSnapshot()
     })
 
-    it('returns the rendered email as plain test', async () => {
+    it('returns the rendered email as plain text', async () => {
       const response = await $fetch('/api/emails/render', {
         method: 'POST',
         body: {

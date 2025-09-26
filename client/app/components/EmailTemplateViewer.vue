@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
+import type { TabsItem } from '@nuxt/ui'
+import { useClipboard } from '@vueuse/core'
 
 interface EmailTemplate {
   name: string
@@ -9,6 +11,12 @@ interface EmailTemplate {
   component: Component
 }
 
+interface SourceResponse {
+  filename: string
+  filePath: string
+  sourceCode: string
+}
+
 interface Props {
   template: EmailTemplate | null
 }
@@ -16,12 +24,45 @@ interface Props {
 const props = defineProps<Props>()
 
 const viewMode = ref<'desktop' | 'mobile'>('desktop')
-const showSource = ref(false)
+const contentMode = ref<'preview' | 'source'>('preview')
 const renderedHtml = ref('')
 const sourceCode = ref('')
 const isLoading = ref(false)
 
 const url = useRequestURL()
+const { copy, copied, isSupported } = useClipboard({ source: sourceCode })
+
+const copySourceCode = async () => {
+  if (isSupported && sourceCode.value) {
+    await copy(sourceCode.value)
+  }
+}
+
+const viewportTabs: Array<TabsItem> = [
+  {
+    value: 'desktop',
+    label: 'Desktop',
+    icon: 'i-heroicons-computer-desktop',
+  },
+  {
+    value: 'mobile',
+    label: 'Mobile',
+    icon: 'i-heroicons-device-phone-mobile',
+  },
+]
+
+const contentTabs: Array<TabsItem> = [
+  {
+    value: 'preview',
+    label: 'Preview',
+    icon: 'i-heroicons-eye',
+  },
+  {
+    value: 'source',
+    label: 'Source Code',
+    icon: 'i-heroicons-code-bracket',
+  },
+]
 
 // Watch for template changes and render the email
 watch(
@@ -38,12 +79,34 @@ watch(
           },
         })
 
-        // Load source code (for now, we'll use a placeholder)
-        sourceCode.value = `// Source code for ${newTemplate.filename}\n// This would contain the actual Vue component source`
+        // Load source code from the API
+        try {
+          const sourceResponse = (await $fetch(
+            `${url.origin}/api/emails/source`,
+            {
+              method: 'POST',
+              body: {
+                name: newTemplate.filename,
+              },
+            },
+          )) as SourceResponse
+          sourceCode.value = sourceResponse.sourceCode
+        }
+        catch (sourceError) {
+          console.error('Failed to load source code:', sourceError)
+          const errorMessage
+            = sourceError instanceof Error
+              ? sourceError.message
+              : 'Unknown error'
+          sourceCode.value = `// Failed to load source code for ${newTemplate.filename}\n// Error: ${errorMessage}`
+        }
       }
       catch (error) {
         console.error('Failed to render template:', error)
+        const errorMessage
+          = error instanceof Error ? error.message : 'Unknown error'
         renderedHtml.value = '<div>Failed to render template</div>'
+        sourceCode.value = `// Failed to load source code due to template render error\n// Error: ${errorMessage}`
       }
       finally {
         isLoading.value = false
@@ -82,14 +145,6 @@ const iframeContent = computed(() => {
 </body>
 </html>`
 })
-
-const viewPortRadioGroupItems = ref([{
-  label: 'Desktop',
-  value: 'desktop',
-}, {
-  label: 'Mobile',
-  value: 'mobile',
-}])
 </script>
 
 <template>
@@ -112,48 +167,42 @@ const viewPortRadioGroupItems = ref([{
     v-else
     class="space-y-6"
   >
-    <!-- Header Controls -->
+    <!-- Header -->
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+        {{ template.name }}
+      </h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        {{ template.description }}
+      </p>
+    </div>
+
+    <!-- Controls -->
     <div class="flex items-center justify-between">
-      <div>
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-          {{ template.name }}
-        </h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          {{ template.description }}
-        </p>
-      </div>
+      <!-- Viewport Tabs -->
+      <UTabs
+        v-model="viewMode"
+        :items="viewportTabs"
+        :content="false"
+        size="md"
+        variant="pill"
+      />
 
-      <div class="flex items-center gap-3">
-        <!-- View Mode Toggle -->
-        <URadioGroup
-          v-model="viewMode"
-          orientation="horizontal"
-          variant="list"
-          size="xl"
-          default-value="System"
-          :items="viewPortRadioGroupItems"
-        />
-
-        <!-- Source Code Toggle -->
-        <UButton
-          :variant="showSource ? 'solid' : 'outline'"
-          icon="i-heroicons-code-bracket"
-          size="sm"
-          @click="showSource = !showSource"
-        >
-          Source
-        </UButton>
-      </div>
+      <!-- Content Tabs -->
+      <UTabs
+        v-model="contentMode"
+        :items="contentTabs"
+        :content="false"
+        size="md"
+        variant="pill"
+      />
     </div>
 
     <!-- Content Area -->
-    <div
-      class="grid gap-6"
-      :class="showSource ? 'lg:grid-cols-2' : 'grid-cols-1'"
-    >
-      <!-- Template Preview -->
-      <div class="space-y-4">
-        <div class="flex items-center gap-2">
+    <div class="space-y-4">
+      <!-- Preview Content -->
+      <div v-if="contentMode === 'preview'">
+        <div class="flex items-center gap-2 mb-4">
           <UIcon
             :name="
               viewMode === 'desktop'
@@ -218,23 +267,36 @@ const viewPortRadioGroupItems = ref([{
         </UCard>
       </div>
 
-      <!-- Source Code -->
-      <div
-        v-if="showSource"
-        class="space-y-4"
-      >
-        <div class="flex items-center gap-2">
-          <UIcon
-            name="i-heroicons-code-bracket"
-            class="w-4 h-4"
-          />
-          <span class="text-sm font-medium">Source Code</span>
-          <UBadge
-            variant="soft"
-            size="xs"
+      <!-- Source Code Content -->
+      <div v-else-if="contentMode === 'source'">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <UIcon
+              name="i-heroicons-code-bracket"
+              class="w-4 h-4"
+            />
+            <span class="text-sm font-medium">Source Code</span>
+            <UBadge
+              variant="soft"
+              size="xs"
+            >
+              {{ template?.filename ?? "-" }}
+            </UBadge>
+          </div>
+
+          <!-- Copy Button -->
+          <UButton
+            v-if="sourceCode && isSupported"
+            :icon="
+              copied ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'
+            "
+            :color="copied ? 'success' : 'neutral'"
+            variant="ghost"
+            size="sm"
+            @click="copySourceCode"
           >
-            {{ template?.filename ?? '-' }}
-          </UBadge>
+            {{ copied ? "Copied!" : "Copy Source" }}
+          </UButton>
         </div>
 
         <UCard class="p-0">
@@ -242,7 +304,7 @@ const viewPortRadioGroupItems = ref([{
             class="bg-gray-50 dark:bg-gray-800 p-4 max-h-[600px] overflow-auto"
           >
             <pre
-              class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap"
+              class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-mono"
             ><code>{{ sourceCode || 'Loading source code...' }}</code></pre>
           </div>
         </UCard>

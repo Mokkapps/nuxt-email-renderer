@@ -12,6 +12,12 @@ jobs:
   ci:
     runs-on: ubuntu-latest
 
+    permissions:
+      # Required to checkout the code
+      contents: read
+      # Required to put a comment into the pull-request
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v5
       - run: corepack enable
@@ -27,4 +33,6 @@ jobs:
       - run: pnpm dev:prepare
       - run: pnpm lint
       - run: pnpm test
+      - name: 'Report Coverage'
+        uses: davelosert/vitest-coverage-report-action@v2
       - run: pnpm build

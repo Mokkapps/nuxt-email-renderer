@@ -7,6 +7,7 @@ export default defineConfig({
       include: [
         'src/**/*.{js,ts,vue}',
       ],
+      reporter: ['text', 'json-summary', 'json'],
     },
     projects: [
       await defineVitestProject({

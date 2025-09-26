@@ -1,4 +1,9 @@
 <script setup lang="ts">
+interface Props {
+  verificationCode?: string
+}
+const { verificationCode = '168396' } = defineProps<Props>()
+
 const textStyle = {
   color: '#333',
   fontFamily:
@@ -62,6 +67,9 @@ const styles = {
     margin: '0px',
     textAlign: 'center' as const,
   },
+  upperSection: {
+    padding: '25px 35px',
+  },
   lowerSection: {
     padding: '25px 35px',
   },
@@ -93,14 +101,14 @@ const styles = {
         <ESection :style="styles.coverSection">
           <ESection :style="styles.imageSection">
             <EImg
-              src="https://react-email-demo-5q5zlglve-resend.vercel.app/static/aws-logo.png"
+              src="https://nuxtemail.com/aws-logo.png"
               width="75"
               height="45"
               alt="AWS's Logo"
             />
           </ESection>
         </ESection>
-        <ESection :style="styles.coverSection">
+        <ESection :style="styles.upperSection">
           <EHeading :style="styles.h1">
             Verify your email address
           </EHeading>
@@ -116,7 +124,7 @@ const styles = {
             </EText>
 
             <EText :style="styles.codeText">
-              {verificationCode}
+              {{ verificationCode }}
             </EText>
             <EText :style="styles.validityText">
               (This code is valid for 10 minutes)

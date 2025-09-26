@@ -1,6 +1,33 @@
 # Changelog
 
 
+## v0.0.5
+
+[compare changes](https://github.com/mokkapps/nuxt-email/compare/v0.0.4...v0.0.5)
+
+### 🚀 Enhancements
+
+- **api:** Change email rendering endpoint to POST and add more render options ([5934227](https://github.com/mokkapps/nuxt-email/commit/5934227))
+- Implement email template rendering with dynamic imports and virtual modules ([1ce58d2](https://github.com/mokkapps/nuxt-email/commit/1ce58d2))
+- Add docs ([cc2a565](https://github.com/mokkapps/nuxt-email/commit/cc2a565))
+
+### 🩹 Fixes
+
+- Update build commands for GitHub Pages deployment in docs.yml and package.json ([70ac8d4](https://github.com/mokkapps/nuxt-email/commit/70ac8d4))
+
+### 🏡 Chore
+
+- Update Node.js setup action to v5 and switch to pnpm for package management ([9bbe746](https://github.com/mokkapps/nuxt-email/commit/9bbe746))
+
+### ✅ Tests
+
+- Add E2E tests for email rendering API ([3d7032f](https://github.com/mokkapps/nuxt-email/commit/3d7032f))
+- Test rendering with props & layers ([4509ab6](https://github.com/mokkapps/nuxt-email/commit/4509ab6))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.4
 
 [compare changes](https://github.com/mokkapps/nuxt-email/compare/v0.0.2...v0.0.4)

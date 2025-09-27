@@ -179,7 +179,7 @@ const tips = [
           </EHeading>
           <EText :style="styles.paragraph">
             With more than 18 million questions, it's possible that someone has
-            already provided a solution to the problem you're facing.{' '}
+            already provided a solution to the problem you're facing.
           </EText>
 
           <EHr :style="styles.divider" />

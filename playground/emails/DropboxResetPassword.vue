@@ -73,7 +73,7 @@ const styles = {
           </EText>
           <EText :style="styles.text">
             To keep your account secure, please don&apos;t forward this email
-            to anyone. See our Help Center for{' '}
+            to anyone. See our Help Center for
             <ELink
               :style="styles.anchor"
               :href="resetPasswordLink"

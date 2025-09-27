@@ -142,7 +142,7 @@ const styles = {
           This message was produced and distributed by Amazon Web Services,
           Inc., 410 Terry Ave. North, Seattle, WA 98109. © 2022, Amazon Web
           Services, Inc.. All rights reserved. AWS is a registered trademark
-          of{' '}
+          of
           <ELink
             href="https://amazon.com"
             target="_blank"
@@ -150,7 +150,7 @@ const styles = {
           >
             Amazon.com
           </ELink>
-          , Inc. View our{' '}
+          , Inc. View our
           <ELink
             href="https://amazon.com"
             target="_blank"

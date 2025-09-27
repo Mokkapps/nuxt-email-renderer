@@ -76,7 +76,7 @@ const styles = {
           </EButton>
           <EHr :style="styles.hr" />
           <EText :style="styles.paragraph">
-            If you haven't finished your integration, you might find our{' '}
+            If you haven't finished your integration, you might find our
             <ELink
               :style="styles.anchor"
               href="https://docs.stripe.com/dashboard/basics"
@@ -87,7 +87,7 @@ const styles = {
           </EText>
           <EText :style="styles.paragraph">
             Once you're ready to start accepting payments, you'll just need to
-            use your live{' '}
+            use your live
             <ELink
               :style="styles.anchor"
               href="https://dashboard.stripe.com/login?redirect=%2Fapikeys"
@@ -96,7 +96,7 @@ const styles = {
             </ELink>
             instead of your test API keys. Your account can simultaneously be
             used for both test and live requests, so you can continue testing
-            while accepting live payments. Check out our{' '}
+            while accepting live payments. Check out our
             <ELink
               :style="styles.anchor"
               href="https://docs.stripe.com/dashboard/basics"
@@ -106,7 +106,7 @@ const styles = {
             .
           </EText>
           <EText :style="styles.paragraph">
-            Finally, we've put together a{' '}
+            Finally, we've put together a
             <ELink
               :style="styles.anchor"
               href="https://docs.stripe.com/get-started/checklist/website"
@@ -117,7 +117,7 @@ const styles = {
           </EText>
           <EText :style="styles.paragraph">
             We'll be here to help you with any step along the way. You can find
-            answers to most questions and get in touch with us on our{' '}
+            answers to most questions and get in touch with us on our
             <ELink
               :style="styles.anchor"
               href="https://support.stripe.com"

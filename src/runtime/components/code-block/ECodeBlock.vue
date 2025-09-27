@@ -40,12 +40,9 @@ export const ECodeBlock = defineComponent({
     },
   },
   async setup({ code, lang, theme, showLineNumbers, lineNumberColor, highlightedLines, lineHighlightingColor }) {
-    const { getHighlighter } = await import('shiki')
+    const { createHighlighter } = await import('shiki')
 
-    if (!getHighlighter)
-      throw new Error('Shiki is not available')
-
-    const shiki = await getHighlighter({
+    const shiki = await createHighlighter({
       langs: [lang],
       themes: [theme],
     })

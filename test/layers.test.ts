@@ -15,7 +15,7 @@ describe('E2E Layer', async () => {
 
   describe('API', () => {
     it('returns a list of all available emails from layer', async () => {
-      const response = await $fetch('/api/emails/list')
+      const response = await $fetch('/api/emails')
       expect(response).toEqual([{
         displayName: 'Test',
         filename: 'Test.vue',

@@ -81,7 +81,7 @@ const styles = {
             Hey <strong>{{ username }}</strong>!
           </EText>
           <EText :style="styles.text">
-            A fine-grained personal access token (<Link>resend</Link>) was
+            A fine-grained personal access token (<ELink>resend</ELink>) was
             recently added to your account.
           </EText>
 

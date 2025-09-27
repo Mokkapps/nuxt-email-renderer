@@ -159,8 +159,8 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addServerHandler({
-      route: '/api/emails/list',
-      handler: resolve('./runtime/server/api/emails/list.get'),
+      route: '/api/emails',
+      handler: resolve('./runtime/server/api/emails/index.get'),
     })
 
     if (options.devtools) setupDevToolsUI(nuxt, resolver)

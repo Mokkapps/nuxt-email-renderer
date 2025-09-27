@@ -10,7 +10,7 @@ interface EmailTemplate {
 }
 
 const url = useRequestURL()
-const { data: templates } = useFetch(`${url.origin}/api/emails/list`, {
+const { data: templates } = useFetch(`${url.origin}/api/emails`, {
   default: () => [],
 })
 

@@ -10,7 +10,7 @@ interface EmailTemplate {
 }
 
 const url = useRequestURL()
-const { data } = useFetch(`${url.origin}/api/emails/list`, {
+const { data } = useFetch(`${url.origin}/api/emails`, {
   default: () => [],
 })
 
@@ -58,7 +58,7 @@ function selectTemplate(template: EmailTemplate) {
         <div class="flex items-start gap-4">
           <div class="flex-1 min-w-0">
             <h3 class="font-medium text-gray-900 dark:text-white">
-              {{ template.name }}
+              {{ template.displayName }}
             </h3>
             <div class="mt-2">
               <UBadge

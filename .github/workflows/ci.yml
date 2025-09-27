@@ -26,13 +26,40 @@ jobs:
           node-version: lts/-1
           cache: "pnpm"
       - run: pnpm install
-
       - name: Install Playwright
         run: pnpm playwright-core install
 
       - run: pnpm dev:prepare
+
       - run: pnpm lint
+
       - run: pnpm test
       - name: 'Report Coverage'
         uses: davelosert/vitest-coverage-report-action@v2
+
       - run: pnpm build
+
+      - run: pnpm docs:build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs/.output/public
+
+  # Deployment job
+  deploy:
+    # Add a dependency to the build job
+    needs: ci
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    # Deploy to the github_pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

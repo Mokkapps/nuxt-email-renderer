@@ -1,123 +1,119 @@
 ---
 seo:
-  title: Write beautiful docs with Markdown
-  description: Ship fast, flexible, and SEO-optimized documentation with beautiful
-    design out of the box. Docus brings together the best of the Nuxt ecosystem.
-    Powered by Nuxt UI.
+  title: Email Template Rendering for your Nuxt Apps
+  description: Plug-and-play email template rendering using Vue components for Nuxt apps. Create beautiful HTML emails with the power of Vue.
 ---
 
+::the-gradient
+::
+
 ::u-page-hero
+---
+orientation: horizontal
+---
+:::the-illustration{.hidden.lg:flex}
+:::
+
 #title
-Write beautiful docs with Markdown
+Email Template Rendering for your [Nuxt Apps]{.text-primary}
 
 #description
-Ship fast, flexible, and SEO-optimized documentation with beautiful design out of the box.
-
-Docus brings the best of the Nuxt ecosystem into one CLI.
+Plug-and-play email template rendering using Vue components. Create beautiful HTML emails with the power of Vue and modern development workflow.
 
 #links
-  :::u-button
-  ---
-  color: neutral
-  size: xl
-  to: /getting-started/installation
-  trailing-icon: i-lucide-arrow-right
-  ---
-  Get started
-  :::
+:::u-button
+---
+icon: i-ph-rocket-launch-duotone
+size: xl
+to: /get-started/installation
+---
+Get started
+:::
 
-  :::u-button
-  ---
-  color: neutral
-  icon: simple-icons-github
-  size: xl
-  to: https://github.com/nuxt-content/docus
-  variant: outline
-  ---
-  Star on GitHub
-  :::
+:::copy-code-input{source="npx nuxt module add nuxt-email-renderer"}
+:::
 ::
 
 ::u-page-section
 #title
-Shipped with many features
+Create stunning emails with :br [Vue components]{.text-primary}
 
 #features
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-nuxt
-  target: _blank
-  to: https://nuxt.com
-  ---
-  #title
-  Built with [Nuxt 4]{.text-primary}
-  
-  #description
-  Optimized by the most famous Vue framework. Docus gives you everything you need to build fast, performant, and SEO-friendly websites.
-  :::
+:::u-page-card
+---
+spotlight: true
+icon: i-ph-envelope-duotone
+to: /usage/email-templates
+---
+#title
+Vue-Powered Templates
 
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-nuxt
-  target: _blank
-  to: https://ui.nuxt.com/
-  ---
-  #title
-  Powered by [Nuxt UI]{.text-primary}
-  
-  #description
-  Beautiful out of the box, minimal by design but highly customizable. Docus leverages Nuxt UI to give you the best docs writing experience with zero boilerplate, just focus on your content.
-  :::
+#description
+Build email templates using Vue components with full TypeScript support and modern development experience.
+:::
 
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-nuxt
-  target: _blank
-  to: https://content.nuxt.com
-  ---
-  #title
-  Enhanced Markdown syntax by [Nuxt Content]{.text-primary}
-  
-  #description
-  The only thing you need to take care about is writing your content. Write your pages in Markdown and extend with MDC syntax to embed Nuxt UI or custom Vue components. Structure, routing, and rendering are handled for you.
-  :::
+:::u-page-card
+---
+spotlight: true
+icon: i-ph-code-duotone
+to: /usage/components
+---
+#title
+Pre-built Components
 
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-nuxt
-  target: _blank
-  to: https://nuxt.com/docs/guide/directory-structure/app-config
-  ---
-  #title
-  Customize with [Nuxt App Config]{.text-primary}
-  
-  #description
-  Update colors, social links, header logos and component styles globally using the `app.config.ts`, no direct code modifications required.
-  :::
+#description
+Use a collection of email-optimized Vue components designed for maximum compatibility across email clients.
+:::
 
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-nuxt
-  target: _blank
-  to: https://content.nuxt.com/studio
-  ---
-  #title
-  Collaborate on [Nuxt Studio]{.text-primary}
-  
-  #description
-  Write and manage your content visually, with zero Markdown knowledge required. Let your non technical colleagues collaborate on the documentation and integrate Vue components without code skills.
-  :::
+:::u-page-card
+---
+spotlight: true
+icon: i-ph-device-mobile-duotone
+to: /usage/responsive
+---
+#title
+Responsive Design
 
-  :::u-page-feature
-  ---
-  icon: i-simple-icons-nuxt
-  target: _blank
-  to: https://ui.nuxt.com/components/content-search
-  ---
-  #title
-  Built-in navigation and [full-text search]{.text-primary}
-  
-  #description
-  Only focus on ordering your content, Docus handles the search modal and auto-generates the side navigation for you.
-  :::
+#description
+Create responsive email layouts that look great on desktop, mobile, and tablet devices.
+:::
+
+:::u-page-card
+---
+spotlight: true
+icon: i-ph-palette-duotone
+to: /usage/styling
+---
+#title
+Flexible Styling
+
+#description
+Style your emails with CSS-in-JS or traditional CSS approaches that work reliably in email clients.
+:::
+
+:::u-page-card
+---
+spotlight: true
+icon: i-ph-browser-duotone
+to: /usage/preview
+---
+#title
+Live Preview
+
+#description
+Preview your email templates in real-time during development with built-in rendering and testing tools.
+:::
+
+:::u-page-card
+---
+spotlight: true
+icon: i-ph-rocket-launch-duotone
+to: /get-started/installation
+---
+#title
+Easy Integration
+
+#description
+Integrate seamlessly with your existing Nuxt application and email service providers for streamlined email delivery.
+:::
 ::

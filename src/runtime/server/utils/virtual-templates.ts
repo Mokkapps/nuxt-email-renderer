@@ -39,7 +39,10 @@ export async function generateTemplateMapping(
       if (!fileStats.isFile()) continue
 
       const name = basename(file, extname(file))
-      const displayName = name.replace(/([A-Z])/g, ' $1').trim()
+      const displayName = name
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
+        .trim()
 
       // Create a virtual import path that Nitro can resolve
       const importPath = `#email-templates/${name}`

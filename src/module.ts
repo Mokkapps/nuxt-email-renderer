@@ -138,6 +138,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     addComponentsDir({
       path: resolve('./runtime/components'),
+      extensions: ['vue'],
       global: true,
     })
 

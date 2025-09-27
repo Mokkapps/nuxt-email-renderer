@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.7
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.6...v0.0.7)
+
+### 🚀 Enhancements
+
+- Add support for .vue file extensions in components directory ([76c1c56](https://github.com/mokkapps/nuxt-email-renderer/commit/76c1c56))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.6
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.5...v0.0.6)

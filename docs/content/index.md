@@ -25,7 +25,7 @@ Plug-and-play email template rendering using Vue components. Create beautiful HT
 ---
 icon: i-ph-rocket-launch-duotone
 size: xl
-to: /get-started/installation
+to: /getting-started/installation
 ---
 Get started
 :::

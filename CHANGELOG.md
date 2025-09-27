@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.0.6
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.5...v0.0.6)
+
+### 🚀 Enhancements
+
+- Add better templates ([c30e030](https://github.com/mokkapps/nuxt-email-renderer/commit/c30e030))
+- Implement source code retrieval for email templates ([2713f17](https://github.com/mokkapps/nuxt-email-renderer/commit/2713f17))
+- Refactor API endpoints and improved docs ([0deb180](https://github.com/mokkapps/nuxt-email-renderer/commit/0deb180))
+
+### 🏡 Chore
+
+- Update test command to include coverage and add coverage configuration in vitest.config.ts ([505732a](https://github.com/mokkapps/nuxt-email-renderer/commit/505732a))
+
+### ✅ Tests
+
+- Update snapshot for rendered email HTML in E2E Layer API tests ([334c195](https://github.com/mokkapps/nuxt-email-renderer/commit/334c195))
+
+### 🤖 CI
+
+- Show coverage report ([28d816d](https://github.com/mokkapps/nuxt-email-renderer/commit/28d816d))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.5
 
 [compare changes](https://github.com/mokkapps/nuxt-email/compare/v0.0.4...v0.0.5)

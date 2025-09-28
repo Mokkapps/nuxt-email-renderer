@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.0.8
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.7...v0.0.8)
+
+### 🚀 Enhancements
+
+- Update documentation for dynamic imports and add new components for email rendering ([3f6f916](https://github.com/mokkapps/nuxt-email-renderer/commit/3f6f916))
+- Update documentation for Nuxt Email Renderer migration and project structure ([0814242](https://github.com/mokkapps/nuxt-email-renderer/commit/0814242))
+- Refactor ECodeBlock component and add StackOverflowNewsletterWithCode component ([02bcfa7](https://github.com/mokkapps/nuxt-email-renderer/commit/02bcfa7))
+- Enhance DevTools UI ([eb51179](https://github.com/mokkapps/nuxt-email-renderer/commit/eb51179))
+
+### 🩹 Fixes
+
+- Remove unnecessary whitespace in email templates ([2ff4547](https://github.com/mokkapps/nuxt-email-renderer/commit/2ff4547))
+
+### 💅 Refactors
+
+- Remove unused copyRenderedHtml function and update ESLint rules for playground ([cb87404](https://github.com/mokkapps/nuxt-email-renderer/commit/cb87404))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.7
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.6...v0.0.7)

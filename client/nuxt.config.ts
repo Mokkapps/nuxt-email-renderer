@@ -3,7 +3,6 @@ import { resolve } from 'pathe'
 export default defineNuxtConfig({
   modules: [
     '../src/module',
-    '@nuxt/ui',
     '@nuxt/devtools-ui-kit',
     '@vueuse/nuxt',
   ],
@@ -15,8 +14,6 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/__nuxt-email-renderer',
   },
-
-  css: ['~/assets/css/main.css'],
 
   compatibilityDate: '2024-08-21',
 

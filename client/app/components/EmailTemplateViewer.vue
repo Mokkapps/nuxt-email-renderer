@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
-import type { TabsItem } from '@nuxt/ui'
 import { useClipboard } from '@vueuse/core'
 
 interface EmailTemplate {
   name: string
+  displayName: string
   filename: string
   description: string
-  icon: string
   component: Component
 }
 
@@ -38,29 +37,77 @@ const copySourceCode = async () => {
   }
 }
 
-const viewportTabs: Array<TabsItem> = [
+const copyRenderedHtml = async () => {
+  if (isSupported && renderedHtml.value) {
+    await copy(renderedHtml.value)
+  }
+}
+
+const renderTemplate = async (template: EmailTemplate) => {
+  isLoading.value = true
+  try {
+    // Render the email template to HTML
+    renderedHtml.value = await $fetch(`${url.origin}/api/emails/render`, {
+      method: 'POST',
+      body: {
+        name: template.filename,
+      },
+    })
+
+    // Load source code from the API
+    try {
+      const sourceResponse = (await $fetch(`${url.origin}/api/emails/source`, {
+        method: 'POST',
+        body: {
+          name: template.filename,
+        },
+      })) as SourceResponse
+      sourceCode.value = sourceResponse.sourceCode
+    }
+    catch (sourceError) {
+      console.error('Failed to load source code:', sourceError)
+      const errorMessage
+        = sourceError instanceof Error ? sourceError.message : 'Unknown error'
+      sourceCode.value = `// Failed to load source code for ${template.filename}\n// Error: ${errorMessage}`
+    }
+  }
+  catch (error) {
+    console.error('Failed to render template:', error)
+    const errorMessage
+      = error instanceof Error ? error.message : 'Unknown error'
+    renderedHtml.value = '<div>Failed to render template</div>'
+    sourceCode.value = `// Failed to load source code due to template render error\n// Error: ${errorMessage}`
+  }
+  finally {
+    isLoading.value = false
+  }
+}
+
+const refreshTemplate = async () => {
+  if (props.template) {
+    await renderTemplate(props.template)
+  }
+}
+
+const viewportTabs = [
   {
     value: 'desktop',
     label: 'Desktop',
-    icon: 'i-heroicons-computer-desktop',
   },
   {
     value: 'mobile',
     label: 'Mobile',
-    icon: 'i-heroicons-device-phone-mobile',
   },
 ]
 
-const contentTabs: Array<TabsItem> = [
+const contentTabs = [
   {
     value: 'preview',
     label: 'Preview',
-    icon: 'i-heroicons-eye',
   },
   {
     value: 'source',
     label: 'Source Code',
-    icon: 'i-heroicons-code-bracket',
   },
 ]
 
@@ -69,48 +116,7 @@ watch(
   () => props.template,
   async (newTemplate: EmailTemplate | null) => {
     if (newTemplate) {
-      isLoading.value = true
-      try {
-        // Render the email template to HTML
-        renderedHtml.value = await $fetch(`${url.origin}/api/emails/render`, {
-          method: 'POST',
-          body: {
-            name: newTemplate.filename,
-          },
-        })
-
-        // Load source code from the API
-        try {
-          const sourceResponse = (await $fetch(
-            `${url.origin}/api/emails/source`,
-            {
-              method: 'POST',
-              body: {
-                name: newTemplate.filename,
-              },
-            },
-          )) as SourceResponse
-          sourceCode.value = sourceResponse.sourceCode
-        }
-        catch (sourceError) {
-          console.error('Failed to load source code:', sourceError)
-          const errorMessage
-            = sourceError instanceof Error
-              ? sourceError.message
-              : 'Unknown error'
-          sourceCode.value = `// Failed to load source code for ${newTemplate.filename}\n// Error: ${errorMessage}`
-        }
-      }
-      catch (error) {
-        console.error('Failed to render template:', error)
-        const errorMessage
-          = error instanceof Error ? error.message : 'Unknown error'
-        renderedHtml.value = '<div>Failed to render template</div>'
-        sourceCode.value = `// Failed to load source code due to template render error\n// Error: ${errorMessage}`
-      }
-      finally {
-        isLoading.value = false
-      }
+      await renderTemplate(newTemplate)
     }
     else {
       renderedHtml.value = ''
@@ -167,60 +173,97 @@ const iframeContent = computed(() => {
     v-else
     class="space-y-6"
   >
-    <!-- Header -->
-    <div>
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-        {{ template.displayName }}
-      </h2>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-        {{ template.description }}
-      </p>
-    </div>
-
     <!-- Controls -->
-    <div class="flex items-center justify-between">
-      <!-- Viewport Tabs -->
-      <UTabs
-        v-model="viewMode"
-        :items="viewportTabs"
-        :content="false"
-        size="md"
-        variant="pill"
-      />
+    <NCard class="p-4">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <!-- Left Side: Template Info & Viewport Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <!-- Template Info -->
+          <div class="flex items-center gap-3">
+            <div>
+              <h3 class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ template.displayName }}
+              </h3>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ template.filename }}
+              </p>
+            </div>
+          </div>
 
-      <!-- Content Tabs -->
-      <UTabs
-        v-model="contentMode"
-        :items="contentTabs"
-        :content="false"
-        size="md"
-        variant="pill"
-      />
-    </div>
+          <!-- Divider -->
+          <div
+            class="hidden sm:block w-px h-8 bg-gray-200 dark:bg-gray-700"
+          />
+
+          <!-- Viewport Controls -->
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Viewport:
+            </span>
+            <NSelectTabs
+              v-model="viewMode"
+              :options="viewportTabs"
+            />
+            <NBadge
+              class="hidden sm:inline-flex"
+            >
+              {{ viewMode === "desktop" ? "800px" : "375px" }}
+            </NBadge>
+          </div>
+
+          <!-- Divider -->
+          <div
+            class="hidden sm:block w-px h-8 bg-gray-200 dark:bg-gray-700"
+          />
+
+          <!-- Content Mode Tabs -->
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              View:
+            </span>
+            <NSelectTabs
+              v-model="contentMode"
+              :options="contentTabs"
+            />
+          </div>
+        </div>
+
+        <!-- Right Side: Content Mode & Actions -->
+        <div class="flex items-center gap-4">
+          <!-- Action Buttons -->
+          <div class="flex items-center gap-2">
+            <!-- Refresh Button -->
+            <NButton
+              v-if="contentMode === 'preview' && renderedHtml"
+              icon="carbon:update-now"
+              :disabled="isLoading"
+              @click="refreshTemplate"
+            >
+              Refresh
+            </NButton>
+
+            <!-- Copy Source Button (Source Mode) -->
+            <NButton
+              v-if="contentMode === 'source' && sourceCode && isSupported"
+              :icon="
+                copied ? 'carbon:checkmark-outline' : 'carbon:copy'
+              "
+              @click="copySourceCode"
+            >
+              {{ copied ? 'Copied' : 'Copy' }}
+            </NButton>
+          </div>
+        </div>
+      </div>
+    </NCard>
 
     <!-- Content Area -->
     <div class="space-y-4">
       <!-- Preview Content -->
       <div v-if="contentMode === 'preview'">
-        <div class="flex items-center gap-2 mb-4">
-          <UIcon
-            :name="
-              viewMode === 'desktop'
-                ? 'i-heroicons-computer-desktop'
-                : 'i-heroicons-device-phone-mobile'
-            "
-            class="w-4 h-4"
-          />
-          <span class="text-sm font-medium">Preview</span>
-          <UBadge
-            variant="soft"
-            size="xs"
-          >
-            {{ viewMode === "desktop" ? "800px" : "375px" }}
-          </UBadge>
-        </div>
-
-        <UCard class="p-4">
+        <NCard class="p-4">
           <div :class="viewportClass">
             <div class="border rounded-lg overflow-hidden bg-white shadow-sm">
               <!-- Loading State -->
@@ -264,42 +307,12 @@ const iframeContent = computed(() => {
               </div>
             </div>
           </div>
-        </UCard>
+        </NCard>
       </div>
 
       <!-- Source Code Content -->
       <div v-else-if="contentMode === 'source'">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2">
-            <UIcon
-              name="i-heroicons-code-bracket"
-              class="w-4 h-4"
-            />
-            <span class="text-sm font-medium">Source Code</span>
-            <UBadge
-              variant="soft"
-              size="xs"
-            >
-              {{ template?.filename ?? "-" }}
-            </UBadge>
-          </div>
-
-          <!-- Copy Button -->
-          <UButton
-            v-if="sourceCode && isSupported"
-            :icon="
-              copied ? 'i-heroicons-check' : 'i-heroicons-clipboard-document'
-            "
-            :color="copied ? 'success' : 'neutral'"
-            variant="ghost"
-            size="sm"
-            @click="copySourceCode"
-          >
-            {{ copied ? "Copied!" : "Copy Source" }}
-          </UButton>
-        </div>
-
-        <UCard class="p-0">
+        <NCard class="p-0">
           <div
             class="bg-gray-50 dark:bg-gray-800 p-4 max-h-[600px] overflow-auto"
           >
@@ -307,7 +320,7 @@ const iframeContent = computed(() => {
               class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-mono"
             ><code>{{ sourceCode || 'Loading source code...' }}</code></pre>
           </div>
-        </UCard>
+        </NCard>
       </div>
     </div>
   </div>

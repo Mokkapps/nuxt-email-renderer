@@ -147,10 +147,6 @@ pnpm test
 pnpm lint
 ```
 
-## Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
 ## Authors
 
 - Michael Hoffmann ([@mokkapps](https://twitter.com/mokkapps))
@@ -162,8 +158,8 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 ---
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
-- [📖 &nbsp;Documentation](#)
-- [🏀 &nbsp;Playground](playground/)
+- [📖 &nbsp;Documentation](https://nuxtemail.com)
+- [🏀 &nbsp;Playground](https://nuxtemail.com/playground)
 
 
 <!-- Badges -->

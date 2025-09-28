@@ -9,7 +9,7 @@ A Nuxt module that provides high-quality, unstyled components for creating email
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-[Website](#) · [GitHub](https://github.com/mokkapps/nuxt-email-renderer) · [Examples](playground/emails)
+[📖 &nbsp;Documentation](https://nuxtemail.com) · [👾 &nbsp;Playground](https://nuxtemail.com/playground)
 
 ## Install
 

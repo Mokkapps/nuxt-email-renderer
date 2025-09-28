@@ -37,12 +37,6 @@ const copySourceCode = async () => {
   }
 }
 
-const copyRenderedHtml = async () => {
-  if (isSupported && renderedHtml.value) {
-    await copy(renderedHtml.value)
-  }
-}
-
 const renderTemplate = async (template: EmailTemplate) => {
   isLoading.value = true
   try {

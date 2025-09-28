@@ -42,4 +42,10 @@ export default createConfigForNuxt({
         'vue/multi-word-component-names': 'off',
       },
     },
+    {
+      files: ['playground/**'],
+      rules: {
+        'no-useless-escape': 'off',
+      },
+    },
   )

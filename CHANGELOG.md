@@ -1,6 +1,32 @@
 # Changelog
 
 
+## v0.0.9
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.8...v0.0.9)
+
+### 🚀 Enhancements
+
+- Enhance email template types and global availability ([986e089](https://github.com/mokkapps/nuxt-email-renderer/commit/986e089))
+
+### 🩹 Fixes
+
+- Update StackBlitz iframe source URL in playground component ([5dc0dbc](https://github.com/mokkapps/nuxt-email-renderer/commit/5dc0dbc))
+
+### 💅 Refactors
+
+- Simplify email template components and improve layout ([9e12c46](https://github.com/mokkapps/nuxt-email-renderer/commit/9e12c46))
+
+### 📖 Documentation
+
+- Update README ([a9d0245](https://github.com/mokkapps/nuxt-email-renderer/commit/a9d0245))
+- Update README ([9d14122](https://github.com/mokkapps/nuxt-email-renderer/commit/9d14122))
+- Update README ([65b2abc](https://github.com/mokkapps/nuxt-email-renderer/commit/65b2abc))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.8
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.7...v0.0.8)

@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
 
-interface SourceResponse {
-  filename: string
-  filePath: string
-  sourceCode: string
-}
-
 interface Props {
   template: EmailTemplate | null
 }
@@ -15,70 +9,36 @@ const props = defineProps<Props>()
 
 const viewMode = ref<'desktop' | 'mobile'>('desktop')
 const contentMode = ref<'preview' | 'source'>('preview')
-const renderedHtml = ref('')
-const sourceCode = ref('')
-const isLoading = ref(false)
 
 const url = useRequestURL()
-const { copy, copied, isSupported } = useClipboard({ source: sourceCode })
 
-const copySourceCode = async () => {
-  if (isSupported && sourceCode.value) {
-    await copy(sourceCode.value)
-  }
-}
-
-const copyRenderedHtml = async () => {
-  if (isSupported && renderedHtml.value) {
-    await copy(renderedHtml.value)
-  }
-}
-
-const renderTemplate = async (template: EmailTemplate) => {
-  isLoading.value = true
-  try {
-    // Render the email template to HTML
-    renderedHtml.value = await $fetch(`${url.origin}/api/emails/render`, {
-      method: 'POST',
-      body: {
-        name: template.filename,
-      },
-    })
-
-    // Load source code from the API
-    try {
-      const sourceResponse = (await $fetch(`${url.origin}/api/emails/source`, {
-        method: 'POST',
-        body: {
-          name: template.filename,
-        },
-      })) as SourceResponse
-      sourceCode.value = sourceResponse.sourceCode
-    }
-    catch (sourceError) {
-      console.error('Failed to load source code:', sourceError)
-      const errorMessage
-        = sourceError instanceof Error ? sourceError.message : 'Unknown error'
-      sourceCode.value = `// Failed to load source code for ${template.filename}\n// Error: ${errorMessage}`
+const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
+  if (!props.template) {
+    return {
+      html: null,
+      sourceCode: null,
     }
   }
-  catch (error) {
-    console.error('Failed to render template:', error)
-    const errorMessage
-      = error instanceof Error ? error.message : 'Unknown error'
-    renderedHtml.value = '<div>Failed to render template</div>'
-    sourceCode.value = `// Failed to load source code due to template render error\n// Error: ${errorMessage}`
-  }
-  finally {
-    isLoading.value = false
-  }
-}
+  const html = await $fetch(`${url.origin}/api/emails/render`, {
+    method: 'POST',
+    body: {
+      name: props.template.filename,
+    },
+  })
 
-const refreshTemplate = async () => {
-  if (props.template) {
-    await renderTemplate(props.template)
-  }
-}
+  const sourceResponse = await $fetch(`${url.origin}/api/emails/source`, {
+    method: 'POST',
+    body: {
+      name: props.template.filename,
+    },
+  })
+  const sourceCode = sourceResponse.sourceCode
+
+  return { html, sourceCode }
+}, { watch: [() => props.template] })
+
+const sourceCode = computed(() => data.value?.sourceCode ?? null)
+const renderedHtml = computed(() => data.value?.html ?? null)
 
 const viewportTabs = [
   {
@@ -102,46 +62,25 @@ const contentTabs = [
   },
 ]
 
-// Watch for template changes and render the email
-watch(
-  () => props.template,
-  async (newTemplate: EmailTemplate | null) => {
-    if (newTemplate) {
-      await renderTemplate(newTemplate)
-    }
-    else {
-      renderedHtml.value = ''
-      sourceCode.value = ''
-    }
-  },
-  { immediate: true },
-)
-
 const viewportClass = computed(() => {
   return viewMode.value === 'mobile'
     ? 'max-w-[375px] mx-auto'
     : 'max-w-[800px] mx-auto'
 })
 
-const iframeContent = computed(() => {
-  if (!renderedHtml.value) return ''
+const { copy, copied, isSupported } = useClipboard({ source: sourceCode })
 
-  // Wrap the rendered HTML in a complete HTML document
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { margin: 0; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; }
-  </style>
-</head>
-<body>
-  ${renderedHtml.value}
-</body>
-</html>`
-})
+const copySourceCode = async () => {
+  if (isSupported && sourceCode.value) {
+    await copy(sourceCode.value)
+  }
+}
+
+const copyRenderedHtml = async () => {
+  if (isSupported && renderedHtml.value) {
+    await copy(renderedHtml.value)
+  }
+}
 </script>
 
 <template>
@@ -159,7 +98,24 @@ const iframeContent = computed(() => {
     </div>
 
     <div
-      v-if="!template"
+      v-if="error"
+      class="flex flex-col"
+    >
+      <NTip
+        n="red6 dark:red5"
+        icon="carbon:warning-alt"
+      >
+        Error!
+      </NTip>
+      <NTip
+        n="red6 dark:red5"
+      >
+        {{ error }}
+      </NTip>
+    </div>
+
+    <div
+      v-else-if="!template"
       class="flex items-center justify-center h-64"
     >
       <div class="text-center">
@@ -225,7 +181,7 @@ const iframeContent = computed(() => {
               v-if="contentMode === 'preview' && renderedHtml"
               icon="carbon:update-now"
               :disabled="isLoading"
-              @click="refreshTemplate"
+              @click="refresh"
             >
               Refresh
             </NButton>
@@ -278,7 +234,7 @@ const iframeContent = computed(() => {
               <!-- Email Template Preview -->
               <iframe
                 v-else-if="renderedHtml"
-                :srcdoc="iframeContent"
+                :srcdoc="renderedHtml"
                 class="w-full h-screen border-0"
                 sandbox="allow-same-origin"
               />

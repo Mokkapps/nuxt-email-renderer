@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
 import { useClipboard } from '@vueuse/core'
-
-interface EmailTemplate {
-  name: string
-  displayName: string
-  filename: string
-  description: string
-  component: Component
-}
 
 interface SourceResponse {
   filename: string
@@ -154,49 +145,44 @@ const iframeContent = computed(() => {
 </script>
 
 <template>
-  <div
-    v-if="!template"
-    class="flex items-center justify-center h-64"
-  >
-    <div class="text-center">
-      <UIcon
-        name="i-heroicons-inbox"
-        class="w-12 h-12 text-gray-400 mx-auto mb-4"
+  <div class="space-y-2">
+    <div class="flex items-center gap-2">
+      <NIconTitle
+        :text="template?.displayName ?? 'Please select a template'"
+        icon="carbon:email"
       />
-      <p class="text-gray-500 dark:text-gray-400">
-        Select an email template to preview
-      </p>
+      <NBadge
+        v-if="template"
+      >
+        {{ template.filename }}
+      </NBadge>
     </div>
-  </div>
 
-  <div
-    v-else
-    class="space-y-6"
-  >
-    <!-- Controls -->
-    <NCard class="p-4">
+    <div
+      v-if="!template"
+      class="flex items-center justify-center h-64"
+    >
+      <div class="text-center">
+        <UIcon
+          name="i-heroicons-inbox"
+          class="w-12 h-12 text-gray-400 mx-auto mb-4"
+        />
+        <p class="text-gray-500 dark:text-gray-400">
+          Select an email template to preview
+        </p>
+      </div>
+    </div>
+
+    <div
+      v-else
+      class="space-y-6"
+    >
+      <!-- Controls -->
       <div
         class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
         <!-- Left Side: Template Info & Viewport Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-          <!-- Template Info -->
-          <div class="flex items-center gap-3">
-            <div>
-              <h3 class="text-sm font-medium text-gray-900 dark:text-white">
-                {{ template.displayName }}
-              </h3>
-              <p class="text-xs text-gray-500 dark:text-gray-400">
-                {{ template.filename }}
-              </p>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <div
-            class="hidden sm:block w-px h-8 bg-gray-200 dark:bg-gray-700"
-          />
-
           <!-- Viewport Controls -->
           <div class="flex items-center gap-3">
             <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -266,13 +252,11 @@ const iframeContent = computed(() => {
           </div>
         </div>
       </div>
-    </NCard>
 
-    <!-- Content Area -->
-    <div class="space-y-4">
-      <!-- Preview Content -->
-      <div v-if="contentMode === 'preview'">
-        <NCard class="p-4">
+      <!-- Content Area -->
+      <div class="space-y-4">
+        <!-- Preview Content -->
+        <div v-if="contentMode === 'preview'">
           <div :class="viewportClass">
             <div class="border rounded-lg overflow-hidden bg-white shadow-sm">
               <!-- Loading State -->
@@ -295,7 +279,7 @@ const iframeContent = computed(() => {
               <iframe
                 v-else-if="renderedHtml"
                 :srcdoc="iframeContent"
-                class="w-full min-h-[500px] border-0"
+                class="w-full h-screen border-0"
                 sandbox="allow-same-origin"
               />
 
@@ -316,20 +300,20 @@ const iframeContent = computed(() => {
               </div>
             </div>
           </div>
-        </NCard>
-      </div>
+        </div>
 
-      <!-- Source Code Content -->
-      <div v-else-if="contentMode === 'source'">
-        <NCard class="p-0">
-          <div
-            class="bg-gray-50 dark:bg-gray-800 p-4 max-h-[600px] overflow-auto"
-          >
-            <pre
-              class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-mono"
-            ><code>{{ sourceCode || 'Loading source code...' }}</code></pre>
-          </div>
-        </NCard>
+        <!-- Source Code Content -->
+        <div v-else-if="contentMode === 'source'">
+          <NCard class="p-0">
+            <div
+              class="bg-gray-50 dark:bg-gray-800 p-4 overflow-auto"
+            >
+              <pre
+                class="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-mono"
+              ><code>{{ sourceCode || 'Loading source code...' }}</code></pre>
+            </div>
+          </NCard>
+        </div>
       </div>
     </div>
   </div>

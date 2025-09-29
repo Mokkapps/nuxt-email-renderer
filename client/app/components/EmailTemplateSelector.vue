@@ -1,14 +1,4 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
-
-interface EmailTemplate {
-  name: string
-  filename: string
-  description: string
-  icon: string
-  component: Component
-}
-
 const url = useRequestURL()
 const { data } = useFetch<Array<EmailTemplate>>(`${url.origin}/api/emails`, {
   default: () => [],
@@ -33,11 +23,12 @@ const selectedTemplate = computed({
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="space-y-2">
     <div class="flex items-center justify-between">
-      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-        Email Templates
-      </h2>
+      <NIconTitle
+        text="Select Your Email Template:"
+        icon="carbon:list"
+      />
       <NBadge
         v-if="data.length > 0"
       >

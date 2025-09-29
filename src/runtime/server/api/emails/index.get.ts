@@ -1,16 +1,18 @@
 import { defineEventHandler } from 'h3'
 import { getAllEmailTemplates } from '../../utils/template-resolver'
+import type { EmailTemplate } from 'nuxt-email-renderer'
 
 export default defineEventHandler(async () => {
   try {
     const templates = await getAllEmailTemplates()
 
     // Transform to match the expected API format
-    return templates.map(template => ({
+    const mappedTemplates: Array<EmailTemplate> = templates.map(template => ({
       name: template.name,
       filename: template.filename,
       displayName: template.displayName,
     }))
+    return mappedTemplates
   }
   catch (error: any) {
     return {

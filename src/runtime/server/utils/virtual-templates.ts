@@ -1,18 +1,10 @@
 import { readdir, stat } from 'node:fs/promises'
 import { join, basename, extname } from 'node:path'
 import { existsSync } from 'node:fs'
+import type { EmailTemplate, EmailTemplateInfo, EmailTemplateMapping } from '../../types'
 
-export interface EmailTemplateInfo {
-  name: string
-  filename: string
-  displayName: string
-  importPath: string
-  filePath: string
-}
-
-export interface EmailTemplateMapping {
-  [templateName: string]: EmailTemplateInfo
-}
+// Re-export the types for backward compatibility
+export type { EmailTemplate, EmailTemplateInfo, EmailTemplateMapping }
 
 /**
  * Scans the emails directory and generates template mappings

@@ -37,6 +37,12 @@ const copySourceCode = async () => {
   }
 }
 
+const copyRenderedHtml = async () => {
+  if (isSupported && renderedHtml.value) {
+    await copy(renderedHtml.value)
+  }
+}
+
 const renderTemplate = async (template: EmailTemplate) => {
   isLoading.value = true
   try {
@@ -238,7 +244,16 @@ const iframeContent = computed(() => {
               Refresh
             </NButton>
 
-            <!-- Copy Source Button (Source Mode) -->
+            <!-- Copy HTML -->
+            <NButton
+              v-if="contentMode === 'preview' && renderedHtml && isSupported"
+              :icon="
+                copied ? 'carbon:checkmark-outline' : 'carbon:copy'
+              "
+              @click="copyRenderedHtml"
+            >
+              {{ copied ? 'Copied' : 'Copy' }}
+            </NButton>
             <NButton
               v-if="contentMode === 'source' && sourceCode && isSupported"
               :icon="

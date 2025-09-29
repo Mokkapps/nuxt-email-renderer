@@ -7,6 +7,8 @@ import {
   createResolver,
   addComponentsDir,
   addServerHandler,
+  addImports,
+  addTypeTemplate,
 } from '@nuxt/kit'
 import { setupDevToolsUI } from './devtools'
 import {
@@ -163,6 +165,50 @@ export default defineNuxtModule<ModuleOptions>({
       route: '/api/emails',
       handler: resolve('./runtime/server/api/emails/index.get'),
     })
+
+    // Add type declarations - makes EmailTemplate types available globally
+    addTypeTemplate({
+      filename: 'types/nuxt-email-renderer.d.ts',
+      getContents: () => `
+declare global {
+  export type EmailTemplate = {
+    name: string
+    filename: string
+    displayName: string
+  }
+
+  export type EmailTemplateInfo = EmailTemplate & {
+    importPath: string
+    filePath: string
+  }
+
+  export type EmailTemplateMapping = Record<string, EmailTemplateInfo>
+}
+
+export {}`,
+    })
+
+    // Add auto-imports for the types
+    addImports([
+      {
+        name: 'EmailTemplate',
+        as: 'EmailTemplate',
+        from: resolve('./runtime/types'),
+        type: true,
+      },
+      {
+        name: 'EmailTemplateInfo',
+        as: 'EmailTemplateInfo',
+        from: resolve('./runtime/types'),
+        type: true,
+      },
+      {
+        name: 'EmailTemplateMapping',
+        as: 'EmailTemplateMapping',
+        from: resolve('./runtime/types'),
+        type: true,
+      },
+    ])
 
     if (options.devtools) setupDevToolsUI(nuxt, resolver)
   },

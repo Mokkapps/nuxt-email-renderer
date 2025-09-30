@@ -30,7 +30,7 @@ defineProps<Props>()
         v-else-if="renderedHtml"
         :srcdoc="renderedHtml"
         class="w-full h-screen border-0"
-        sandbox="allow-same-origin"
+        sandbox="allow-same-origin allow-scripts"
       />
     </div>
   </div>

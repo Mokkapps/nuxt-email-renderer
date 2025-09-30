@@ -37,12 +37,6 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
 
 const sourceCode = computed(() => data.value?.sourceCode ?? null)
 const renderedHtml = computed(() => data.value?.html ?? null)
-
-const viewportClass = computed(() => {
-  return viewMode.value === 'mobile'
-    ? 'max-w-[375px] mx-auto'
-    : 'max-w-[800px] mx-auto'
-})
 </script>
 
 <template>
@@ -112,7 +106,7 @@ const viewportClass = computed(() => {
           <EmailPreviewPane
             :is-loading="isLoading"
             :rendered-html="renderedHtml"
-            :viewport-class="viewportClass"
+            :view-mode="viewMode"
           />
         </div>
 

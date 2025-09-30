@@ -2,14 +2,20 @@
 interface Props {
   isLoading: boolean
   renderedHtml: string | null
-  viewportClass: string
+  viewMode: 'desktop' | 'mobile'
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const viewportClass = computed(() => {
+  return props.viewMode === 'mobile'
+    ? 'max-w-[375px] mx-auto'
+    : 'max-w-[800px] mx-auto'
+})
 </script>
 
 <template>
-  <div :class="viewportClass">
+  <div>
     <div class="border rounded-lg overflow-hidden bg-white shadow-sm">
       <div
         v-if="isLoading"
@@ -30,6 +36,9 @@ defineProps<Props>()
         v-else-if="renderedHtml"
         :srcdoc="renderedHtml"
         class="w-full h-screen border-0"
+        :class="viewportClass"
+        width="100%"
+        height="100%"
         sandbox="allow-same-origin allow-scripts"
       />
     </div>

@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.0.11
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.10...v0.0.11)
+
+### 🩹 Fixes
+
+- Update sandbox attribute to allow scripts in email preview ([de3ab38](https://github.com/mokkapps/nuxt-email-renderer/commit/de3ab38))
+
+### 💅 Refactors
+
+- Use Nuxt Kit logger ([e8141b5](https://github.com/mokkapps/nuxt-email-renderer/commit/e8141b5))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.10
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.9...v0.0.10)

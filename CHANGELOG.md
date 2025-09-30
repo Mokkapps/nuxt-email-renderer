@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.12
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.11...v0.0.12)
+
+### 🚀 Enhancements
+
+- Update EmailPreviewPane to use viewMode prop for responsive design ([f09d9f9](https://github.com/mokkapps/nuxt-email-renderer/commit/f09d9f9))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.11
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.10...v0.0.11)

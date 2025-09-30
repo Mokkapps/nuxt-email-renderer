@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.13
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.12...v0.0.13)
+
+### 🚀 Enhancements
+
+- Add pretty option to EmailTemplateViewer POST request ([1d19bec](https://github.com/mokkapps/nuxt-email-renderer/commit/1d19bec))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.12
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.11...v0.0.12)

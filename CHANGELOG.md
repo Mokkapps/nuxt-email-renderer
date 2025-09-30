@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.0.10
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.9...v0.0.10)
+
+### 🚀 Enhancements
+
+- Improve email template loading and selection experience ([38c9751](https://github.com/mokkapps/nuxt-email-renderer/commit/38c9751))
+- Refactor email template viewer components for improved structure and loading experience ([aafff42](https://github.com/mokkapps/nuxt-email-renderer/commit/aafff42))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.9
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.8...v0.0.9)

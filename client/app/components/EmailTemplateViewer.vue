@@ -21,6 +21,7 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
     method: 'POST',
     body: {
       name: props.template.filename,
+      pretty: true,
     },
   })
 

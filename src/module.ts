@@ -1,15 +1,14 @@
 import { join } from 'node:path'
-import { existsSync } from 'node:fs'
-import { defu } from 'defu'
-import vue from '@vitejs/plugin-vue'
-import {
+import { logger,
   defineNuxtModule,
   createResolver,
   addComponentsDir,
   addServerHandler,
   addImports,
-  addTypeTemplate,
-} from '@nuxt/kit'
+  addTypeTemplate } from '@nuxt/kit'
+import { existsSync } from 'node:fs'
+import { defu } from 'defu'
+import vue from '@vitejs/plugin-vue'
 import { setupDevToolsUI } from './devtools'
 import {
   generateTemplateMapping,
@@ -118,15 +117,15 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.alias = nitroConfig.alias || {}
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
 
-        console.log(
-          `[nuxt-email-renderer] Generated virtual module for ${
+        logger.success(
+          `Nuxt Email Renderer generated virtual module for ${
             Object.keys(templateMapping).length
           } email templates`,
         )
       }
       catch (error) {
-        console.error(
-          '[nuxt-email-renderer] Failed to generate virtual module:',
+        logger.error(
+          'Nuxt Email Renderer failed to generate virtual module:',
           error,
         )
       }

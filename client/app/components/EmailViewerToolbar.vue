@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core'
+import EmailSendButton from './EmailSendButton.vue'
 
 interface Props {
   viewMode: 'desktop' | 'mobile'
@@ -54,13 +55,41 @@ const { copy, copied, isSupported } = useClipboard()
 
 const copySourceCode = async () => {
   if (isSupported && props.sourceCode) {
-    await copy(props.sourceCode)
+    try {
+      await copy(props.sourceCode)
+      devtoolsUiShowNotification({
+        message: 'Copied source code to clipboard',
+        icon: 'i-carbon-checkmark',
+        classes: 'text-green',
+      })
+    }
+    catch {
+      devtoolsUiShowNotification({
+        message: 'Failed to copy source code to clipboard',
+        icon: 'i-carbon-warning',
+        classes: 'text-red',
+      })
+    }
   }
 }
 
 const copyRenderedHtml = async () => {
   if (isSupported && props.renderedHtml) {
-    await copy(props.renderedHtml)
+    try {
+      await copy(props.renderedHtml)
+      devtoolsUiShowNotification({
+        message: 'Copied HTML to clipboard',
+        icon: 'i-carbon-checkmark',
+        classes: 'text-green',
+      })
+    }
+    catch {
+      devtoolsUiShowNotification({
+        message: 'Failed to copy HTML to clipboard',
+        icon: 'i-carbon-warning',
+        classes: 'text-red',
+      })
+    }
   }
 }
 
@@ -100,14 +129,14 @@ const handleRefresh = () => {
 
     <div class="flex items-center gap-4">
       <div class="flex items-center gap-2">
-        <NButton
+        <BaseButton
           v-if="contentMode === 'preview' && renderedHtml"
-          icon="carbon:update-now"
-          :disabled="isLoading"
+          icon="carbon:rotate-360"
+          :is-loading="isLoading"
           @click="handleRefresh"
         >
-          Refresh
-        </NButton>
+          Re-render
+        </BaseButton>
 
         <NButton
           v-if="contentMode === 'preview' && renderedHtml && isSupported"
@@ -124,6 +153,10 @@ const handleRefresh = () => {
         >
           {{ copied ? 'Copied' : 'Copy' }}
         </NButton>
+        <EmailSendButton
+          v-if="renderedHtml"
+          :html="renderedHtml"
+        />
       </div>
     </div>
   </div>

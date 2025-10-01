@@ -1,6 +1,21 @@
 # Changelog
 
 
+## v0.0.14
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.13...v0.0.14)
+
+### 🚀 Enhancements
+
+- Implement EmailSendButton and BaseButton components for sending test emails ([431a2be](https://github.com/mokkapps/nuxt-email-renderer/commit/431a2be))
+- Enhance EmailTemplateViewer with HTML content mode and improve EmailPreviewPane rendering ([e3e3c6c](https://github.com/mokkapps/nuxt-email-renderer/commit/e3e3c6c))
+- Integrate Shiki for syntax highlighting in EmailSourceCodeViewer ([ef383b7](https://github.com/mokkapps/nuxt-email-renderer/commit/ef383b7))
+- Update layout and improve template selection in EmailTemplateViewer ([e5ff775](https://github.com/mokkapps/nuxt-email-renderer/commit/e5ff775))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.13
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.12...v0.0.13)

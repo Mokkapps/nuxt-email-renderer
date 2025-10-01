@@ -6,7 +6,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const viewMode = ref<'desktop' | 'mobile'>('desktop')
-const contentMode = ref<'preview' | 'source'>('preview')
+const contentMode = ref<'preview' | 'html' | 'source'>('preview')
 
 const url = useRequestURL()
 
@@ -96,7 +96,6 @@ const renderedHtml = computed(() => data.value?.html ?? null)
       <EmailViewerToolbar
         v-model:view-mode="viewMode"
         v-model:content-mode="contentMode"
-        :is-loading="isLoading"
         :rendered-html="renderedHtml"
         :source-code="sourceCode"
         @refresh="refresh"
@@ -105,10 +104,13 @@ const renderedHtml = computed(() => data.value?.html ?? null)
       <div class="space-y-4">
         <div v-if="contentMode === 'preview'">
           <EmailPreviewPane
-            :is-loading="isLoading"
             :rendered-html="renderedHtml"
             :view-mode="viewMode"
           />
+        </div>
+
+        <div v-else-if="contentMode === 'html'">
+          <EmailSourceCodeViewer :source-code="renderedHtml" />
         </div>
 
         <div v-else-if="contentMode === 'source'">

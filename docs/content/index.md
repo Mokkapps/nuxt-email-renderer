@@ -8,11 +8,7 @@ seo:
 ::
 
 ::u-page-hero
----
-orientation: horizontal
----
-:::the-illustration{.hidden.lg:flex}
-:::
+![Test](/promo.png)
 
 #title
 Email Template Rendering for your [Nuxt Apps]{.text-primary}

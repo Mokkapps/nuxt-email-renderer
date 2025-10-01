@@ -11,6 +11,8 @@ A Nuxt module that provides high-quality, unstyled components for creating email
 
 [📖 &nbsp;Documentation](https://nuxtemail.com) · [👾 &nbsp;Playground](https://nuxtemail.com/playground)
 
+![Nuxt Email Renderer Screenshot](https://mokkapps.twic.pics/nuxtemail.com/promo.png?twic=v1/resize=-x600)
+
 ## Install
 
 Install the module to your Nuxt application with one command:

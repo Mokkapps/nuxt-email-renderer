@@ -32,6 +32,36 @@ Get started
 
 ::u-page-section
 #title
+Trusted by Leading Tools in :br [Production]{.text-primary}
+
+#links
+:::u-button
+---
+trailing-icon: i-ph-arrow-right
+size: xl
+color: neutral
+variant: outline
+to: https://weekly-vue.news
+target: _blank
+---
+Weekly Vue Newsletter
+:::
+
+:::u-button
+---
+trailing-icon: i-ph-arrow-right
+size: xl
+color: neutral
+variant: outline
+to: https://nuxtstarterkit.com
+target: _blank
+---
+Nuxt Starter Kit
+:::
+::
+
+::u-page-section
+#title
 Create stunning emails with :br [Vue components]{.text-primary}
 
 #features

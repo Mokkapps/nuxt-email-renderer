@@ -107,6 +107,11 @@ All components were tested using the most popular email clients.
 | Gmail ✔ | Apple Mail ✔ | Outlook ✔ | Yahoo! Mail ✔ | HEY ✔ | Superhuman ✔ |
 |---------|--------------|-----------|---------------|-------|--------------|
 
+## Used by
+
+- [Weekly Vue News](https://weekly-vue.news) - A curated newsletter for Vue.js & Nuxt developers
+- [Nuxt Starter Kit](https://nuxtstarterkit.com) - A boilerplate starter kit for Nuxt projects with authentication, database, and more.
+
 ## Development
 
 #### Install dependencies

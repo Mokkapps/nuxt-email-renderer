@@ -69,8 +69,8 @@ const renderedHtml = computed(() => data.value?.html ?? null)
       class="flex items-center justify-center h-64"
     >
       <div class="text-center">
-        <UIcon
-          name="i-heroicons-inbox"
+        <NIcon
+          icon="carbon:email"
           class="w-12 h-12 text-gray-400 mx-auto mb-4"
         />
         <p class="text-gray-500 dark:text-gray-400">
@@ -100,11 +100,17 @@ const renderedHtml = computed(() => data.value?.html ?? null)
         </div>
 
         <div v-else-if="contentMode === 'html'">
-          <EmailSourceCodeViewer :source-code="renderedHtml" />
+          <EmailSourceCodeViewer
+            :source-code="renderedHtml"
+            :content-mode="contentMode"
+          />
         </div>
 
         <div v-else-if="contentMode === 'source'">
-          <EmailSourceCodeViewer :source-code="sourceCode" />
+          <EmailSourceCodeViewer
+            :source-code="sourceCode"
+            :content-mode="contentMode"
+          />
         </div>
       </div>
     </div>

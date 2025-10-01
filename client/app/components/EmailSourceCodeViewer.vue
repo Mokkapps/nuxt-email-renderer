@@ -1,19 +1,26 @@
 <script setup lang="ts">
-import { codeToHtml } from 'shiki'
+import { useShiki } from '~/composables/useShiki'
 
 interface Props {
   sourceCode: string | null
+  contentMode: 'html' | 'source'
 }
 
-const { sourceCode } = defineProps<Props>()
+const { sourceCode, contentMode } = defineProps<Props>()
+
+const { highlighter } = useShiki()
 
 const html = ref(sourceCode)
 
-watch(() => sourceCode, async (newCode) => {
+watch([() => sourceCode, highlighter], async ([newCode, newHighlighter]) => {
+  if (!newHighlighter) {
+    html.value = sourceCode
+    return
+  }
   if (newCode) {
     try {
-      html.value = await codeToHtml(newCode, {
-        lang: 'html',
+      html.value = await newHighlighter.codeToHtml(newCode, {
+        lang: contentMode === 'source' ? 'html' : 'html',
         theme: 'vitesse-dark',
       })
     }

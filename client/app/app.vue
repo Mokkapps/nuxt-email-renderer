@@ -35,13 +35,22 @@ watch(emailTemplates, (newTemplates) => {
       :horizontal="false"
     >
       <template #left>
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <div class="mb-8 flex justify-between">
+          <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
             Nuxt Email Renderer
           </h1>
-          <p class="text-gray-600 dark:text-gray-400">
-            Preview and explore email templates with desktop and mobile viewports
-          </p>
+          <div class="flex items-center gap-2">
+            <NButton
+              icon="carbon:logo-github"
+              to="https://github.com/Mokkapps/nuxt-email-renderer"
+              target="_blank"
+            />
+            <NButton
+              icon="carbon:earth"
+              to="https://nuxtemail.com"
+              target="_blank"
+            />
+          </div>
         </div>
 
         <div

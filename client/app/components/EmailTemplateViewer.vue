@@ -42,16 +42,6 @@ const renderedHtml = computed(() => data.value?.html ?? null)
 
 <template>
   <div class="space-y-2">
-    <div class="flex items-center gap-2">
-      <NIconTitle
-        :text="template?.displayName ?? 'Please select a template'"
-        icon="carbon:email"
-      />
-      <NBadge v-if="template">
-        {{ template.filename }}
-      </NBadge>
-    </div>
-
     <div
       v-if="isLoading"
       class="flex mt-8"

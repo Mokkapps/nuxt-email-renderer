@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   emailTemplates: Array<EmailTemplate>
-  selectedTemplate: EmailTemplate
+  selectedTemplate: EmailTemplate | null
 }
 defineProps<Props>()
 
@@ -16,7 +16,7 @@ defineEmits<{
   >
     <div class="flex items-center justify-between">
       <NIconTitle
-        text="Select Your Email Template:"
+        text="Select a template:"
         icon="carbon:list"
       />
       <NBadge>

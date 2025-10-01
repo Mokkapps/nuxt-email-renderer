@@ -16,6 +16,7 @@
     "@vueuse/core": "^13.9.0",
     "@vueuse/nuxt": "^13.9.0",
     "nuxt": "latest",
+    "shiki": "^3.13.0",
     "vue": "3.5.21"
   }
 }

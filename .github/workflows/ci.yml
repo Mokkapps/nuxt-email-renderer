@@ -40,6 +40,10 @@ jobs:
       - run: pnpm build
 
       - run: pnpm docs:build
+        env:
+          NUXT_UMAMI_HOST: ${{ secrets.NUXT_UMAMI_HOST }}
+          NUXT_UMAMI_ID: ${{ secrets.NUXT_UMAMI_ID }}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -63,3 +67,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

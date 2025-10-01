@@ -1,10 +1,15 @@
 export default defineNuxtConfig({
   extends: ['docus'],
+
+  modules: ['nuxt-umami'],
   css: ['~/assets/css/main.css'],
+
   site: {
     name: 'Nuxt Email Renderer',
   },
+
   compatibilityDate: '2025-08-07',
+
   image: {
     domains: ['mokkapps.twic.pics'],
     provider: 'twicpics',
@@ -12,5 +17,12 @@ export default defineNuxtConfig({
     twicpics: {
       baseURL: 'https://mokkapps.twic.pics/nuxtemail.com/',
     },
+  },
+
+  umami: {
+    host: process.env.NUXT_UMAMI_HOST,
+    id: process.env.NUXT_UMAMI_ID,
+    proxy: 'cloak',
+    ignoreLocalhost: true,
   },
 })

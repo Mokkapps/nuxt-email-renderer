@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.15
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.14...v0.0.15)
+
+### 🔥 Performance
+
+- Improve Shiki performance in DevTools ([14991fc](https://github.com/mokkapps/nuxt-email-renderer/commit/14991fc))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.14
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.13...v0.0.14)

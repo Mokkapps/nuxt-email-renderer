@@ -1,6 +1,6 @@
 {
   "name": "nuxt-email-renderer",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Nuxt email module for rendering HTML emails with Vue components",
   "repository": "mokkapps/nuxt-email-renderer",
   "license": "MIT",

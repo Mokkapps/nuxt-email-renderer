@@ -20,12 +20,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+
       - run: corepack enable
+
       - uses: actions/setup-node@v5
         with:
           node-version: lts/-1
           cache: "pnpm"
+
+      - name: Add Environment Variables
+        env:
+          NUXT_UMAMI_HOST: ${{ secrets.NUXT_UMAMI_HOST }}
+          NUXT_UMAMI_ID: ${{ secrets.NUXT_UMAMI_ID }}
+        run: echo "Environment variables configured."
+
       - run: pnpm install
+
       - name: Install Playwright
         run: pnpm playwright-core install
 
@@ -40,9 +50,6 @@ jobs:
       - run: pnpm build
 
       - run: pnpm docs:build
-        env:
-          NUXT_UMAMI_HOST: ${{ secrets.NUXT_UMAMI_HOST }}
-          NUXT_UMAMI_ID: ${{ secrets.NUXT_UMAMI_ID }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -50,7 +57,7 @@ jobs:
           path: ./docs/.output/public
 
   # Deployment job
-  deploy:
+  deployDocs:
     # Add a dependency to the build job
     needs: ci
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment

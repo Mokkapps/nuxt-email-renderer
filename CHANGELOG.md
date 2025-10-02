@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v0.0.16
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.15...v0.0.16)
+
+### 🚀 Enhancements
+
+- Add image support and update README with screenshot for Nuxt Email Renderer ([4ded954](https://github.com/mokkapps/nuxt-email-renderer/commit/4ded954))
+- **docs:** Integrate nuxt-umami module ([816b506](https://github.com/mokkapps/nuxt-email-renderer/commit/816b506))
+- **ci:** Add environment variables for Nuxt Umami in CI workflow ([4a706a8](https://github.com/mokkapps/nuxt-email-renderer/commit/4a706a8))
+- **ci:** Add Nuxt Umami environment variables to CI workflow ([9729d6d](https://github.com/mokkapps/nuxt-email-renderer/commit/9729d6d))
+- Configure Umami environment variables in Nuxt config ([9afa723](https://github.com/mokkapps/nuxt-email-renderer/commit/9afa723))
+- Remove proxy configuration from Umami settings in Nuxt config ([032cdf2](https://github.com/mokkapps/nuxt-email-renderer/commit/032cdf2))
+- Add EMarkdown component for rendering markdown content with customizable styles ([f5a98d1](https://github.com/mokkapps/nuxt-email-renderer/commit/f5a98d1))
+
+### 📖 Documentation
+
+- Add "Used by" section to README and include links to Weekly Vue News and Nuxt Starter Kit ([b00fbda](https://github.com/mokkapps/nuxt-email-renderer/commit/b00fbda))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.15
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.14...v0.0.15)

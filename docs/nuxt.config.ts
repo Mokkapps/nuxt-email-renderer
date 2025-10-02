@@ -22,7 +22,6 @@ export default defineNuxtConfig({
   umami: {
     host: process.env.NUXT_UMAMI_HOST,
     id: process.env.NUXT_UMAMI_ID,
-    proxy: 'cloak',
     ignoreLocalhost: true,
   },
 })

@@ -46,6 +46,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "html-to-text": "^9.0.5",
     "js-beautify": "^1.15.4",
+    "marked": "7.0.4",
     "shiki": "^3.13.0",
     "zod": "^4.1.11"
   },

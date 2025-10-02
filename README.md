@@ -94,6 +94,7 @@ A set of standard components to help you build amazing emails without having to 
 - [Html](src/runtime/components/html) - Root HTML wrapper
 - [Img](src/runtime/components/img) - Responsive images
 - [Link](src/runtime/components/link) - Styled anchor links
+- [Markdown](src/runtime/components/markdown) - Render markdown content
 - [Preview](src/runtime/components/preview) - Email preview text
 - [Row](src/runtime/components/row) - Table rows for layouts
 - [Section](src/runtime/components/section) - Content sections

@@ -17,6 +17,7 @@ export { default as ERow } from './row/ERow.vue'
 export { default as ESection } from './section/ESection.vue'
 export { default as EStyle } from './style/EStyle.vue'
 export { default as ECodeInline } from './code-inline/ECodeInline.vue'
+export { default as EMarkdown } from './markdown/EMarkdown.vue'
 
 // Export all components as a registry object for easy iteration
 export const emailComponents = {
@@ -38,4 +39,5 @@ export const emailComponents = {
   ESection: () => import('./section/ESection.vue'),
   EStyle: () => import('./style/EStyle.vue'),
   EText: () => import('./text/EText.vue'),
+  EMarkdown: () => import('./markdown/EMarkdown.vue'),
 }

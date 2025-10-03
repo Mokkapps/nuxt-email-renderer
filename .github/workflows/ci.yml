@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main
+      - '**-rc.**'
+      - 'renovate/**'
   pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   ci:

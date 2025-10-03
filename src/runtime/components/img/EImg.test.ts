@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { EImg } from './EImg.vue'
+import EImg from './EImg.vue'
 
 describe('<EImg> component', () => {
   it('passes style and other props correctly', async () => {

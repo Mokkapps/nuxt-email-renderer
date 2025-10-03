@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { EFont } from './EFont.vue'
+import EFont from './EFont.vue'
 
 describe('<EFont> component', () => {
   it('renders with default props', async () => {

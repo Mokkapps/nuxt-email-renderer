@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { EContainer } from './EContainer.vue'
+import EContainer from './EContainer.vue'
 
 describe('<EContainer> component', () => {
   it('renders children correctly', async () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { EHr } from './EHr.vue'
+import EHr from './EHr.vue'
 
 describe('<EHr> component', () => {
   it('passes styles and other props correctly', async () => {

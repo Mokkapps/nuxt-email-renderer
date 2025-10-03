@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { ECodeBlock } from './ECodeBlock.vue'
+import ECodeBlock from './ECodeBlock.vue'
 
 const stringSnapshotSerializer = {
   serialize(val: any) {

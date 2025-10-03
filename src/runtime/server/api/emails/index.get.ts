@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3'
 import { getAllEmailTemplates } from '../../utils/template-resolver'
-import type { EmailTemplate } from 'nuxt-email-renderer'
+import type { EmailTemplate } from '../../../../runtime/types'
 
 export default defineEventHandler(async () => {
   try {

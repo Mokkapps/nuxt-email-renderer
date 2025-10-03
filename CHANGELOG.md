@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.0.17
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.16...v0.0.17)
+
+### 🩹 Fixes
+
+- On HMR update email template imports and enhance Nitro configuration for better rendering ([ac80fe4](https://github.com/mokkapps/nuxt-email-renderer/commit/ac80fe4))
+- On HMR update email template imports and enhance Nitro configuration for better rendering ([df81fa4](https://github.com/mokkapps/nuxt-email-renderer/commit/df81fa4))
+
+### 💅 Refactors
+
+- Change component exports to default for consistency ([5f3b6fb](https://github.com/mokkapps/nuxt-email-renderer/commit/5f3b6fb))
+
+### 📖 Documentation
+
+- Update migration guide to reflect removal of Rollup config and renumber steps ([ea725ee](https://github.com/mokkapps/nuxt-email-renderer/commit/ea725ee))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.16
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.15...v0.0.16)

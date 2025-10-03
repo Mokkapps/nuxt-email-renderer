@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { ECodeInline } from './ECodeInline.vue'
+import ECodeInline from './ECodeInline.vue'
 
 describe('<ECodeInline> component', () => {
   it('renders children correctly', async () => {

@@ -2,7 +2,6 @@ import { join } from 'node:path'
 import { logger,
   defineNuxtModule,
   createResolver,
-  addComponentsDir,
   addServerHandler,
   addImports,
   addTypeTemplate } from '@nuxt/kit'
@@ -46,28 +45,38 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     const { resolve } = createResolver(import.meta.url)
 
-    // Configure Nitro to handle Vue components properly
+    // Configure Nitro to handle Vue components for email rendering
     nuxt.options.nitro ||= {}
     nuxt.options.nitro.rollupConfig ||= {}
 
-    // Add Vue plugin with proper configuration for email rendering
+    // Configure Vue plugin for server-side email rendering
     const vuePlugin = vue({
-      isProduction: true,
+      isProduction: !nuxt.options.dev,
+      script: {
+        defineModel: true,
+        propsDestructure: true,
+      },
       template: {
         compilerOptions: {
-          // Ensure compatibility with email clients
+          // Preserve whitespace for email client compatibility
           whitespace: 'preserve',
         },
       },
     })
 
-    // Ensure plugins is an array and add the Vue plugin
+    // Add Vue plugin at the beginning of the plugin chain
+    // This ensures .vue files are processed before other transformations
     if (Array.isArray(nuxt.options.nitro.rollupConfig.plugins)) {
-      nuxt.options.nitro.rollupConfig.plugins.push(vuePlugin as never)
+      nuxt.options.nitro.rollupConfig.plugins.unshift(vuePlugin as never)
     }
     else {
       nuxt.options.nitro.rollupConfig.plugins = [vuePlugin as never]
     }
+
+    // Configure esbuild for TypeScript support
+    nuxt.options.nitro.esbuild = nuxt.options.nitro.esbuild || {}
+    nuxt.options.nitro.esbuild.options = nuxt.options.nitro.esbuild.options || {}
+    nuxt.options.nitro.esbuild.options.target = nuxt.options.nitro.esbuild.options.target || 'es2020'
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
@@ -89,23 +98,25 @@ export default defineNuxtModule<ModuleOptions>({
     ).emailsDir = templatesDir
 
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
+    // Inline runtime and Vue dependencies in Nitro bundle
     nuxt.options.nitro.externals = defu(
       typeof nuxt.options.nitro.externals === 'object'
         ? nuxt.options.nitro.externals
         : {},
       {
-        inline: [resolve('./runtime')],
+        inline: [resolve('./runtime'), '@vue', 'vue'],
       },
     )
 
+    // Setup Nitro aliases
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
       '#nuxt-email-renderer': resolve('./runtime/server/utils'),
     })
 
-    // Generate virtual module for email templates during build
+    // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
       try {
-        // Generate template mapping at build time
+        // Scan templates directory and generate virtual module
         const templateMapping = await generateTemplateMapping(templatesDir)
         const virtualModuleContent = generateVirtualModule(templateMapping)
 
@@ -113,40 +124,57 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.virtual = nitroConfig.virtual || {}
         nitroConfig.virtual['#email-templates'] = virtualModuleContent
 
-        // Also create alias for easier importing
+        // Create alias for the virtual module
         nitroConfig.alias = nitroConfig.alias || {}
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
 
         logger.success(
-          `Nuxt Email Renderer generated virtual module for ${
+          `Nuxt Email Renderer: Generated virtual module with ${
             Object.keys(templateMapping).length
-          } email templates`,
+          } email template(s)`,
         )
       }
       catch (error) {
         logger.error(
-          'Nuxt Email Renderer failed to generate virtual module:',
+          'Nuxt Email Renderer: Failed to generate virtual module',
           error,
         )
       }
     })
 
+    // Enable HMR for email templates in development mode
+    if (nuxt.options.dev) {
+      // Watch templates directory for changes
+      nuxt.options.watch = nuxt.options.watch || []
+      nuxt.options.watch.push(`${templatesDir}/**/*.vue`)
+
+      // Log template changes and trigger server restart
+      nuxt.hooks.hook('builder:watch', async (event, path) => {
+        if (path.startsWith(templatesDir) && path.endsWith('.vue')) {
+          logger.info(
+            `Nuxt Email Renderer: Template ${event} - ${path}`,
+          )
+          logger.info(
+            'Nuxt Email Renderer: Server will restart to apply changes',
+          )
+        }
+      })
+
+      // Configure Nitro dev storage for the templates directory
+      nuxt.hooks.hook('nitro:config', (nitroConfig) => {
+        nitroConfig.devStorage = nitroConfig.devStorage || {}
+        nitroConfig.devStorage['emails'] = {
+          driver: 'fs',
+          base: templatesDir,
+        }
+      })
+    }
+
+    // Add templates directory as Nitro server asset
     nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
     nuxt.options.nitro.serverAssets.push({
       baseName: 'emails',
       dir: templatesDir,
-    })
-
-    addComponentsDir({
-      path: resolve('./runtime/components'),
-      extensions: ['vue'],
-      global: true,
-    })
-
-    addComponentsDir({
-      path: templatesDir,
-      extensions: ['vue'],
-      global: true,
     })
 
     // Add server handlers

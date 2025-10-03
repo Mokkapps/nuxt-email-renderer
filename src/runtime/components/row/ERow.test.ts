@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import { render } from '../../server/utils/render'
-import { ERow } from './ERow.vue'
+import ERow from './ERow.vue'
 
 describe('<ERow> component', () => {
   it('renders children correctly', async () => {

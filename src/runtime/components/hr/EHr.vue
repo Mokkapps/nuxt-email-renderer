@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const EHr = defineComponent({
+export default defineComponent({
   name: 'EHr',
   setup() {
     return () => {
@@ -11,6 +11,4 @@ export const EHr = defineComponent({
     }
   },
 })
-
-export default EHr
 </script>

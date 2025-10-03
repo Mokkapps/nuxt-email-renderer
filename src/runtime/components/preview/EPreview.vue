@@ -11,7 +11,7 @@ export const renderWhiteSpace = (text: string) => {
   return h('div', [whiteSpaceCodes.repeat(PREVIEW_MAX_LENGTH - text.length)])
 }
 
-export const EPreview = defineComponent({
+export default defineComponent({
   name: 'EPreview',
   setup(_, { slots }) {
     const text = computed(() => {
@@ -43,6 +43,4 @@ export const EPreview = defineComponent({
     }
   },
 })
-
-export default EPreview
 </script>

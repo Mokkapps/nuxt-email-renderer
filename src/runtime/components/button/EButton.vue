@@ -34,7 +34,7 @@ const buttonTextStyle = (pb?: number) => {
   }
 }
 
-export const EButton = defineComponent<AnchorHTMLAttributes>({
+export default defineComponent<AnchorHTMLAttributes>({
   name: 'EButton',
   setup(props, { slots }) {
     const styleObject = computed(() => {
@@ -87,6 +87,4 @@ export const EButton = defineComponent<AnchorHTMLAttributes>({
     }
   },
 })
-
-export default EButton
 </script>

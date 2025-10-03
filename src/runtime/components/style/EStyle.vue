@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const EStyle = defineComponent({
+export default defineComponent({
   name: 'EStyle',
   setup(_, { slots }) {
     return () => {
@@ -15,6 +15,4 @@ export const EStyle = defineComponent({
     }
   },
 })
-
-export default EStyle
 </script>

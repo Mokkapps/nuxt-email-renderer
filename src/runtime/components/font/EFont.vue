@@ -25,7 +25,7 @@ type FontFormat
 type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | number
 type FontStyle = 'normal' | 'italic' | 'oblique'
 
-export const EFont = defineComponent({
+export default defineComponent({
   name: 'EFont',
   props: {
     fontFamily: {
@@ -81,6 +81,4 @@ export const EFont = defineComponent({
     }
   },
 })
-
-export default EFont
 </script>

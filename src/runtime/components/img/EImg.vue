@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import { defineComponent, h, ref } from 'vue'
 
-export const EImg = defineComponent({
+export default defineComponent({
   name: 'EImg',
   props: {
     src: {
@@ -36,6 +36,4 @@ export const EImg = defineComponent({
     }
   },
 })
-
-export default EImg
 </script>

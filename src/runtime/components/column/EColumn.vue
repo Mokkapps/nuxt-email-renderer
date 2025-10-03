@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const EColumn = defineComponent({
+export default defineComponent({
   name: 'EColumn',
   setup(_, { slots }) {
     return () => {
@@ -15,6 +15,4 @@ export const EColumn = defineComponent({
     }
   },
 })
-
-export default EColumn
 </script>

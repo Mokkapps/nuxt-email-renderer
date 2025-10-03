@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const EText = defineComponent({
+export default defineComponent({
   name: 'EText',
   setup(_, { slots }) {
     return () => {
@@ -19,6 +19,4 @@ export const EText = defineComponent({
     }
   },
 })
-
-export default EText
 </script>

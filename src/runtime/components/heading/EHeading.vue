@@ -3,7 +3,7 @@ import type { CSSProperties, PropType } from 'vue'
 import { computed, defineComponent, h } from 'vue'
 import { withMargin } from './EHeading.utils'
 
-export const EHeading = defineComponent({
+export default defineComponent({
   name: 'EHeading',
   props: {
     as: {
@@ -73,6 +73,4 @@ export const EHeading = defineComponent({
     }
   },
 })
-
-export default EHeading
 </script>

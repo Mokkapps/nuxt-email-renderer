@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const ESection = defineComponent({
+export default defineComponent({
   name: 'ESection',
   setup(_, { slots }) {
     return () => {
@@ -20,6 +20,4 @@ export const ESection = defineComponent({
     }
   },
 })
-
-export default ESection
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const EHead = defineComponent({
+export default defineComponent({
   name: 'EHead',
   setup(_, { slots }) {
     return () => {
@@ -13,6 +13,4 @@ export const EHead = defineComponent({
     }
   },
 })
-
-export default EHead
 </script>

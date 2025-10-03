@@ -3,7 +3,7 @@ import type { PropType } from 'vue'
 import { defineComponent, h } from 'vue'
 import type { BundledLanguage, BundledTheme, SpecialLanguage, ThemeRegistrationAny } from 'shiki'
 
-export const ECodeBlock = defineComponent({
+export default defineComponent({
   name: 'ECodeBlock',
   props: {
     code: {
@@ -102,6 +102,4 @@ export const ECodeBlock = defineComponent({
       ])
   },
 })
-
-export default ECodeBlock
 </script>

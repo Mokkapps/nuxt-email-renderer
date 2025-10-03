@@ -2,7 +2,7 @@
 import type { PropType } from 'vue'
 import { defineComponent, h } from 'vue'
 
-export const EHtml = defineComponent({
+export default defineComponent({
   name: 'EHtml',
   props: {
     lang: {
@@ -27,6 +27,4 @@ export const EHtml = defineComponent({
     }
   },
 })
-
-export default EHtml
 </script>

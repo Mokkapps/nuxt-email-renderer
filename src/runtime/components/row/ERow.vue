@@ -1,7 +1,7 @@
 <script lang="ts">
 import { defineComponent, h } from 'vue'
 
-export const ERow = defineComponent({
+export default defineComponent({
   name: 'ERow',
   setup(_, { slots }) {
     return () => {
@@ -28,6 +28,4 @@ export const ERow = defineComponent({
     }
   },
 })
-
-export default ERow
 </script>

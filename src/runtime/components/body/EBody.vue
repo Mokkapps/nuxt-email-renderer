@@ -7,8 +7,7 @@ export interface EBodyProps {
   [key: string]: unknown
 }
 
-export const EBody = defineComponent({
-  name: 'EBody',
+export default defineComponent({
   props: {
     style: {
       type: Object as () => CSSProperties,
@@ -51,6 +50,4 @@ export const EBody = defineComponent({
     }
   },
 })
-
-export default EBody
 </script>

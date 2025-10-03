@@ -3,7 +3,7 @@ import { type CSSProperties, defineComponent, h, type PropType } from 'vue'
 import { parseMarkdownToJSX } from './utils'
 import type { StylesType } from './utils'
 
-export const EMarkdown = defineComponent({
+export default defineComponent({
   name: 'EMarkdown',
   props: {
     source: {
@@ -36,6 +36,4 @@ export const EMarkdown = defineComponent({
     }
   },
 })
-
-export default EMarkdown
 </script>

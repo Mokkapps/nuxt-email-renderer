@@ -2,7 +2,7 @@
 import type { TableHTMLAttributes, CSSProperties } from 'vue'
 import { defineComponent, h } from 'vue'
 
-export const EContainer = defineComponent<TableHTMLAttributes>({
+export default defineComponent<TableHTMLAttributes>({
   name: 'EContainer',
   setup(props, { slots }) {
     return () => h(
@@ -23,6 +23,4 @@ export const EContainer = defineComponent<TableHTMLAttributes>({
     )
   },
 })
-
-export default EContainer
 </script>

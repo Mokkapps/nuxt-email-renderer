@@ -2,7 +2,7 @@
 import type { CSSProperties, PropType } from 'vue'
 import { defineComponent, h } from 'vue'
 
-export const ECodeInline = defineComponent({
+export default defineComponent({
   name: 'ECodeInline',
   props: {
     class: {
@@ -41,6 +41,4 @@ export const ECodeInline = defineComponent({
       }, slots.default?.())]
   },
 })
-
-export default ECodeInline
 </script>

@@ -8,6 +8,7 @@ export interface EBodyProps {
 }
 
 export default defineComponent({
+  name: 'EBody',
   props: {
     style: {
       type: Object as () => CSSProperties,

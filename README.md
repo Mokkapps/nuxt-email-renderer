@@ -35,16 +35,23 @@ export default defineNuxtConfig({
 })
 ```
 
-Create an email template using Vue components. Include styles where needed:
+Create an email template using Vue components, for example `emails/WelcomeEmail.vue`. Include styles where needed:
 
 ```vue
+<script setup lang="ts">
+  interface Props {
+    userName: string;
+  }
+  defineProps<Props>();
+</script>
+
 <template>
   <EHtml>
     <EHead />
     <EPreview>Welcome to our platform!</EPreview>
     <EBody :style="{ backgroundColor: '#f6f9fc', fontFamily: 'Arial, sans-serif' }">
       <EContainer :style="{ margin: '0 auto', padding: '20px 0 48px' }">
-        <EHeading :as="'h1'">Welcome!</EHeading>
+        <EHeading :as="'h1'">Welcome {{ username }}</EHeading>
         <EText :style="{ fontSize: '16px', lineHeight: '24px' }">
           Thanks for joining us. Click the button below to get started.
         </EText>
@@ -63,10 +70,10 @@ Create an email template using Vue components. Include styles where needed:
 In your code, you can now render the template by calling the render API endpoint provided by the module:
 
 ```ts
-const response = await $fetch("/api/emails/render", {}, {
+const response = await $fetch("/api/emails/render", {
   method: "POST",
   body: {
-    template: "WelcomeEmail",
+    name: "WelcomeEmail",
     props: {
       userName: "John Doe",
       confirmationUrl: "https://example.com/confirm?token=abc123",

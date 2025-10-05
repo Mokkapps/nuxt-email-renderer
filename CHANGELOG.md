@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.0.20
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.19...v0.0.20)
+
+### 🩹 Fixes
+
+- 500 prerendering server errors ([44c5e93](https://github.com/mokkapps/nuxt-email-renderer/commit/44c5e93))
+
+### 📖 Documentation
+
+- Update import path for renderEmailComponent in usage documentation ([8b9849c](https://github.com/mokkapps/nuxt-email-renderer/commit/8b9849c))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.19
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.18...v0.0.19)

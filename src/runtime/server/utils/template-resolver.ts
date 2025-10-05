@@ -29,17 +29,16 @@ async function initializeTemplates() {
 
       initialized = true
     }
-    catch (error) {
-      console.warn(
-        '[nuxt-email-renderer] Virtual email templates module not available',
-        error,
-      )
+    catch {
+      // Silently handle missing virtual module - this is expected when:
+      // 1. The consuming app doesn't have any email templates
+      // 2. During prerendering when the module hasn't been properly initialized
+      // 3. In environments where email rendering is not needed
 
       // Initialize with empty objects if module is not available
-      if (!initialized) {
-        emailTemplates = {}
-        emailTemplateMapping = {}
-      }
+      emailTemplates = {}
+      emailTemplateMapping = {}
+      initialized = true // Mark as initialized to prevent retries
     }
     finally {
       initPromise = null

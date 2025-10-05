@@ -138,17 +138,27 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.alias = nitroConfig.alias || {}
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
 
-        logger.success(
-          `Nuxt Email Renderer: Generated virtual module with ${
-            Object.keys(templateMapping).length
-          } email template(s)`,
-        )
+        const templateCount = Object.keys(templateMapping).length
+        if (templateCount > 0) {
+          logger.success(
+            `Nuxt Email Renderer: Generated virtual module with ${templateCount} email template(s)`,
+          )
+        }
+        else {
+          logger.info(
+            'Nuxt Email Renderer: No email templates found, module will operate in passive mode',
+          )
+        }
       }
-      catch (error) {
-        logger.error(
-          'Nuxt Email Renderer: Failed to generate virtual module',
-          error,
+      catch {
+        logger.warn(
+          'Nuxt Email Renderer: Failed to generate virtual module, creating empty module',
         )
+        // Always create the virtual module, even if empty, to prevent resolution errors
+        nitroConfig.virtual = nitroConfig.virtual || {}
+        nitroConfig.virtual['#email-templates'] = generateVirtualModule({})
+        nitroConfig.alias = nitroConfig.alias || {}
+        nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
       }
     })
 

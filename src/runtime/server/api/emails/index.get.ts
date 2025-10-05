@@ -1,6 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { getAllEmailTemplates } from '../../utils/template-resolver'
 import type { EmailTemplate } from '../../../../runtime/types'
+import { consola } from 'consola'
 
 export default defineEventHandler(async () => {
   try {
@@ -15,9 +16,9 @@ export default defineEventHandler(async () => {
     return mappedTemplates
   }
   catch (error: any) {
-    return {
-      error: true,
-      message: error.message || 'Failed to fetch email templates',
-    }
+    consola.error('[nuxt-email-renderer] Failed to get email templates:', error)
+    // Return empty array instead of error object to prevent prerender failures
+    // This allows the consuming app to build successfully even if no email templates exist
+    return []
   }
 })

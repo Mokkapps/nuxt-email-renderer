@@ -1,6 +1,25 @@
 # Changelog
 
 
+## v0.0.18
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.17...v0.0.18)
+
+### 🚀 Enhancements
+
+- Add MIT License file to the repository ([0adfeb4](https://github.com/mokkapps/nuxt-email-renderer/commit/0adfeb4))
+- Add issue templates for bug reports, feature requests, and questions ([396e673](https://github.com/mokkapps/nuxt-email-renderer/commit/396e673))
+- Add renderEmailComponent server utility method ([44a81c3](https://github.com/mokkapps/nuxt-email-renderer/commit/44a81c3))
+
+### 🩹 Fixes
+
+- Update documentation for email rendering API responses and template usage ([945097b](https://github.com/mokkapps/nuxt-email-renderer/commit/945097b))
+- Update variable name in README for consistency in user greeting ([8705024](https://github.com/mokkapps/nuxt-email-renderer/commit/8705024))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.17
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.16...v0.0.17)

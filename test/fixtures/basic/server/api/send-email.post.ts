@@ -1,6 +1,6 @@
 import z from 'zod'
 import { defineEventHandler, readValidatedBody } from 'h3'
-import { renderEmailComponent } from '#imports'
+import { renderEmailComponent } from '#nuxt-email-renderer'
 
 const bodySchema = z.object({
   name: z.string().min(1),

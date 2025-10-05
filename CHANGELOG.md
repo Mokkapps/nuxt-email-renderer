@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.19
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.18...v0.0.19)
+
+### 🚀 Enhancements
+
+- Add module for renderEmailComponent and update import path ([2232a38](https://github.com/mokkapps/nuxt-email-renderer/commit/2232a38))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.18
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.17...v0.0.18)

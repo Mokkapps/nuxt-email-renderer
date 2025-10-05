@@ -13,108 +13,6 @@ A Nuxt module that provides high-quality, unstyled components for creating email
 
 ![Nuxt Email Renderer Screenshot](https://mokkapps.twic.pics/nuxtemail.com/promo.png?twic=v1/resize=-x600)
 
-## Install
-
-Install the module to your Nuxt application with one command:
-
-```bash
-npx nuxi module add nuxt-email-renderer
-```
-
-That's it! You can now use Nuxt Email Renderer in your Nuxt app ✨
-
-## Getting started
-
-Add the module to your `nuxt.config.ts`:
-
-```typescript
-export default defineNuxtConfig({
-  modules: [
-    'nuxt-email-renderer'
-  ]
-})
-```
-
-Create an email template using Vue components, for example `emails/WelcomeEmail.vue`. Include styles where needed:
-
-```vue
-<script setup lang="ts">
-interface Props {
-  username: string;
-}
-defineProps<Props>();
-</script>
-
-<template>
-  <EHtml>
-    <EHead />
-    <EPreview>Welcome to our platform!</EPreview>
-    <EBody :style="{ backgroundColor: '#f6f9fc', fontFamily: 'Arial, sans-serif' }">
-      <EContainer :style="{ margin: '0 auto', padding: '20px 0 48px' }">
-        <EHeading :as="'h1'">Welcome {{ username }}</EHeading>
-        <EText :style="{ fontSize: '16px', lineHeight: '24px' }">
-          Thanks for joining us. Click the button below to get started.
-        </EText>
-        <EButton 
-          href="https://example.com" 
-          :style="{ backgroundColor: '#007ee6', color: '#fff', padding: '12px 20px' }"
-        >
-          Get Started
-        </EButton>
-      </EContainer>
-    </EBody>
-  </EHtml>
-</template>
-```
-
-In your code, you can now render the template by calling the render API endpoint provided by the module:
-
-```ts
-const response = await $fetch("/api/emails/render", {
-  method: "POST",
-  body: {
-    name: "WelcomeEmail",
-    props: {
-      userName: "John Doe",
-      confirmationUrl: "https://example.com/confirm?token=abc123",
-    },
-  },
-});
-```
-
-If you have the Nuxt DevTools enabled, you can also test rendering directly from the DevTools panel. You should see your `WelcomeEmail` template listed.
-
-## Components
-
-A set of standard components to help you build amazing emails without having to deal with the mess of creating table-based layouts and maintaining archaic markup.
-
-- [Body](src/runtime/components/body) - The main body wrapper for your email
-- [Button](src/runtime/components/button) - A styled button component
-- [CodeBlock](src/runtime/components/code-block) - Syntax-highlighted code blocks  
-- [CodeInline](src/runtime/components/code-inline) - Inline code snippets
-- [Column](src/runtime/components/column) - Table column for layouts
-- [Container](src/runtime/components/container) - Centered container wrapper
-- [Font](src/runtime/components/font) - Web font imports
-- [Head](src/runtime/components/head) - HTML head section
-- [Heading](src/runtime/components/heading) - Headings (h1-h6)
-- [Hr](src/runtime/components/hr) - Horizontal divider lines
-- [Html](src/runtime/components/html) - Root HTML wrapper
-- [Img](src/runtime/components/img) - Responsive images
-- [Link](src/runtime/components/link) - Styled anchor links
-- [Markdown](src/runtime/components/markdown) - Render markdown content
-- [Preview](src/runtime/components/preview) - Email preview text
-- [Row](src/runtime/components/row) - Table rows for layouts
-- [Section](src/runtime/components/section) - Content sections
-- [Style](src/runtime/components/style) - CSS styles
-- [Text](src/runtime/components/text) - Paragraph and text content
-
-## Support
-
-All components were tested using the most popular email clients.
-
-| Gmail ✔ | Apple Mail ✔ | Outlook ✔ | Yahoo! Mail ✔ | HEY ✔ | Superhuman ✔ |
-|---------|--------------|-----------|---------------|-------|--------------|
-
 ## Used by
 
 - [Weekly Vue News](https://weekly-vue.news) - A curated newsletter for Vue.js & Nuxt developers
@@ -164,11 +62,11 @@ pnpm lint
 
 ## Authors
 
-- Michael Hoffmann ([@mokkapps](https://twitter.com/mokkapps))
+- Michael Hoffmann ([@mokkapps](https://mokkapps.de))
 
 ## License
 
-MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see the [LICENSE](LICENSE.md) file for details.
 
 ---
 

@@ -13,6 +13,15 @@ describe('E2E', async () => {
     expect(html).toContain('<div>basic</div>')
   })
 
+  it('returns HTML from custom API endpoint', async () => {
+    // Get response to a server-rendered page with `$fetch`.
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'Test' },
+    })
+    expect(response).toMatchSnapshot()
+  })
+
   describe('API', () => {
     it('returns a list of all available emails', async () => {
       const response = await $fetch('/api/emails')

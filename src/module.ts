@@ -1,10 +1,13 @@
 import { join } from 'node:path'
-import { logger,
+import {
+  logger,
   defineNuxtModule,
   createResolver,
   addServerHandler,
   addImports,
-  addTypeTemplate } from '@nuxt/kit'
+  addTypeTemplate,
+  addServerImports,
+} from '@nuxt/kit'
 import { existsSync } from 'node:fs'
 import { defu } from 'defu'
 import vue from '@vitejs/plugin-vue'
@@ -112,6 +115,13 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
       '#nuxt-email-renderer': resolve('./runtime/server/utils'),
     })
+
+    addServerImports([
+      {
+        name: 'renderEmailComponent',
+        from: resolver.resolve('runtime/server/utils/render'),
+      },
+    ])
 
     // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {

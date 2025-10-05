@@ -1,4 +1,5 @@
 import { renderToString } from 'vue/server-renderer'
+import { createError } from 'h3'
 import type { AllowedComponentProps, Component, VNodeProps } from 'vue'
 import { createSSRApp } from 'vue'
 import type { Options } from './options'
@@ -7,8 +8,7 @@ import { pretty } from './pretty'
 import { plainTextSelectors } from './plainTextSelectors'
 import { cleanup } from './cleanup'
 
-// Import all components from the index file
-import { emailComponents } from '../../components/index'
+import { emailComponents } from '../../components'
 
 async function registerEmailComponents(app: ReturnType<typeof createSSRApp>) {
   // Register all email components automatically
@@ -42,7 +42,6 @@ export async function render<T extends Component>(
   const doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
   const App = createSSRApp(component, props || {})
 
-  // Register all email components automatically
   await registerEmailComponents(App)
 
   const markup = await renderToString(App)
@@ -60,4 +59,31 @@ export async function render<T extends Component>(
   }
 
   return doc
+}
+
+export async function renderEmailComponent<T extends Component>(componentName: string, props?: ExtractComponentProps<T>,
+  options?: Options) {
+  const cleanComponentName = componentName.endsWith('.vue')
+    ? componentName.replace('.vue', '')
+    : componentName
+
+  const { getEmailTemplate, hasEmailTemplate } = await import('./template-resolver')
+
+  if (!(await hasEmailTemplate(cleanComponentName))) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: `Email template "${componentName}" not found`,
+    })
+  }
+
+  const component = await getEmailTemplate(cleanComponentName)
+
+  if (!component) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Failed to load email template "${componentName}"`,
+    })
+  }
+
+  return render(component, props, options)
 }

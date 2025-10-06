@@ -88,6 +88,7 @@ export async function renderEmailComponent<T extends Component>(componentName: s
 
     return render(component, props, options)
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   catch (error: any) {
     // Re-throw H3 errors as-is
     if (error.statusCode) {

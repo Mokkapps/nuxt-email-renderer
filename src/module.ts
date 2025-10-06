@@ -118,12 +118,12 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
 
         const templateCount = Object.keys(templateMapping).length
-        
+
         // Always add Vue plugin to process module's runtime components
         // This is necessary even without email templates because the module's own components need processing
         nitroConfig.rollupConfig = nitroConfig.rollupConfig || {}
         nitroConfig.rollupConfig.plugins = nitroConfig.rollupConfig.plugins || []
-        
+
         const vuePlugin = vue({
           isProduction: !nuxt.options.dev,
           script: {
@@ -136,14 +136,14 @@ export default defineNuxtModule<ModuleOptions>({
             },
           },
         })
-        
+
         // Ensure plugins is an array before pushing
         const plugins = Array.isArray(nitroConfig.rollupConfig.plugins)
           ? nitroConfig.rollupConfig.plugins
           : [nitroConfig.rollupConfig.plugins]
         plugins.push(vuePlugin as never)
         nitroConfig.rollupConfig.plugins = plugins
-        
+
         if (templateCount > 0) {
           logger.success(
             `Nuxt Email Renderer: Generated virtual module with ${templateCount} email template(s)`,

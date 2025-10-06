@@ -48,33 +48,12 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     const { resolve } = createResolver(import.meta.url)
 
-    // Configure Nitro to handle Vue components for email rendering
+    // Configure Nitro
     nuxt.options.nitro ||= {}
     nuxt.options.nitro.rollupConfig ||= {}
 
-    // Configure Vue plugin for server-side email rendering
-    const vuePlugin = vue({
-      isProduction: !nuxt.options.dev,
-      script: {
-        defineModel: true,
-        propsDestructure: true,
-      },
-      template: {
-        compilerOptions: {
-          // Preserve whitespace for email client compatibility
-          whitespace: 'preserve',
-        },
-      },
-    })
-
-    // Add Vue plugin at the beginning of the plugin chain
-    // This ensures .vue files are processed before other transformations
-    if (Array.isArray(nuxt.options.nitro.rollupConfig.plugins)) {
-      nuxt.options.nitro.rollupConfig.plugins.unshift(vuePlugin as never)
-    }
-    else {
-      nuxt.options.nitro.rollupConfig.plugins = [vuePlugin as never]
-    }
+    // Vue plugin will be added conditionally in nitro:config hook
+    // based on whether email templates exist
 
     // Configure esbuild for TypeScript support
     nuxt.options.nitro.esbuild = nuxt.options.nitro.esbuild || {}
@@ -139,6 +118,32 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
 
         const templateCount = Object.keys(templateMapping).length
+        
+        // Always add Vue plugin to process module's runtime components
+        // This is necessary even without email templates because the module's own components need processing
+        nitroConfig.rollupConfig = nitroConfig.rollupConfig || {}
+        nitroConfig.rollupConfig.plugins = nitroConfig.rollupConfig.plugins || []
+        
+        const vuePlugin = vue({
+          isProduction: !nuxt.options.dev,
+          script: {
+            defineModel: true,
+            propsDestructure: true,
+          },
+          template: {
+            compilerOptions: {
+              whitespace: 'preserve',
+            },
+          },
+        })
+        
+        // Ensure plugins is an array before pushing
+        const plugins = Array.isArray(nitroConfig.rollupConfig.plugins)
+          ? nitroConfig.rollupConfig.plugins
+          : [nitroConfig.rollupConfig.plugins]
+        plugins.push(vuePlugin as never)
+        nitroConfig.rollupConfig.plugins = plugins
+        
         if (templateCount > 0) {
           logger.success(
             `Nuxt Email Renderer: Generated virtual module with ${templateCount} email template(s)`,

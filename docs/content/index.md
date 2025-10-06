@@ -69,7 +69,6 @@ Create stunning emails with :br [Vue components]{.text-primary}
 ---
 spotlight: true
 icon: i-ph-envelope-duotone
-to: /usage/email-templates
 ---
 #title
 Vue-Powered Templates
@@ -82,7 +81,6 @@ Build email templates using Vue components with full TypeScript support and mode
 ---
 spotlight: true
 icon: i-ph-code-duotone
-to: /usage/components
 ---
 #title
 Pre-built Components
@@ -95,7 +93,6 @@ Use a collection of email-optimized Vue components designed for maximum compatib
 ---
 spotlight: true
 icon: i-ph-device-mobile-duotone
-to: /usage/responsive
 ---
 #title
 Responsive Design
@@ -108,7 +105,6 @@ Create responsive email layouts that look great on desktop, mobile, and tablet d
 ---
 spotlight: true
 icon: i-ph-palette-duotone
-to: /usage/styling
 ---
 #title
 Flexible Styling
@@ -121,7 +117,6 @@ Style your emails with CSS-in-JS or traditional CSS approaches that work reliabl
 ---
 spotlight: true
 icon: i-ph-browser-duotone
-to: /usage/preview
 ---
 #title
 Live Preview
@@ -134,7 +129,6 @@ Preview your email templates in real-time during development with built-in rende
 ---
 spotlight: true
 icon: i-ph-rocket-launch-duotone
-to: /get-started/installation
 ---
 #title
 Easy Integration

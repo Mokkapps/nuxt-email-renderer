@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.0.21
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.20...v0.0.21)
+
+### 🩹 Fixes
+
+- Improve error handling and ensure Vue plugin is always added for email template rendering ([7fa6ec8](https://github.com/mokkapps/nuxt-email-renderer/commit/7fa6ec8))
+- Improve error handling and ensure Vue plugin is always added for email template rendering ([810fab0](https://github.com/mokkapps/nuxt-email-renderer/commit/810fab0))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.20
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.19...v0.0.20)

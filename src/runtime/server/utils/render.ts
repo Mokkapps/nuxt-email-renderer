@@ -67,38 +67,23 @@ export async function renderEmailComponent<T extends Component>(componentName: s
     ? componentName.replace('.vue', '')
     : componentName
 
-  try {
-    const { getEmailTemplate, hasEmailTemplate } = await import('./template-resolver')
+  const { getEmailTemplate, hasEmailTemplate } = await import('./template-resolver')
 
-    if (!(await hasEmailTemplate(cleanComponentName))) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: `Email template "${componentName}" not found`,
-      })
-    }
-
-    const component = await getEmailTemplate(cleanComponentName)
-
-    if (!component) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: `Failed to load email template "${componentName}"`,
-      })
-    }
-
-    return render(component, props, options)
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  catch (error: any) {
-    // Re-throw H3 errors as-is
-    if (error.statusCode) {
-      throw error
-    }
-
-    // Handle any other errors gracefully
+  if (!(await hasEmailTemplate(cleanComponentName))) {
     throw createError({
-      statusCode: 500,
-      statusMessage: `Failed to render email template: ${error.message || 'Unknown error'}`,
+      statusCode: 404,
+      statusMessage: `Email template "${componentName}" not found`,
     })
   }
+
+  const component = await getEmailTemplate(cleanComponentName)
+
+  if (!component) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: `Failed to load email template "${componentName}"`,
+    })
+  }
+
+  return render(component, props, options)
 }

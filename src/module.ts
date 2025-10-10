@@ -213,6 +213,12 @@ export default defineNuxtModule<ModuleOptions>({
       handler: resolve('./runtime/server/api/emails/index.get'),
     })
 
+    // Prevent API routes from being prerendered to avoid 500 errors during build
+    // These routes are server-only and should not be prerendered
+    nuxt.options.routeRules = nuxt.options.routeRules || {}
+    nuxt.options.routeRules['/api/emails'] = { prerender: false }
+    nuxt.options.routeRules['/api/emails/**'] = { prerender: false }
+
     // Add type declarations - makes EmailTemplate types available globally
     addTypeTemplate({
       filename: 'types/nuxt-email-renderer.d.ts',

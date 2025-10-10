@@ -26,8 +26,6 @@ async function initializeTemplates() {
 
       emailTemplates = virtualModule.emailTemplates || {}
       emailTemplateMapping = virtualModule.emailTemplateMapping || {}
-
-      initialized = true
     }
     catch (error) {
       console.warn(
@@ -36,12 +34,13 @@ async function initializeTemplates() {
       )
 
       // Initialize with empty objects if module is not available
-      if (!initialized) {
-        emailTemplates = {}
-        emailTemplateMapping = {}
-      }
+      emailTemplates = {}
+      emailTemplateMapping = {}
     }
     finally {
+      // Always mark as initialized, even if import failed
+      // This prevents infinite retry loops during prerendering
+      initialized = true
       initPromise = null
     }
   })()

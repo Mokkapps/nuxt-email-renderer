@@ -107,7 +107,17 @@ export default defineNuxtModule<ModuleOptions>({
         ? nuxt.options.nitro.externals
         : {},
       {
-        inline: [resolve('./runtime'), '@vue', 'vue'],
+        inline: [
+          resolve('./runtime'),
+          '@vue',
+          'vue',
+          // Inline Vue compiler dependencies that may cause issues in Nitro
+          // These are ESM-only packages used by Vue's compiler
+          'estree-walker',
+          '@vue/compiler-core',
+          '@vue/compiler-dom',
+          '@vue/compiler-sfc',
+        ],
       },
     )
 

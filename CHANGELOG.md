@@ -1,6 +1,24 @@
 # Changelog
 
 
+## v0.0.22
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.21...v0.0.22)
+
+### 🩹 Fixes
+
+- Revert 500 server prerendering fixes ([c30e18b](https://github.com/mokkapps/nuxt-email-renderer/commit/c30e18b))
+- Remove unused 'to' links from index.md ([12a8214](https://github.com/mokkapps/nuxt-email-renderer/commit/12a8214))
+- Inline Vue compiler dependencies in module setup and remove redundant nitro externals configuration ([0c84016](https://github.com/mokkapps/nuxt-email-renderer/commit/0c84016))
+
+### 💅 Refactors
+
+- Streamline component exports in index.ts ([e1a4722](https://github.com/mokkapps/nuxt-email-renderer/commit/e1a4722))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.21
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.20...v0.0.21)

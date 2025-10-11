@@ -48,38 +48,15 @@ export default defineNuxtModule<ModuleOptions>({
     const resolver = createResolver(import.meta.url)
     const { resolve } = createResolver(import.meta.url)
 
-    // Configure Nitro to handle Vue components for email rendering
+    // Configure Nitro
     nuxt.options.nitro ||= {}
-    nuxt.options.nitro.rollupConfig ||= {}
-
-    // Configure Vue plugin for server-side email rendering
-    const vuePlugin = vue({
-      isProduction: !nuxt.options.dev,
-      script: {
-        defineModel: true,
-        propsDestructure: true,
-      },
-      template: {
-        compilerOptions: {
-          // Preserve whitespace for email client compatibility
-          whitespace: 'preserve',
-        },
-      },
-    })
-
-    // Add Vue plugin at the beginning of the plugin chain
-    // This ensures .vue files are processed before other transformations
-    if (Array.isArray(nuxt.options.nitro.rollupConfig.plugins)) {
-      nuxt.options.nitro.rollupConfig.plugins.unshift(vuePlugin as never)
-    }
-    else {
-      nuxt.options.nitro.rollupConfig.plugins = [vuePlugin as never]
-    }
 
     // Configure esbuild for TypeScript support
     nuxt.options.nitro.esbuild = nuxt.options.nitro.esbuild || {}
-    nuxt.options.nitro.esbuild.options = nuxt.options.nitro.esbuild.options || {}
-    nuxt.options.nitro.esbuild.options.target = nuxt.options.nitro.esbuild.options.target || 'es2020'
+    nuxt.options.nitro.esbuild.options
+      = nuxt.options.nitro.esbuild.options || {}
+    nuxt.options.nitro.esbuild.options.target
+      = nuxt.options.nitro.esbuild.options.target || 'es2020'
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
@@ -101,23 +78,14 @@ export default defineNuxtModule<ModuleOptions>({
     ).emailsDir = templatesDir
 
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    // Inline runtime and Vue dependencies in Nitro bundle
+    // Inline runtime in Nitro bundle
+    // Let Nuxt/Nitro handle Vue dependencies to avoid conflicts with other modules
     nuxt.options.nitro.externals = defu(
       typeof nuxt.options.nitro.externals === 'object'
         ? nuxt.options.nitro.externals
         : {},
       {
-        inline: [
-          resolve('./runtime'),
-          '@vue',
-          'vue',
-          // Inline Vue compiler dependencies that may cause issues in Nitro
-          // These are ESM-only packages used by Vue's compiler
-          'estree-walker',
-          '@vue/compiler-core',
-          '@vue/compiler-dom',
-          '@vue/compiler-sfc',
-        ],
+        inline: [resolve('./runtime')],
       },
     )
 
@@ -148,6 +116,36 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.alias = nitroConfig.alias || {}
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
 
+        // Configure Vue plugin for Nitro server build
+        // We need Vue compilation for email templates in the server bundle
+        nitroConfig.rollupConfig = nitroConfig.rollupConfig || {}
+        nitroConfig.rollupConfig.plugins
+          = nitroConfig.rollupConfig.plugins || []
+
+        // Add Vue plugin with strict include pattern
+        // Use array format to be very explicit about what to include
+        const vuePlugin = vue({
+          include: '**/*.vue', // Only .vue files, nothing else
+          isProduction: !nuxt.options.dev,
+          script: {
+            defineModel: true,
+            propsDestructure: true,
+          },
+          template: {
+            compilerOptions: {
+              // Preserve whitespace for email client compatibility
+              whitespace: 'preserve',
+            },
+          },
+        })
+
+        if (Array.isArray(nitroConfig.rollupConfig.plugins)) {
+          nitroConfig.rollupConfig.plugins.unshift(vuePlugin as never)
+        }
+        else {
+          nitroConfig.rollupConfig.plugins = [vuePlugin as never]
+        }
+
         logger.success(
           `Nuxt Email Renderer: Generated virtual module with ${
             Object.keys(templateMapping).length
@@ -171,9 +169,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Log template changes and trigger server restart
       nuxt.hooks.hook('builder:watch', async (event, path) => {
         if (path.startsWith(templatesDir) && path.endsWith('.vue')) {
-          logger.info(
-            `Nuxt Email Renderer: Template ${event} - ${path}`,
-          )
+          logger.info(`Nuxt Email Renderer: Template ${event} - ${path}`)
           logger.info(
             'Nuxt Email Renderer: Server will restart to apply changes',
           )

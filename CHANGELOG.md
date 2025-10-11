@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.0.23
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.22...v0.0.23)
+
+### 🩹 Fixes
+
+- Prerendering errors in combination with Nuxt UI v4 ([437d4a6](https://github.com/mokkapps/nuxt-email-renderer/commit/437d4a6))
+
+### ✅ Tests
+
+- Add Nuxt UI prerendering E2E test ([e5612a4](https://github.com/mokkapps/nuxt-email-renderer/commit/e5612a4))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.22
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.21...v0.0.22)

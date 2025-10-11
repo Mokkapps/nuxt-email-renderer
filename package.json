@@ -9,6 +9,9 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./components": {
+      "types": "./dist/runtime/components/components.d.ts"
     }
   },
   "main": "./dist/module.mjs",

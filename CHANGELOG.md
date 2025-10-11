@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.0.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.23...v1.0.0)
+
+### 🚀 Enhancements
+
+- Add auto-generated type declarations for email components ([b072e6a](https://github.com/mokkapps/nuxt-email-renderer/commit/b072e6a))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v0.0.23
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.22...v0.0.23)

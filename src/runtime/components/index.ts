@@ -19,3 +19,7 @@ export const emailComponents = {
   EText: () => import('./text/EText.vue'),
   EMarkdown: () => import('./markdown/EMarkdown.vue'),
 }
+
+// Export all component types from the declaration file
+// Note: These are auto-exported from components.d.ts
+export type * from './components.d'

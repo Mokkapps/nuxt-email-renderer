@@ -10,19 +10,14 @@ export default createConfigForNuxt({
     stylistic: true,
   },
   dirs: {
-    src: [
-      './playground',
-      './docs',
-    ],
+    src: ['./playground', './docs'],
   },
 })
-  .append(
-    {
-      rules: {
-        'vue/multi-word-component-names': 'off',
-      },
+  .append({
+    rules: {
+      'vue/multi-word-component-names': 'off',
     },
-  )
+  })
   .append(
     {
       files: ['**/*.test.ts'],
@@ -46,6 +41,12 @@ export default createConfigForNuxt({
       files: ['playground/**'],
       rules: {
         'no-useless-escape': 'off',
+      },
+    },
+    {
+      files: ['**/components/components.d.ts'],
+      rules: {
+        '@typescript-eslint/no-empty-object-type': 'off',
       },
     },
   )

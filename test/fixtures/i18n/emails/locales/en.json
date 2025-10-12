@@ -1,0 +1,15 @@
+{
+  "welcome": {
+    "title": "Welcome to our platform! 🎉",
+    "greeting": "Hi there,",
+    "message": "Welcome to our platform! We're thrilled to have you join our community of innovators and creators. Your journey to amazing possibilities starts right here.",
+    "features": {
+      "title": "To get you started, here are a few things you can do:",
+      "profile": "Complete your profile",
+      "explore": "Explore features",
+      "community": "Join the community"
+    },
+    "cta": "Get Started Now",
+    "help": "Need help getting started? We're here for you!"
+  }
+}

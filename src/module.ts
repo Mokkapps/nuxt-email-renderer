@@ -17,6 +17,28 @@ import {
   generateVirtualModule,
 } from './runtime/server/utils/virtual-templates'
 
+export interface I18nOptions {
+  /**
+   * Enable i18n support for email templates
+   *
+   * @default false
+   */
+  enabled?: boolean
+  /**
+   * Default locale to use when no locale is specified
+   *
+   * @default 'en'
+   */
+  defaultLocale?: string
+  /**
+   * Directory containing locale message files (relative to project root or absolute path)
+   * Can be used for standalone i18n instance
+   *
+   * @default undefined
+   */
+  localesDir?: string
+}
+
 export interface ModuleOptions {
   /**
    * Folder where email templates are stored. Can be either an absolute path or relative to the project root.
@@ -30,6 +52,10 @@ export interface ModuleOptions {
    * @default true
    */
   devtools: boolean
+  /**
+   * i18n (internationalization) configuration for email templates
+   */
+  i18n?: I18nOptions
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -42,6 +68,10 @@ export default defineNuxtModule<ModuleOptions>({
     return {
       emailsDir: '/emails',
       devtools: true,
+      i18n: {
+        enabled: false,
+        defaultLocale: 'en',
+      },
     }
   },
   setup(options, nuxt) {

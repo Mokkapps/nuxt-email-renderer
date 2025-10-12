@@ -53,6 +53,14 @@
     "shiki": "^3.13.0",
     "zod": "^4.1.11"
   },
+  "peerDependencies": {
+    "vue-i18n": "^10.0.0 || ^11.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue-i18n": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@nuxt/devtools": "^2.6.5",
     "@nuxt/devtools-ui-kit": "^2.6.5",
@@ -73,6 +81,7 @@
     "playwright-core": "^1.55.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
+    "vue-i18n": "^11.1.12",
     "vue-tsc": "^3.0.8"
   },
   "resolutions": {

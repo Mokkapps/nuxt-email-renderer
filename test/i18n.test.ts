@@ -35,7 +35,7 @@ describe('E2E i18n', async () => {
           },
         },
       })
-      
+
       expect(response).toContain('Welcome to our platform! 🎉')
       expect(response).toContain('Hi there,')
       expect(response).toContain('Get Started Now')
@@ -54,7 +54,7 @@ describe('E2E i18n', async () => {
           },
         },
       })
-      
+
       expect(response).toContain('Willkommen auf unserer Plattform! 🎉')
       expect(response).toContain('Hallo,')
       expect(response).toContain('Jetzt loslegen')
@@ -73,7 +73,7 @@ describe('E2E i18n', async () => {
           },
         },
       })
-      
+
       expect(response).toContain('¡Bienvenido a nuestra plataforma! 🎉')
       expect(response).toContain('Hola,')
       expect(response).toContain('Comenzar ahora')
@@ -108,7 +108,7 @@ describe('E2E i18n', async () => {
           },
         },
       })
-      
+
       expect(response).toContain('Bienvenue sur notre plateforme! 🎉')
       expect(response).toContain('Bonjour,')
       expect(response).toContain('Commencer maintenant')
@@ -127,7 +127,7 @@ describe('E2E i18n', async () => {
           },
         },
       })
-      
+
       // Should fall back to English
       expect(response).toContain('Welcome to our platform! 🎉')
       expect(response).toContain('Hi there,')
@@ -140,7 +140,7 @@ describe('E2E i18n', async () => {
           name: 'I18nTest',
         },
       })
-      
+
       // When i18n is not enabled, $t() should not be replaced
       // The template will render the raw $t() expression or fail
       expect(typeof response).toBe('string')

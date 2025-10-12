@@ -1,0 +1,8 @@
+{
+  "greeting": "Hello",
+  "welcome": {
+    "title": "Welcome to Our Platform",
+    "message": "Thank you for joining us. We're excited to have you on board!",
+    "action": "Get Started"
+  }
+}

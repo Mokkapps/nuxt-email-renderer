@@ -1,0 +1,8 @@
+{
+  "greeting": "Hallo",
+  "welcome": {
+    "title": "Willkommen auf unserer Plattform",
+    "message": "Vielen Dank, dass Sie sich uns angeschlossen haben. Wir freuen uns, Sie an Bord zu haben!",
+    "action": "Jetzt loslegen"
+  }
+}

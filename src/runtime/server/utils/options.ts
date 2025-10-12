@@ -20,6 +20,7 @@ export interface I18nRenderOptions {
   /**
    * The existing i18n instance (if useAppInstance is true)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   appInstance?: any
   /**
    * Directory containing locale message files
@@ -28,6 +29,7 @@ export interface I18nRenderOptions {
   /**
    * Pre-loaded locale messages (alternative to localesDir)
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   messages?: Record<string, any>
 }
 

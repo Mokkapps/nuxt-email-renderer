@@ -65,13 +65,22 @@ export default defineNuxtModule<ModuleOptions>({
 
     let templatesDir = resolve(options.emailsDir) || resolve('/emails')
 
+    // Check for email templates in layer directories
+    // Priority: app/emails (Nuxt 4 structure) > emails (root folder)
     for (const layer of nuxt.options._layers) {
-      const templatePath = join(layer.cwd, '/emails')
-      const pathFound = existsSync(templatePath)
+      // First check app/emails (Nuxt 4 structure)
+      const appEmailsPath = join(layer.cwd, 'app', 'emails')
+      if (existsSync(appEmailsPath)) {
+        templatesDir = appEmailsPath
+        break
+      }
 
-      if (!pathFound) continue
-      templatesDir = templatePath
-      break
+      // Fall back to root emails folder
+      const rootEmailsPath = join(layer.cwd, 'emails')
+      if (existsSync(rootEmailsPath)) {
+        templatesDir = rootEmailsPath
+        break
+      }
     }
     (
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions

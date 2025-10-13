@@ -202,8 +202,12 @@ export default defineNuxtModule<ModuleOptions>({
       dir: templatesDir,
     })
 
+    // Add server handlers for DevTools integration (development only)
+    // These endpoints are only registered when the consuming app is in development mode
+    // In production, developers should use the renderEmailComponent function directly
     if (nuxt.options.dev) {
-      // Add server handlers for DevTools integration
+      logger.info('[nuxt-email-renderer] Registering dev-only API endpoints')
+      
       addServerHandler({
         route: '/api/emails/render',
         handler: resolve('./runtime/server/api/emails/render.post'),

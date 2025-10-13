@@ -1,6 +1,23 @@
 # Changelog
 
 
+## v2.0.2
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.0.1...v2.0.2)
+
+### 🩹 Fixes
+
+- TS error for #nuxt-email-renderer imports ([d56fb9b](https://github.com/mokkapps/nuxt-email-renderer/commit/d56fb9b))
+
+### 📖 Documentation
+
+- Correct package name in installation instructions ([a32e7db](https://github.com/mokkapps/nuxt-email-renderer/commit/a32e7db))
+- Remove outdated server API card from installation guide ([483b029](https://github.com/mokkapps/nuxt-email-renderer/commit/483b029))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.0.1
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.0.0...v2.0.1)

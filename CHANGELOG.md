@@ -1,6 +1,31 @@
 # Changelog
 
 
+## v2.0.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.23...v2.0.0)
+
+### 🚀 Enhancements
+
+- Add auto-generated type declarations for email components ([b072e6a](https://github.com/mokkapps/nuxt-email-renderer/commit/b072e6a))
+- ⚠️  Only expose API endpoints in dev mode for DevTools ([1a9f92f](https://github.com/mokkapps/nuxt-email-renderer/commit/1a9f92f))
+
+### 📖 Documentation
+
+- Update installation instructions for nuxt-email-renderer ([e544a84](https://github.com/mokkapps/nuxt-email-renderer/commit/e544a84))
+
+### 🏡 Chore
+
+- **release:** V1.0.0 ([545cd2e](https://github.com/mokkapps/nuxt-email-renderer/commit/545cd2e))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Only expose API endpoints in dev mode for DevTools ([1a9f92f](https://github.com/mokkapps/nuxt-email-renderer/commit/1a9f92f))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v1.0.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v0.0.23...v1.0.0)

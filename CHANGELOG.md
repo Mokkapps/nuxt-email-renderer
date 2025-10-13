@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v2.0.3
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.0.2...v2.0.3)
+
+### 🩹 Fixes
+
+- Auto-import renderEmailComponent with correct types ([7a8d1af](https://github.com/mokkapps/nuxt-email-renderer/commit/7a8d1af))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.0.2
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.0.1...v2.0.2)

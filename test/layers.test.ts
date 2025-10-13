@@ -12,25 +12,4 @@ describe('E2E Layer', async () => {
     const html = await $fetch('/')
     expect(html).toContain('<div>Layer Test</div>')
   })
-
-  describe('API', () => {
-    it('returns a list of all available emails from layer', async () => {
-      const response = await $fetch('/api/emails')
-      expect(response).toEqual([{
-        displayName: 'Test',
-        filename: 'Test.vue',
-        name: 'Test',
-      }])
-    })
-
-    it('returns the rendered email from layer as HTML', async () => {
-      const response = await $fetch('/api/emails/render', {
-        method: 'POST',
-        body: {
-          name: 'Test',
-        },
-      })
-      expect(response).toMatchSnapshot()
-    })
-  })
 })

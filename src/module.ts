@@ -202,21 +202,23 @@ export default defineNuxtModule<ModuleOptions>({
       dir: templatesDir,
     })
 
-    // Add server handlers
-    addServerHandler({
-      route: '/api/emails/render',
-      handler: resolve('./runtime/server/api/emails/render.post'),
-    })
+    if (nuxt.options.dev) {
+      // Add server handlers for DevTools integration
+      addServerHandler({
+        route: '/api/emails/render',
+        handler: resolve('./runtime/server/api/emails/render.post'),
+      })
 
-    addServerHandler({
-      route: '/api/emails/source',
-      handler: resolve('./runtime/server/api/emails/source.post'),
-    })
+      addServerHandler({
+        route: '/api/emails/source',
+        handler: resolve('./runtime/server/api/emails/source.post'),
+      })
 
-    addServerHandler({
-      route: '/api/emails',
-      handler: resolve('./runtime/server/api/emails/index.get'),
-    })
+      addServerHandler({
+        route: '/api/emails',
+        handler: resolve('./runtime/server/api/emails/index.get'),
+      })
+    }
 
     // Add type declarations - makes EmailTemplate types available globally
     addTypeTemplate({
@@ -248,7 +250,7 @@ export {}`,
 
         // Dynamically import the emailComponents to get the component list
         const { emailComponents } = await import(
-          './runtime/components/index.ts'
+          './runtime/components/index'
         )
         const componentNames = Object.keys(emailComponents)
 
@@ -269,7 +271,10 @@ export {}`,
           return names
             .map((name) => {
               const componentPath = getComponentPath(name)
-              const importPath = join(componentsPath, componentPath).replace(/\\/g, '/')
+              const importPath = join(componentsPath, componentPath).replace(
+                /\\/g,
+                '/',
+              )
               return `    ${name}: typeof import('${importPath}').default`
             })
             .join('\n')

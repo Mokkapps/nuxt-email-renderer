@@ -4,7 +4,6 @@ import {
   defineNuxtModule,
   createResolver,
   addServerHandler,
-  addImports,
   addTypeTemplate,
   addServerImports,
 } from '@nuxt/kit'
@@ -31,6 +30,8 @@ export interface ModuleOptions {
    */
   devtools: boolean
 }
+
+const LOGGER_PREFIX = 'Nuxt Email Renderer:'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -98,11 +99,6 @@ export default defineNuxtModule<ModuleOptions>({
       },
     )
 
-    // Setup Nitro aliases
-    nuxt.options.nitro.alias = defu(nuxt.options.nitro.alias, {
-      '#nuxt-email-renderer': resolve('./runtime/server/utils'),
-    })
-
     addServerImports([
       {
         name: 'renderEmailComponent',
@@ -156,14 +152,14 @@ export default defineNuxtModule<ModuleOptions>({
         }
 
         logger.success(
-          `Nuxt Email Renderer: Generated virtual module with ${
+          `${LOGGER_PREFIX} Generated virtual module with ${
             Object.keys(templateMapping).length
           } email template(s)`,
         )
       }
       catch (error) {
         logger.error(
-          'Nuxt Email Renderer: Failed to generate virtual module',
+          `${LOGGER_PREFIX} Failed to generate virtual module`,
           error,
         )
       }
@@ -178,9 +174,9 @@ export default defineNuxtModule<ModuleOptions>({
       // Log template changes and trigger server restart
       nuxt.hooks.hook('builder:watch', async (event, path) => {
         if (path.startsWith(templatesDir) && path.endsWith('.vue')) {
-          logger.info(`Nuxt Email Renderer: Template ${event} - ${path}`)
+          logger.info(`${LOGGER_PREFIX} Template ${event} - ${path}`)
           logger.info(
-            'Nuxt Email Renderer: Server will restart to apply changes',
+            `${LOGGER_PREFIX} Server will restart to apply changes`,
           )
         }
       })
@@ -206,8 +202,8 @@ export default defineNuxtModule<ModuleOptions>({
     // These endpoints are only registered when the consuming app is in development mode
     // In production, developers should use the renderEmailComponent function directly
     if (nuxt.options.dev) {
-      logger.info('[nuxt-email-renderer] Registering dev-only API endpoints')
-      
+      logger.info(`${LOGGER_PREFIX} Registering dev-only API endpoints`)
+
       addServerHandler({
         route: '/api/emails/render',
         handler: resolve('./runtime/server/api/emails/render.post'),
@@ -307,28 +303,6 @@ export {}
 `
       },
     })
-
-    // Add auto-imports for the types
-    addImports([
-      {
-        name: 'EmailTemplate',
-        as: 'EmailTemplate',
-        from: resolve('./runtime/types'),
-        type: true,
-      },
-      {
-        name: 'EmailTemplateInfo',
-        as: 'EmailTemplateInfo',
-        from: resolve('./runtime/types'),
-        type: true,
-      },
-      {
-        name: 'EmailTemplateMapping',
-        as: 'EmailTemplateMapping',
-        from: resolve('./runtime/types'),
-        type: true,
-      },
-    ])
 
     if (options.devtools) setupDevToolsUI(nuxt, resolver)
   },

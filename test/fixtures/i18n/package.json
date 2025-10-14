@@ -1,0 +1,9 @@
+{
+  "name": "nuxt-email-renderer-test-i18n",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@nuxtjs/i18n": "^10.1.1",
+    "vue-i18n": "^10.0.9"
+  }
+}

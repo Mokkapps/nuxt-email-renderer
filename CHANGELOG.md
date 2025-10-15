@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.1.0 (Unreleased)
+
+### 🚀 Features
+
+- **i18n Support**: Added internationalization support for email templates when `@nuxtjs/i18n` is installed
+  - Automatically detects and configures i18n from your Nuxt app
+  - Supports rendering emails in different locales via `locale` option
+  - Loads i18n messages at build time for server-side rendering
+  - Added `locale` and `event` parameters to `renderEmailComponent` options
+  - Comprehensive test coverage with 4 test cases covering multiple locales
+  - Full documentation in `/docs/content/1.getting-started/7.i18n.md`
+
+### 📦 Dependencies
+
+- Added `@nuxtjs/i18n` >= 8.0.0 as optional peer dependency
+- Added `vue-i18n` >= 9.0.0 as optional peer dependency
 
 ## v2.0.3
 
@@ -41,7 +57,7 @@
 ### 🚀 Enhancements
 
 - Add auto-generated type declarations for email components ([b072e6a](https://github.com/mokkapps/nuxt-email-renderer/commit/b072e6a))
-- ⚠️  Only expose API endpoints in dev mode for DevTools ([1a9f92f](https://github.com/mokkapps/nuxt-email-renderer/commit/1a9f92f))
+- ⚠️ Only expose API endpoints in dev mode for DevTools ([1a9f92f](https://github.com/mokkapps/nuxt-email-renderer/commit/1a9f92f))
 
 ### 📖 Documentation
 
@@ -53,7 +69,7 @@
 
 #### ⚠️ Breaking Changes
 
-- ⚠️  Only expose API endpoints in dev mode for DevTools ([1a9f92f](https://github.com/mokkapps/nuxt-email-renderer/commit/1a9f92f))
+- ⚠️ Only expose API endpoints in dev mode for DevTools ([1a9f92f](https://github.com/mokkapps/nuxt-email-renderer/commit/1a9f92f))
 
 ### ❤️ Contributors
 
@@ -482,4 +498,3 @@
 ### ❤️ Contributors
 
 - Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
-

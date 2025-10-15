@@ -64,6 +64,84 @@ export default defineNuxtModule<ModuleOptions>({
       options,
     )
 
+    // Check if @nuxtjs/i18n module is installed and configure i18n support
+    nuxt.hook('nitro:config', async () => {
+      const hasI18n = nuxt.options.modules.some((m) => {
+        if (typeof m === 'string') {
+          return m.includes('@nuxtjs/i18n')
+        }
+        if (Array.isArray(m)) {
+          const first = m[0]
+          return typeof first === 'string' && first.includes('@nuxtjs/i18n')
+        }
+        return false
+      })
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (hasI18n && (nuxt.options as any).i18n) {
+        // Store i18n configuration in runtime config for server-side email rendering
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const i18nOptions = (nuxt.options as any).i18n
+
+        const publicI18n
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          = (nuxt.options.runtimeConfig.public.i18n as any) || {}
+
+        // Try to load messages from vueI18n config
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let messages: Record<string, any> = {}
+        if (i18nOptions.vueI18n && typeof i18nOptions.vueI18n === 'string') {
+          try {
+            const configPath = resolve(
+              nuxt.options.rootDir,
+              i18nOptions.vueI18n,
+            )
+            const { pathToFileURL } = await import('node:url')
+
+            // Import the i18n config file
+            const configModule = await import(pathToFileURL(configPath).href)
+            const configResult
+              = typeof configModule.default === 'function'
+                ? configModule.default()
+                : configModule.default
+
+            if (configResult && configResult.messages) {
+              messages = configResult.messages
+              logger.success(
+                `${LOGGER_PREFIX} Loaded i18n messages for ${Object.keys(messages).length} locale(s)`,
+              )
+            }
+          }
+          catch (error) {
+            logger.warn(
+              `${LOGGER_PREFIX} Could not load i18n messages from config file: ${error}`,
+            )
+          }
+        }
+        else if (
+          i18nOptions.vueI18n
+          && typeof i18nOptions.vueI18n === 'object'
+        ) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          messages = (i18nOptions.vueI18n as any).messages || {}
+        }
+
+        // Store essential i18n configuration
+        nuxt.options.runtimeConfig.public.i18n = defu(publicI18n, {
+          defaultLocale:
+            i18nOptions.defaultLocale || i18nOptions.locale || 'en',
+          locales: i18nOptions.locales || [],
+          messages,
+          vueI18n:
+            typeof i18nOptions.vueI18n === 'object' ? i18nOptions.vueI18n : {},
+        })
+
+        logger.info(
+          `${LOGGER_PREFIX} i18n support enabled with default locale: ${i18nOptions.defaultLocale || i18nOptions.locale || 'en'}`,
+        )
+      }
+    })
+
     let templatesDir = resolve(options.emailsDir) || resolve('/emails')
 
     // Check for email templates in layer directories
@@ -171,13 +249,10 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.watch = nuxt.options.watch || []
       nuxt.options.watch.push(`${templatesDir}/**/*.vue`)
 
-      // Log template changes and trigger server restart
       nuxt.hooks.hook('builder:watch', async (event, path) => {
         if (path.startsWith(templatesDir) && path.endsWith('.vue')) {
           logger.info(`${LOGGER_PREFIX} Template ${event} - ${path}`)
-          logger.info(
-            `${LOGGER_PREFIX} Server will restart to apply changes`,
-          )
+          logger.info(`${LOGGER_PREFIX} Server will restart to apply changes`)
         }
       })
 
@@ -220,28 +295,6 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    // Add type declarations - makes EmailTemplate types available globally
-    addTypeTemplate({
-      filename: 'types/nuxt-email-renderer.d.ts',
-      getContents: () => `
-declare global {
-  export type EmailTemplate = {
-    name: string
-    filename: string
-    displayName: string
-  }
-
-  export type EmailTemplateInfo = EmailTemplate & {
-    importPath: string
-    filePath: string
-  }
-
-  export type EmailTemplateMapping = Record<string, EmailTemplateInfo>
-}
-
-export {}`,
-    })
-
     // Add email component type declarations for auto-completion in email templates
     addTypeTemplate({
       filename: 'types/nuxt-email-renderer-components.d.ts',
@@ -249,9 +302,7 @@ export {}`,
         const componentsPath = resolver.resolve('./runtime/components')
 
         // Dynamically import the emailComponents to get the component list
-        const { emailComponents } = await import(
-          './runtime/components/index'
-        )
+        const { emailComponents } = await import('./runtime/components/index')
         const componentNames = Object.keys(emailComponents)
 
         // Helper function to convert component name to file path

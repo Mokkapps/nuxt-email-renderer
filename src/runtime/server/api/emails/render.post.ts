@@ -9,6 +9,7 @@ const bodySchema = z.object({
   plainText: z.boolean().optional(),
   props: z.custom<Record<string, any>>().optional(),
   htmlToTextOptions: z.custom<HtmlToTextOptions>().optional(),
+  locale: z.string().optional(),
 })
 
 export default defineEventHandler(async (event) => {
@@ -18,6 +19,7 @@ export default defineEventHandler(async (event) => {
     plainText,
     props,
     htmlToTextOptions,
+    locale,
   } = await readValidatedBody(event, bodySchema.parse)
 
   try {
@@ -25,6 +27,8 @@ export default defineEventHandler(async (event) => {
       pretty,
       plainText,
       htmlToTextOptions,
+      locale,
+      event,
     })
   }
   catch (error: any) {

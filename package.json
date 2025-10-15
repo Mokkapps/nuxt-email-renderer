@@ -60,6 +60,7 @@
     "@nuxt/module-builder": "^1.0.2",
     "@nuxt/schema": "^4.1.2",
     "@nuxt/test-utils": "^3.19.2",
+    "@nuxtjs/i18n": "^10.1.1",
     "@types/html-to-text": "^9.0.4",
     "@types/js-beautify": "^1.14.3",
     "@types/node": "^24.5.2",
@@ -73,7 +74,20 @@
     "playwright-core": "^1.55.1",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4",
+    "vue-i18n": "^11.1.12",
     "vue-tsc": "^3.0.8"
+  },
+  "peerDependencies": {
+    "@nuxtjs/i18n": ">=10.0.0",
+    "vue-i18n": ">=11.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@nuxtjs/i18n": {
+      "optional": true
+    },
+    "vue-i18n": {
+      "optional": true
+    }
   },
   "resolutions": {
     "nuxt": "^4.1.2",

@@ -1,0 +1,56 @@
+name: Deploy Docs
+
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - "docs/**"
+    # pull_request:
+    #     paths:
+    #         - "docs/**"
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v5
+
+            - run: corepack enable
+
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: lts/-1
+                  cache: "pnpm"
+
+            - run: pnpm install
+
+            - run: pnpm docs:build
+              env:
+                  NUXT_UMAMI_HOST: ${{ secrets.NUXT_UMAMI_HOST }}
+                  NUXT_UMAMI_ID: ${{ secrets.NUXT_UMAMI_ID }}
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: ./docs/.output/public
+
+    deployDocs:
+        if: github.event_name == 'push'
+        needs: build
+        permissions:
+            pages: write # to deploy to Pages
+            id-token: write # to verify the deployment originates from an appropriate source
+            pull-requests: write
+            contents: read
+        # Deploy to the github_pages environment
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        # Specify runner + deployment step
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

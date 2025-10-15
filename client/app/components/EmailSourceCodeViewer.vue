@@ -12,32 +12,35 @@ const { highlighter } = useShiki()
 
 const html = ref(sourceCode)
 
-watch([() => sourceCode, highlighter], async ([newCode, newHighlighter]) => {
-  if (!newHighlighter) {
-    html.value = sourceCode
-    return
-  }
-  if (newCode) {
-    try {
-      html.value = await newHighlighter.codeToHtml(newCode, {
-        lang: contentMode === 'source' ? 'html' : 'html',
-        theme: 'vitesse-dark',
-      })
-    }
-    catch {
+watch(
+  [() => sourceCode, highlighter],
+  async ([newCode, newHighlighter]) => {
+    if (!newHighlighter) {
       html.value = sourceCode
+      return
     }
-  }
-  else {
-    html.value = 'Missing source code'
-  }
-}, { immediate: true })
+    if (newCode) {
+      try {
+        html.value = await newHighlighter.codeToHtml(newCode, {
+          lang: contentMode === 'source' ? 'html' : 'html',
+          theme: 'vitesse-dark',
+        })
+      }
+      catch {
+        html.value = sourceCode
+      }
+    }
+    else {
+      html.value = 'Missing source code'
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <NCard class="p-4 overflow-auto max-h-full">
-    <div
-      v-html="html"
-    />
+    <!-- eslint-disable-next-line vue/no-v-html -->
+    <div v-html="html" />
   </NCard>
 </template>

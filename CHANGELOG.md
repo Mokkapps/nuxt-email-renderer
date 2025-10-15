@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.1.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.0.3...v2.1.0)
+
+### 🚀 Enhancements
+
+- **i18n:** Add i18n support for email rendering ([f78546d](https://github.com/mokkapps/nuxt-email-renderer/commit/f78546d))
+
+### 🤖 CI
+
+- Add CI workflow for documentation deployment ([b8b526b](https://github.com/mokkapps/nuxt-email-renderer/commit/b8b526b))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.1.0 (Unreleased)
 
 ### 🚀 Features

@@ -32,36 +32,6 @@ Get started
 
 ::u-page-section
 #title
-Trusted by Leading Tools in :br [Production]{.text-primary}
-
-#links
-:::u-button
----
-trailing-icon: i-ph-arrow-right
-size: xl
-color: neutral
-variant: outline
-to: https://weekly-vue.news
-target: _blank
----
-Weekly Vue Newsletter
-:::
-
-:::u-button
----
-trailing-icon: i-ph-arrow-right
-size: xl
-color: neutral
-variant: outline
-to: https://nuxtstarterkit.com
-target: _blank
----
-Nuxt Starter Kit
-:::
-::
-
-::u-page-section
-#title
 Create stunning emails with :br [Vue components]{.text-primary}
 
 #features
@@ -104,13 +74,13 @@ Create responsive email layouts that look great on desktop, mobile, and tablet d
 :::u-page-card
 ---
 spotlight: true
-icon: i-ph-palette-duotone
+icon: i-ph-globe
 ---
 #title
-Flexible Styling
+Internationalization (i18n)
 
 #description
-Style your emails with CSS-in-JS or traditional CSS approaches that work reliably in email clients.
+Easily create multilingual email templates with built-in i18n support when using `@nuxtjs/i18n`.
 :::
 
 :::u-page-card
@@ -135,5 +105,37 @@ Easy Integration
 
 #description
 Integrate seamlessly with your existing Nuxt application and email service providers for streamlined email delivery.
+:::
+::
+
+
+
+::u-page-section
+#title
+Trusted by Leading Tools in :br [Production]{.text-primary}
+
+#links
+:::u-button
+---
+trailing-icon: i-ph-arrow-right
+size: xl
+color: neutral
+variant: outline
+to: https://weekly-vue.news
+target: _blank
+---
+Weekly Vue Newsletter
+:::
+
+:::u-button
+---
+trailing-icon: i-ph-arrow-right
+size: xl
+color: neutral
+variant: outline
+to: https://nuxtstarterkit.com
+target: _blank
+---
+Nuxt Starter Kit
 :::
 ::

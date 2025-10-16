@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.1.1
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.0...v2.1.1)
+
+### 🩹 Fixes
+
+- Update import path for useRuntimeConfig in setupI18nFromRuntimeConfig ([017eb42](https://github.com/mokkapps/nuxt-email-renderer/commit/017eb42))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.1.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.0.3...v2.1.0)

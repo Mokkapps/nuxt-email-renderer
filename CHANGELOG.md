@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.1.2
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.1...v2.1.2)
+
+### 🩹 Fixes
+
+- Mark vue-i18n as external to avoid build errors when not installed ([977bf41](https://github.com/mokkapps/nuxt-email-renderer/commit/977bf41))
+
+### 📖 Documentation
+
+- Enhance documentation for internationalization in email templates ([8c57b4c](https://github.com/mokkapps/nuxt-email-renderer/commit/8c57b4c))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.1.1
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.0...v2.1.1)

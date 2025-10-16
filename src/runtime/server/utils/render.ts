@@ -74,7 +74,7 @@ async function setupI18nFromRuntimeConfig(
   locale?: string,
 ): Promise<boolean> {
   try {
-    const { useRuntimeConfig } = await import('#imports')
+    const { useRuntimeConfig } = await import('nitropack/runtime')
     const config = useRuntimeConfig()
 
     if (!config.public?.i18n) {

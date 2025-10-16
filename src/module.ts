@@ -205,6 +205,14 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.rollupConfig.plugins
           = nitroConfig.rollupConfig.plugins || []
 
+        // Mark vue-i18n as external to avoid build errors when it's not installed
+        // It's dynamically imported only when needed
+        nitroConfig.rollupConfig.external
+          = nitroConfig.rollupConfig.external || []
+        if (Array.isArray(nitroConfig.rollupConfig.external)) {
+          nitroConfig.rollupConfig.external.push('vue-i18n')
+        }
+
         // Add Vue plugin with strict include pattern
         // Use array format to be very explicit about what to include
         const vuePlugin = vue({

@@ -10,6 +10,16 @@ seo:
 
 A paragraph text component with default styling optimized for email clients. It provides consistent text rendering across different email environments.
 
+::component-preview
+---
+html: |
+  <p style="font-size: 14px; line-height: 24px; margin: 16px 0; color: #333333;">
+    Welcome to our platform! We're excited to have you on board.
+  </p>
+title: Basic Text
+---
+::
+
 ## Installation
 
 The `EText` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

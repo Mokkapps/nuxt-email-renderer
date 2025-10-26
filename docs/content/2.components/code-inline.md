@@ -10,6 +10,16 @@ seo:
 
 An inline code component that renders code snippets within text content. The component uses a dual-rendering approach to ensure compatibility across different email clients, including Outlook.
 
+::component-preview
+---
+html: |
+  <p style="font-size: 14px; line-height: 24px; margin: 16px 0; color: #333333;">
+    To install, run <code style="background-color: #f4f4f4; border-radius: 3px; font-family: 'Courier New', Courier, monospace; font-size: 13px; padding: 2px 6px;">npm install nuxt-email-renderer</code> in your terminal.
+  </p>
+title: Inline Code
+---
+::
+
 ## Installation
 
 The `ECodeInline` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

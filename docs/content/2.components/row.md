@@ -10,6 +10,25 @@ seo:
 
 Create horizontal layouts using table-based rows optimized for email client compatibility. Perfect for creating multi-column layouts and organizing content horizontally.
 
+::component-preview
+---
+html: |
+  <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+    <tbody>
+      <tr>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; width: 50%;">
+          <p style="margin: 0; font-size: 14px; color: #333;">Left Column</p>
+        </td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; width: 50%;">
+          <p style="margin: 0; font-size: 14px; color: #333;">Right Column</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+title: Two Column Layout
+---
+::
+
 ## Installation
 
 The `ERow` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

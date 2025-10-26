@@ -10,6 +10,16 @@ seo:
 
 A clickable button component that renders as a styled link optimized for email client compatibility. The button automatically handles padding, styling, and Outlook-specific rendering quirks.
 
+::component-preview
+---
+html: |
+  <a href="https://example.com" target="_blank" style="line-height: 100%; text-decoration: none; display: inline-block; max-width: 100%; padding: 12px 24px; background-color: #007bff; color: #ffffff; border-radius: 6px; font-size: 16px; font-weight: 500;">
+    <span style="max-width: 100%; display: inline-block; line-height: 120%;">Click me</span>
+  </a>
+title: Basic Button
+---
+::
+
 ## Installation
 
 The `EButton` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.
@@ -67,6 +77,16 @@ The button supports all CSS properties, with special handling for padding:
 ::
 
 ### Recommended Button Styles
+
+::component-preview
+---
+html: |
+  <a href="https://example.com" target="_blank" style="line-height: 100%; text-decoration: none; display: inline-block; max-width: 100%; padding: 12px 24px; background-color: #007bff; color: #ffffff; border-radius: 6px; font-size: 16px; font-weight: 500;">
+    <span style="max-width: 100%; display: inline-block; line-height: 120%;">Action Button</span>
+  </a>
+title: Recommended Style
+---
+::
 
 ```vue
 <template>

@@ -10,6 +10,23 @@ seo:
 
 Render markdown content in your email templates with full styling control. Perfect for content-rich emails, newsletters, and documentation-style communications.
 
+::component-preview
+---
+html: |
+  <div>
+    <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 16px 0; color: #1a202c;">Welcome</h1>
+    <p style="font-size: 14px; line-height: 24px; margin: 0 0 16px 0; color: #333;">This is <strong>bold</strong> text and <em>italic</em> text.</p>
+    <h2 style="font-size: 24px; font-weight: 700; margin: 0 0 12px 0; color: #1a202c;">Features</h2>
+    <ul style="margin: 0 0 16px 0; padding-left: 20px;">
+      <li style="margin-bottom: 8px; color: #333;">Easy to use</li>
+      <li style="margin-bottom: 8px; color: #333;">Fully customizable</li>
+      <li style="margin-bottom: 8px; color: #333;">Email client compatible</li>
+    </ul>
+  </div>
+title: Markdown Rendering
+---
+::
+
 ## Installation
 
 The `EMarkdown` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

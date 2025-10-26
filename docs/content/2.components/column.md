@@ -10,6 +10,28 @@ seo:
 
 Create columns within rows for multi-column email layouts. Columns render as table cells optimized for email client compatibility.
 
+::component-preview
+---
+html: |
+  <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+    <tbody>
+      <tr>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; width: 33.33%;">
+          <p style="margin: 0; font-size: 14px; color: #333; text-align: center;">Column 1</p>
+        </td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; width: 33.33%;">
+          <p style="margin: 0; font-size: 14px; color: #333; text-align: center;">Column 2</p>
+        </td>
+        <td style="padding: 10px; border: 1px solid #e5e7eb; width: 33.33%;">
+          <p style="margin: 0; font-size: 14px; color: #333; text-align: center;">Column 3</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+title: Three Column Layout
+---
+::
+
 ## Installation
 
 The `EColumn` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

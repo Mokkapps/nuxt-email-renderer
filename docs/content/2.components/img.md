@@ -10,6 +10,14 @@ seo:
 
 Display images in your email templates with automatic optimization for email client compatibility. The component handles proper styling and attributes for maximum deliverability.
 
+::component-preview
+---
+html: |
+  <img src="https://via.placeholder.com/300x200/007bff/ffffff?text=Email+Image" alt="Example Image" width="300" height="200" style="display: block; outline: none; border: none; text-decoration: none;" />
+title: Basic Image
+---
+::
+
 ## Installation
 
 The `EImg` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

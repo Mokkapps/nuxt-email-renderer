@@ -10,6 +10,24 @@ seo:
 
 A responsive container component that centers your email content and provides optimal width constraints for different email clients.
 
+::component-preview
+---
+html: |
+  <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width: 600px; margin: 0 auto; border: 1px solid #eaeaea; padding: 20px;">
+    <tbody>
+      <tr>
+        <td>
+          <p style="font-size: 14px; line-height: 24px; margin: 0; color: #333333;">
+            This content is centered and constrained to 600px width, providing an optimal reading experience across all devices.
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+title: Container with Content
+---
+::
+
 ## Installation
 
 The `EContainer` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

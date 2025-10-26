@@ -10,6 +10,16 @@ seo:
 
 Create clickable text links in your email templates with consistent styling across email clients. Perfect for navigation, calls-to-action, and reference links.
 
+::component-preview
+---
+html: |
+  <a href="https://example.com" target="_blank" style="color: #007bff; text-decoration: underline;">
+    Visit our website
+  </a>
+title: Basic Link
+---
+::
+
 ## Installation
 
 The `ELink` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

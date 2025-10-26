@@ -10,6 +10,23 @@ seo:
 
 Create content sections using table-based layout optimized for email client compatibility. Perfect for organizing content into distinct areas with consistent spacing.
 
+::component-preview
+---
+html: |
+  <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #f9fafb;">
+    <tbody>
+      <tr>
+        <td style="padding: 20px;">
+          <h2 style="margin: 0 0 10px 0; font-size: 24px; color: #1a202c;">Welcome Section</h2>
+          <p style="margin: 0; font-size: 14px; color: #333;">This content is organized within a section with padding and background color.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+title: Section with Background
+---
+::
+
 ## Installation
 
 The `ESection` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

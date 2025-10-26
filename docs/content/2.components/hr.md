@@ -10,6 +10,14 @@ seo:
 
 Create visual separators and dividers in your email content with the horizontal rule component. Perfect for separating sections and improving content organization.
 
+::component-preview
+---
+html: |
+  <hr style="width: 100%; border: none; border-top: 1px solid #eaeaea; margin: 26px 0;" />
+title: Horizontal Rule
+---
+::
+
 ## Installation
 
 The `EHr` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

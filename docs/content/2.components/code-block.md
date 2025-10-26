@@ -10,6 +10,14 @@ seo:
 
 A code block component that renders syntax-highlighted code with support for line numbers, line highlighting, and multiple themes. Built on top of Shiki for accurate syntax highlighting.
 
+::component-preview
+---
+html: |
+  <pre style="background-color: #f6f8fa; border-radius: 6px; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5; margin: 16px 0; overflow-x: auto; padding: 16px;"><code style="color: #24292e;">console.log(<span style="color: #032f62;">'Hello World!'</span>);</code></pre>
+title: Code Block
+---
+::
+
 ## Installation
 
 The `ECodeBlock` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

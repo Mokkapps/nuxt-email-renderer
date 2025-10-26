@@ -10,6 +10,26 @@ seo:
 
 Create semantic headings (h1-h6) with customizable margins and email-optimized styling. Perfect for titles, section headers, and content hierarchy.
 
+::component-preview
+---
+html: |
+  <h1 style="font-weight: 700; font-size: 36px; line-height: 40px; margin: 0; padding: 0; color: #1a202c;">
+    Welcome to Our Platform!
+  </h1>
+title: Heading (h1)
+---
+::
+
+::component-preview
+---
+html: |
+  <h2 style="font-weight: 700; font-size: 30px; line-height: 36px; margin: 0; padding: 0; color: #1a202c;">
+    Section Title
+  </h2>
+title: Heading (h2)
+---
+::
+
 ## Installation
 
 The `EHeading` component is automatically available when you install `nuxt-email-renderer`. No additional imports needed.

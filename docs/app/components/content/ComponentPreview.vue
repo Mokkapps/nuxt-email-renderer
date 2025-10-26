@@ -1,6 +1,9 @@
 <template>
   <div class="component-preview">
-    <div v-if="title" class="preview-header">
+    <div
+      v-if="title"
+      class="preview-header"
+    >
       <span class="preview-title">{{ title }}</span>
     </div>
     <div class="preview-container">

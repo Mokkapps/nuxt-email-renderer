@@ -24,4 +24,14 @@ export default defineNuxtConfig({
     id: process.env.NUXT_UMAMI_ID,
     ignoreLocalhost: true,
   },
+
+  llms: {
+    domain: 'https://nuxtemail.com',
+    title: 'Nuxt Email Renderer',
+    description: 'Plug-and-play email template rendering using Vue components. Create beautiful HTML emails with the power of Vue and modern development workflow.',
+    full: {
+      title: 'Nuxt Email Renderer',
+      description: 'Plug-and-play email template rendering using Vue components. Create beautiful HTML emails with the power of Vue and modern development workflow.',
+    },
+  },
 })

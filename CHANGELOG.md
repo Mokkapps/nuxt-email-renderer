@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.1.3
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.2...v2.1.3)
+
+### 🏡 Chore
+
+- Bump dependencies ([70a78c6](https://github.com/mokkapps/nuxt-email-renderer/commit/70a78c6))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.1.2
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.1...v2.1.2)

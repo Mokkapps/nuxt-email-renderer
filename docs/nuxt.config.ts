@@ -19,6 +19,16 @@ export default defineNuxtConfig({
     },
   },
 
+  llms: {
+    domain: 'https://nuxtemail.com',
+    title: 'Nuxt Email Renderer',
+    description: 'Plug-and-play email template rendering using Vue components. Create beautiful HTML emails with the power of Vue and modern development workflow.',
+    full: {
+      title: 'Nuxt Email Renderer',
+      description: 'Plug-and-play email template rendering using Vue components. Create beautiful HTML emails with the power of Vue and modern development workflow.',
+    },
+  },
+
   umami: {
     host: process.env.NUXT_UMAMI_HOST,
     id: process.env.NUXT_UMAMI_ID,

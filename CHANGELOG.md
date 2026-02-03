@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.3.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.2.0...v2.3.0)
+
+### 🚀 Enhancements
+
+- **docs:** Add llms configuration for email rendering ([bd8a98c](https://github.com/mokkapps/nuxt-email-renderer/commit/bd8a98c))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.2.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.4...v2.2.0)

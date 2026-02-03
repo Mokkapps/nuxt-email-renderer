@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.4...v2.2.0)
+
 ## v2.1.4
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.1.3...v2.1.4)

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 interface Props {
   heading?: string
+  siteName?: string
 }
-const { heading = 'Welcome to our platform! 🎉' } = defineProps<Props>()
+const { heading = 'Welcome to our platform! 🎉', siteName = 'Your Company' } = defineProps<Props>()
 </script>
 
 <template>
   <EHtml>
+    <ESubject>Welcome to {{ siteName }}!</ESubject>
     <EHead />
     <EPreview>Welcome to our platform! Get started with your account today.</EPreview>
     <EBody style="background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;">
@@ -86,7 +88,7 @@ const { heading = 'Welcome to our platform! 🎉' } = defineProps<Props>()
         <!-- Footer -->
         <ESection style="padding: 20px 0; border-top: 1px solid #e5e7eb;">
           <EText style="color: #6b7280; font-size: 12px; text-align: center; margin: 0;">
-            © 2024 Your Company. All rights reserved.<br>
+            © 2024 {{ siteName }}. All rights reserved.<br>
             123 Business Street, City, State 12345
           </EText>
         </ESection>

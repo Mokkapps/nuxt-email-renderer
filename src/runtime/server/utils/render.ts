@@ -9,6 +9,7 @@ import { plainTextSelectors } from './plainTextSelectors'
 import { cleanup } from './cleanup'
 
 import { emailComponents } from '../../components'
+import { SUBJECT_INJECTION_KEY } from '../../components/subject/ESubject.vue'
 
 async function registerEmailComponents(app: ReturnType<typeof createSSRApp>) {
   for (const [name, componentImporter] of Object.entries(emailComponents)) {
@@ -140,7 +141,16 @@ export async function render<T extends Component>(
 ) {
   const doctype
     = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+  
+  // Capture subject from ESubject component
+  let capturedSubject: string | undefined
+
   const App = createSSRApp(component, props || {})
+  
+  // Provide subject setter
+  App.provide(SUBJECT_INJECTION_KEY, (subject: string) => {
+    capturedSubject = subject
+  })
 
   await registerEmailComponents(App)
 
@@ -150,20 +160,41 @@ export async function render<T extends Component>(
   }
 
   const markup = await renderToString(App)
+  
+  // Decode HTML entities in subject
+  const decodedSubject = capturedSubject 
+    ? decodeHtmlEntities(capturedSubject)
+    : undefined
+
   if (options?.plainText) {
-    return convert(markup, {
+    const plainText = convert(markup, {
       selectors: plainTextSelectors,
       ...(options?.plainText === true ? options.htmlToTextOptions : {}),
     })
+    return decodedSubject ? { html: plainText, subject: decodedSubject } : plainText
   }
 
   const doc = `${doctype}${cleanup(markup)}`
 
-  if (options && options.pretty) {
-    return pretty(doc)
-  }
+  const html = options && options.pretty ? pretty(doc) : doc
+  
+  return decodedSubject ? { html, subject: decodedSubject } : html
+}
 
-  return doc
+// Helper function to decode HTML entities
+function decodeHtmlEntities(text: string): string {
+  const entities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#39;': "'",
+    '&apos;': "'",
+  }
+  
+  return text.replace(/&[a-z]+;|&#\d+;/gi, (match) => {
+    return entities[match] || match
+  })
 }
 
 export async function renderEmailComponent<T extends Component>(

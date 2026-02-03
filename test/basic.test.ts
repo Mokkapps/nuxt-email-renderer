@@ -21,4 +21,33 @@ describe('E2E', async () => {
     })
     expect(response).toMatchSnapshot()
   })
+
+  it('returns subject and HTML from email with ESubject component', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'Test', props: { siteName: 'Acme Corp' } },
+    }) as any
+
+    // Should have subject property
+    expect(response).toHaveProperty('subject')
+    expect(response).toHaveProperty('html')
+    
+    // Subject should be decoded and interpolated
+    expect(response.subject).toBe('Welcome to Acme Corp!')
+    
+    // HTML should not contain the subject text in visible content
+    expect(response.html).toContain('<!DOCTYPE html')
+    expect(response.html).toContain('Acme Corp')
+  })
+
+  it('returns only HTML when no subject is defined', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'NoSubject' },
+    })
+
+    // Should be a string, not an object
+    expect(typeof response).toBe('string')
+    expect(response).toContain('<!DOCTYPE html')
+  })
 })

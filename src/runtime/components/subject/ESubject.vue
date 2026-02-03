@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, h, inject } from 'vue'
+import { computed, defineComponent, inject } from 'vue'
 
 export const SUBJECT_INJECTION_KEY = Symbol('email-subject')
 

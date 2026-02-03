@@ -31,10 +31,10 @@ describe('E2E', async () => {
     // Should have subject property
     expect(response).toHaveProperty('subject')
     expect(response).toHaveProperty('html')
-    
+
     // Subject should be decoded and interpolated
     expect(response.subject).toBe('Welcome to Acme Corp!')
-    
+
     // HTML should not contain the subject text in visible content
     expect(response.html).toContain('<!DOCTYPE html')
     expect(response.html).toContain('Acme Corp')

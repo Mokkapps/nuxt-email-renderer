@@ -16,7 +16,7 @@ describe('<ESubject> component', () => {
       ]),
     ])
     const result = await render(component)
-    
+
     expect(result).toHaveProperty('subject')
     expect(result).toHaveProperty('html')
     expect((result as any).subject).toBe(testSubject)
@@ -33,7 +33,7 @@ describe('<ESubject> component', () => {
       ]),
     ])
     const result = await render(component)
-    
+
     expect((result as any).html).not.toContain('Secret Subject')
   })
 
@@ -45,7 +45,7 @@ describe('<ESubject> component', () => {
       ]),
     ])
     const result = await render(component)
-    
+
     expect((result as any).subject).toBe('Welcome to Procter & Gamble!')
   })
 
@@ -58,7 +58,7 @@ describe('<ESubject> component', () => {
       ]),
     ])
     const result = await render(component)
-    
+
     expect((result as any).subject).toBe('Welcome to MySite!')
   })
 
@@ -69,7 +69,7 @@ describe('<ESubject> component', () => {
       ]),
     ])
     const result = await render(component)
-    
+
     // Result should be a string, not an object with subject
     expect(typeof result).toBe('string')
     expect(result).toContain('Email content')

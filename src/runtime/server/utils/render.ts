@@ -141,12 +141,12 @@ export async function render<T extends Component>(
 ) {
   const doctype
     = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
-  
+
   // Capture subject from ESubject component
   let capturedSubject: string | undefined
 
   const App = createSSRApp(component, props || {})
-  
+
   // Provide subject setter
   App.provide(SUBJECT_INJECTION_KEY, (subject: string) => {
     capturedSubject = subject
@@ -160,9 +160,9 @@ export async function render<T extends Component>(
   }
 
   const markup = await renderToString(App)
-  
+
   // Decode HTML entities in subject
-  const decodedSubject = capturedSubject 
+  const decodedSubject = capturedSubject
     ? decodeHtmlEntities(capturedSubject)
     : undefined
 
@@ -177,7 +177,7 @@ export async function render<T extends Component>(
   const doc = `${doctype}${cleanup(markup)}`
 
   const html = options && options.pretty ? pretty(doc) : doc
-  
+
   return decodedSubject ? { html, subject: decodedSubject } : html
 }
 
@@ -188,10 +188,10 @@ function decodeHtmlEntities(text: string): string {
     '&lt;': '<',
     '&gt;': '>',
     '&quot;': '"',
-    '&#39;': "'",
-    '&apos;': "'",
+    '&#39;': '\'',
+    '&apos;': '\'',
   }
-  
+
   return text.replace(/&[a-z]+;|&#\d+;/gi, (match) => {
     return entities[match] || match
   })

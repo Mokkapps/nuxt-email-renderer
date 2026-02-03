@@ -16,6 +16,7 @@ export const emailComponents = {
   ERow: () => import('./row/ERow.vue'),
   ESection: () => import('./section/ESection.vue'),
   EStyle: () => import('./style/EStyle.vue'),
+  ESubject: () => import('./subject/ESubject.vue'),
   EText: () => import('./text/EText.vue'),
   EMarkdown: () => import('./markdown/EMarkdown.vue'),
 }

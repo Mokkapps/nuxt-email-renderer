@@ -9,6 +9,7 @@ export default defineComponent({
       const slotContent = slots.default?.()
 
       // Extract CSS text from the slot content
+      // Note: We only process the first slot node, as EStyle is designed for single text content
       let cssText = ''
       if (slotContent && slotContent.length > 0) {
         const firstNode = slotContent[0]

@@ -6,6 +6,7 @@ A Nuxt module that provides high-quality, unstyled components for creating email
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![nuxt.care](https://img.shields.io/endpoint?url=https://nuxt.care/api/v1/badge?module=nuxt-email-renderer)](https://nuxt.care/?search=nuxt-email-renderer)
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 

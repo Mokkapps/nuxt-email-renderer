@@ -11,19 +11,19 @@ const { userName = 'John Doe' } = defineProps<Props>()
     <EStyle>
       /* Test CSS with child combinators */
       .hackWebmailPadding > tbody > tr > td:first-child {
-        padding: 20px;
+      padding: 20px;
       }
-      
+
       /* Test CSS with quotes in font-family */
       body {
-        font-family: "Helvetica Neue", "Arial", sans-serif;
+      font-family: "Helvetica Neue", "Arial", sans-serif;
       }
-      
+
       /* Test CSS with media queries (less-than symbol) */
       @media (max-width: 600px) {
-        .responsive {
-          font-size: 14px;
-        }
+      .responsive {
+      font-size: 14px;
+      }
       }
     </EStyle>
     <EBody style="background-color: #f0f0f0; padding: 20px;">

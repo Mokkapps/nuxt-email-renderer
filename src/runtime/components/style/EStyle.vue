@@ -12,7 +12,7 @@ export default defineComponent({
       // Use innerHTML to prevent HTML entity escaping for CSS content
       return h('style', {
         'data-id': '__nuxt-email-style',
-        innerHTML: typeof cssContent === 'string' ? cssContent : slotContent,
+        'innerHTML': typeof cssContent === 'string' ? cssContent : slotContent,
       })
     }
   },

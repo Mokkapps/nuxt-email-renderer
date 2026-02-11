@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.4.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.3.0...v2.4.0)
+
+### 🏡 Chore
+
+- **release:** V2.3.1 ([d1a7e3a](https://github.com/mokkapps/nuxt-email-renderer/commit/d1a7e3a))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.3.1
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.3.0...v2.3.1)

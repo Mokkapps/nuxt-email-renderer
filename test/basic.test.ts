@@ -50,4 +50,13 @@ describe('E2E', async () => {
     expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
   })
+
+  it('returns HTML using renderEmail function (alias)', async () => {
+    // Test the renderEmail function which is an alias for renderEmailComponent
+    const response = await $fetch('/api/render-email', {
+      method: 'POST',
+      body: { name: 'Test' },
+    })
+    expect(response).toMatchSnapshot()
+  })
 })

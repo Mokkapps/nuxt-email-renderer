@@ -182,6 +182,14 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'renderEmailComponent',
         from: resolver.resolve('runtime/server/utils/render'),
       },
+      {
+        name: 'renderEmail',
+        from: resolver.resolve('runtime/server/utils/index'),
+      },
+      {
+        name: 'render',
+        from: resolver.resolve('runtime/server/utils/render'),
+      },
     ])
 
     // Generate virtual module containing all email templates

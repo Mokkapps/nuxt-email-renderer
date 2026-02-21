@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import { join, basename, dirname } from 'node:path'
 import {
   logger,
   defineNuxtModule,
@@ -142,26 +142,34 @@ export default defineNuxtModule<ModuleOptions>({
       }
     })
 
-    let templatesDir = resolve(options.emailsDir) || resolve('/emails')
+    // Collect email template directories from all layers
+    // Priority: app/emails (Nuxt 4 structure) > emails (root folder), earlier layers have higher priority
+    const templatesDirs: string[] = []
 
-    // Check for email templates in layer directories
-    // Priority: app/emails (Nuxt 4 structure) > emails (root folder)
     for (const layer of nuxt.options._layers) {
       // First check app/emails (Nuxt 4 structure)
       const appEmailsPath = join(layer.cwd, 'app', 'emails')
       if (existsSync(appEmailsPath)) {
-        templatesDir = appEmailsPath
-        break
+        templatesDirs.push(appEmailsPath)
+        continue
       }
 
       // Fall back to root emails folder
       const rootEmailsPath = join(layer.cwd, 'emails')
       if (existsSync(rootEmailsPath)) {
-        templatesDir = rootEmailsPath
-        break
+        templatesDirs.push(rootEmailsPath)
       }
     }
-    (
+
+    // Fallback to configured emailsDir if no layer directories were found
+    if (templatesDirs.length === 0) {
+      templatesDirs.push(resolve(options.emailsDir) || resolve('/emails'))
+    }
+
+    // The primary templates directory is the highest-priority one (first layer)
+    const templatesDir = templatesDirs[0]
+
+    ;(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions
     ).emailsDir = templatesDir
 
@@ -187,8 +195,13 @@ export default defineNuxtModule<ModuleOptions>({
     // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
       try {
-        // Scan templates directory and generate virtual module
-        const templateMapping = await generateTemplateMapping(templatesDir)
+        // Scan all layer template directories and merge the mappings
+        // Process in reverse order so higher-priority layers (earlier in array) override lower-priority ones
+        const templateMapping: Awaited<ReturnType<typeof generateTemplateMapping>> = {}
+        for (const dir of [...templatesDirs].reverse()) {
+          const dirMapping = await generateTemplateMapping(dir)
+          Object.assign(templateMapping, dirMapping)
+        }
         const virtualModuleContent = generateVirtualModule(templateMapping)
 
         // Add virtual module to Nitro
@@ -253,18 +266,20 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Enable HMR for email templates in development mode
     if (nuxt.options.dev) {
-      // Watch templates directory for changes
+      // Watch all layer template directories for changes
       nuxt.options.watch = nuxt.options.watch || []
-      nuxt.options.watch.push(`${templatesDir}/**/*.vue`)
+      for (const dir of templatesDirs) {
+        nuxt.options.watch.push(`${dir}/**/*.vue`)
+      }
 
       nuxt.hooks.hook('builder:watch', async (event, path) => {
-        if (path.startsWith(templatesDir) && path.endsWith('.vue')) {
+        if (templatesDirs.some(dir => path.startsWith(dir)) && path.endsWith('.vue')) {
           logger.info(`${LOGGER_PREFIX} Template ${event} - ${path}`)
           logger.info(`${LOGGER_PREFIX} Server will restart to apply changes`)
         }
       })
 
-      // Configure Nitro dev storage for the templates directory
+      // Configure Nitro dev storage for the primary templates directory
       nuxt.hooks.hook('nitro:config', (nitroConfig) => {
         nitroConfig.devStorage = nitroConfig.devStorage || {}
         nitroConfig.devStorage['emails'] = {
@@ -274,12 +289,15 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    // Add templates directory as Nitro server asset
+    // Add all layer template directories as Nitro server assets
     nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
-    nuxt.options.nitro.serverAssets.push({
-      baseName: 'emails',
-      dir: templatesDir,
-    })
+    for (const [index, dir] of templatesDirs.entries()) {
+      const layerName = basename(dirname(dir))
+      nuxt.options.nitro.serverAssets.push({
+        baseName: index === 0 ? 'emails' : `emails_${layerName}_${index}`,
+        dir,
+      })
+    }
 
     // Add server handlers for DevTools integration (development only)
     // These endpoints are only registered when the consuming app is in development mode

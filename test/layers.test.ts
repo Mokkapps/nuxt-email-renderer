@@ -20,6 +20,7 @@ describe('E2E Layer', async () => {
     })
     expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
+    expect(response).toContain('Welcome to our platform!')
   })
 
   it('renders an email template from the app layer', async () => {

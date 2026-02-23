@@ -12,4 +12,24 @@ describe('E2E Layer', async () => {
     const html = await $fetch('/')
     expect(html).toContain('<div>Layer Test</div>')
   })
+
+  it('renders an email template from the sub-layer', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'Test' },
+    })
+    expect(typeof response).toBe('string')
+    expect(response).toContain('<!DOCTYPE html')
+    expect(response).toContain('Welcome to our platform!')
+  })
+
+  it('renders an email template from the app layer', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'AppEmail' },
+    })
+    expect(typeof response).toBe('string')
+    expect(response).toContain('<!DOCTYPE html')
+    expect(response).toContain('App Layer Email')
+  })
 })

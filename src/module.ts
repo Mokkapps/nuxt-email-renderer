@@ -1,4 +1,4 @@
-import { join, basename, dirname } from 'node:path'
+import { join, resolve as resolvePath, basename, dirname } from 'node:path'
 import {
   logger,
   defineNuxtModule,
@@ -19,10 +19,10 @@ import {
 export interface ModuleOptions {
   /**
    * Folder where email templates are stored. Can be either an absolute path or relative to the project root.
-   *
-   * @default /emails
+   * When set, this takes priority over the auto-detected `app/emails` and `emails` directories.
+   * When not set, the module auto-detects the emails directory by checking `app/emails` (Nuxt 4) then `emails`.
    */
-  emailsDir: string
+  emailsDir?: string
   /**
    * Enable Nuxt Devtools integration
    *
@@ -41,7 +41,6 @@ export default defineNuxtModule<ModuleOptions>({
   // Default configuration options of the Nuxt module
   defaults() {
     return {
-      emailsDir: '/emails',
       devtools: true,
     }
   },
@@ -143,11 +142,25 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Collect email template directories from all layers
-    // Priority: app/emails (Nuxt 4 structure) > emails (root folder), earlier layers have higher priority
+    // Priority: configured emailsDir > app/emails (Nuxt 4 structure) > emails (root folder)
+    // Earlier layers have higher priority over later layers
     const templatesDirs: string[] = []
 
     for (const layer of nuxt.options._layers) {
-      // First check app/emails (Nuxt 4 structure)
+      // If emailsDir is explicitly configured, resolve it (supports both relative and absolute paths)
+      if (options.emailsDir) {
+        const customEmailsPath = resolvePath(layer.cwd, options.emailsDir)
+        if (existsSync(customEmailsPath)) {
+          templatesDirs.push(customEmailsPath)
+          continue
+        }
+        // Warn only for the root layer so users know their configured path wasn't found
+        if (layer.cwd === nuxt.options.rootDir) {
+          logger.warn(`${LOGGER_PREFIX} Configured emailsDir '${options.emailsDir}' not found at '${customEmailsPath}', falling back to auto-detection.`)
+        }
+      }
+
+      // Auto-detect: check app/emails (Nuxt 4 structure)
       const appEmailsPath = join(layer.cwd, 'app', 'emails')
       if (existsSync(appEmailsPath)) {
         templatesDirs.push(appEmailsPath)
@@ -161,9 +174,8 @@ export default defineNuxtModule<ModuleOptions>({
       }
     }
 
-    // Fallback to configured emailsDir if no layer directories were found
     if (templatesDirs.length === 0) {
-      templatesDirs.push(resolve(options.emailsDir) || resolve('/emails'))
+      logger.warn(`${LOGGER_PREFIX} No email templates directory found. Configure emailsDir or create an 'emails' or 'app/emails' directory.`)
     }
 
     // The primary templates directory is the highest-priority one (first layer)

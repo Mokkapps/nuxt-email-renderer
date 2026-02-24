@@ -1,4 +1,4 @@
-import { join, basename, dirname } from 'node:path'
+import { join, resolve as resolvePath, basename, dirname } from 'node:path'
 import {
   logger,
   defineNuxtModule,
@@ -147,9 +147,9 @@ export default defineNuxtModule<ModuleOptions>({
     const templatesDirs: string[] = []
 
     for (const layer of nuxt.options._layers) {
-      // If emailsDir is explicitly configured, check it first (resolved relative to layer cwd)
+      // If emailsDir is explicitly configured, resolve it (supports both relative and absolute paths)
       if (options.emailsDir) {
-        const customEmailsPath = join(layer.cwd, options.emailsDir)
+        const customEmailsPath = resolvePath(layer.cwd, options.emailsDir)
         if (existsSync(customEmailsPath)) {
           templatesDirs.push(customEmailsPath)
           continue

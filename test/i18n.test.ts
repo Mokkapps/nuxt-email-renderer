@@ -84,4 +84,3 @@ describe('i18n support', async () => {
     expect(response).toContain('Click here')
   })
 })
-

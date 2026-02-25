@@ -154,10 +154,8 @@ export async function render<T extends Component>(
 
   await registerEmailComponents(App)
 
-  // Setup i18n if locale or event is provided
-  if (options?.locale || options?.event) {
-    await setupI18n(App, options.locale, options.event)
-  }
+  // Always try to setup i18n to support $t() in email templates when i18n is configured
+  await setupI18n(App, options?.locale, options?.event)
 
   const markup = await renderToString(App)
 

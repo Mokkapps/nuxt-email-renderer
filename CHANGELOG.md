@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.5.2
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.1...v2.5.2)
+
+### 🩹 Fixes
+
+- Always setup i18n to support $t() in email templates without requiring event/locale options ([163f16a](https://github.com/mokkapps/nuxt-email-renderer/commit/163f16a))
+- Remove trailing blank line in i18n.test.ts to satisfy lint rule ([5e91d99](https://github.com/mokkapps/nuxt-email-renderer/commit/5e91d99))
+
 ## v2.5.1
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.0...v2.5.1)

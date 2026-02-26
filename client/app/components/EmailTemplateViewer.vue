@@ -101,7 +101,6 @@ const renderedSubject = computed(() => data.value?.subject ?? null)
         <div v-if="contentMode === 'preview'">
           <EmailPreviewPane
             :rendered-html="renderedHtml"
-            :rendered-subject="renderedSubject"
             :view-mode="viewMode"
           />
         </div>

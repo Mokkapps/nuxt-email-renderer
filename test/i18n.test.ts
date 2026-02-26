@@ -68,4 +68,19 @@ describe('i18n support', async () => {
     expect(response).toContain('Welcome')
     expect(response).toContain('Hello, Test!')
   })
+
+  it('renders email with $t() when renderEmailComponent is called without event', async () => {
+    const response = await $fetch('/api/send-email-no-event', {
+      method: 'POST',
+      body: {
+        name: 'Welcome',
+        props: { name: 'John' },
+      },
+    })
+
+    expect(response).toContain('Welcome')
+    expect(response).toContain('Hello, John!')
+    expect(response).toContain('This is a test email')
+    expect(response).toContain('Click here')
+  })
 })

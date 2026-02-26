@@ -14,10 +14,11 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
   if (!props.template) {
     return {
       html: null,
+      subject: null,
       sourceCode: null,
     }
   }
-  const html = await $fetch(`${url.origin}/api/emails/render`, {
+  const response = await $fetch<{ html: string, subject: string } | string>(`${url.origin}/api/emails/render`, {
     method: 'POST',
     body: {
       name: props.template.filename,
@@ -25,7 +26,10 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
     },
   })
 
-  const sourceResponse = await $fetch(`${url.origin}/api/emails/source`, {
+  const html = typeof response === 'string' ? response : response.html
+  const subject = typeof response === 'string' ? null : response.subject
+
+  const sourceResponse = await $fetch<{ sourceCode: string }>(`${url.origin}/api/emails/source`, {
     method: 'POST',
     body: {
       name: props.template.filename,
@@ -33,11 +37,12 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
   })
   const sourceCode = sourceResponse.sourceCode
 
-  return { html, sourceCode }
+  return { html, subject, sourceCode }
 }, { watch: [() => props.template] })
 
 const sourceCode = computed(() => data.value?.sourceCode ?? null)
 const renderedHtml = computed(() => data.value?.html ?? null)
+const renderedSubject = computed(() => data.value?.subject ?? null)
 </script>
 
 <template>
@@ -87,6 +92,7 @@ const renderedHtml = computed(() => data.value?.html ?? null)
         v-model:view-mode="viewMode"
         v-model:content-mode="contentMode"
         :rendered-html="renderedHtml"
+        :rendered-subject="renderedSubject"
         :source-code="sourceCode"
         @refresh="refresh"
       />
@@ -95,6 +101,7 @@ const renderedHtml = computed(() => data.value?.html ?? null)
         <div v-if="contentMode === 'preview'">
           <EmailPreviewPane
             :rendered-html="renderedHtml"
+            :rendered-subject="renderedSubject"
             :view-mode="viewMode"
           />
         </div>

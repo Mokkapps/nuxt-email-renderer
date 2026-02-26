@@ -4,6 +4,7 @@ import BaseButton from './BaseButton.vue'
 
 interface Props {
   html: string
+  subject?: string | null
 }
 const props = defineProps<Props>()
 
@@ -24,7 +25,7 @@ const sendTestEmail = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         to: email.value,
-        subject: 'Test Email from Nuxt Email Renderer',
+        subject: props.subject || 'Test Email from Nuxt Email Renderer',
         html: props.html,
       }),
     })

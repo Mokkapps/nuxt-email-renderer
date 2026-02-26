@@ -7,6 +7,7 @@ interface Props {
   viewMode: 'desktop' | 'mobile'
   contentMode: 'preview' | 'source' | 'html'
   renderedHtml: string | null
+  renderedSubject?: string | null
   sourceCode: string | null
 }
 
@@ -143,6 +144,7 @@ const handleRefresh = () => {
         <EmailSendButton
           v-if="renderedHtml"
           :html="renderedHtml"
+          :subject="renderedSubject"
         />
       </div>
     </div>

@@ -18,7 +18,7 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
       sourceCode: null,
     }
   }
-  const response = await $fetch<{ html: string, subject: string } | string>(`${url.origin}/api/emails/render`, {
+  const response = await $fetch(`${url.origin}/api/emails/render`, {
     method: 'POST',
     body: {
       name: props.template.filename,
@@ -29,7 +29,7 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
   const html = typeof response === 'string' ? response : response.html
   const subject = typeof response === 'string' ? null : response.subject
 
-  const sourceResponse = await $fetch<{ sourceCode: string }>(`${url.origin}/api/emails/source`, {
+  const sourceResponse = await $fetch(`${url.origin}/api/emails/source`, {
     method: 'POST',
     body: {
       name: props.template.filename,

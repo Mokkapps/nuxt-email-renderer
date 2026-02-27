@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.5.3
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.2...v2.5.3)
+
+### 🩹 Fixes
+
+- Remove subject type from fetch response in EmailTemplateViewer ([b4097d5](https://github.com/mokkapps/nuxt-email-renderer/commit/b4097d5))
+
+### ❤️ Contributors
+
+- Sruusk ([@sruusk](https://github.com/sruusk))
+
 ## v2.5.2
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.1...v2.5.2)

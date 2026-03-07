@@ -304,11 +304,12 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.rollupConfig.plugins
           = nitroConfig.rollupConfig.plugins || []
 
-        // When @nuxtjs/i18n is configured, bundle vue-i18n into the Nitro
-        // server so it is always available at runtime regardless of the user's
-        // package manager isolation settings (e.g. pnpm strict mode).
-        // When i18n is NOT configured we keep it external so that a missing
-        // optional installation does not cause a build error.
+        // When the @nuxtjs/i18n module is present (hasI18n), bundle vue-i18n
+        // into the Nitro server so it is always available at runtime
+        // regardless of the user's package manager isolation settings
+        // (e.g. pnpm strict mode). When @nuxtjs/i18n is NOT present we keep
+        // vue-i18n external so that a missing optional installation does not
+        // cause a build error.
         if (hasI18n) {
           nitroConfig.externals = nitroConfig.externals || {}
           const inline: string[] = Array.isArray(nitroConfig.externals.inline)

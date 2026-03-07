@@ -28,7 +28,6 @@ export default defineEventHandler(async (event) => {
       plainText,
       htmlToTextOptions,
       locale,
-      event,
     })
   }
   catch (error: any) {

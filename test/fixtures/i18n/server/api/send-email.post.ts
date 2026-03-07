@@ -14,5 +14,5 @@ export default defineEventHandler(async (event) => {
     bodySchema.parse,
   )
 
-  return renderEmailComponent(name, props, { locale, event })
+  return renderEmailComponent(name, props, { locale })
 })

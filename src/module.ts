@@ -7,7 +7,7 @@ import {
   addTypeTemplate,
   addServerImports,
 } from '@nuxt/kit'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { defu } from 'defu'
 import vue from '@vitejs/plugin-vue'
 import { setupDevToolsUI } from './devtools'
@@ -63,19 +63,21 @@ export default defineNuxtModule<ModuleOptions>({
       options,
     )
 
+    // Detect @nuxtjs/i18n early so it can be shared across hooks.
+    // nuxt.options.modules is already fully merged from all layers at this point.
+    const hasI18n = nuxt.options.modules.some((m) => {
+      if (typeof m === 'string') {
+        return m.includes('@nuxtjs/i18n')
+      }
+      if (Array.isArray(m)) {
+        const first = m[0]
+        return typeof first === 'string' && first.includes('@nuxtjs/i18n')
+      }
+      return false
+    })
+
     // Check if @nuxtjs/i18n module is installed and configure i18n support
     nuxt.hook('nitro:config', async () => {
-      const hasI18n = nuxt.options.modules.some((m) => {
-        if (typeof m === 'string') {
-          return m.includes('@nuxtjs/i18n')
-        }
-        if (Array.isArray(m)) {
-          const first = m[0]
-          return typeof first === 'string' && first.includes('@nuxtjs/i18n')
-        }
-        return false
-      })
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (hasI18n && (nuxt.options as any).i18n) {
         // Store i18n configuration in runtime config for server-side email rendering
@@ -90,31 +92,46 @@ export default defineNuxtModule<ModuleOptions>({
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let messages: Record<string, any> = {}
         if (i18nOptions.vueI18n && typeof i18nOptions.vueI18n === 'string') {
-          try {
-            const configPath = resolve(
-              nuxt.options.rootDir,
-              i18nOptions.vueI18n,
-            )
-            const { pathToFileURL } = await import('node:url')
+          // The vueI18n path may already be absolute (resolved by @nuxtjs/i18n)
+          // or relative to a layer directory. Try each layer's rootDir as a base.
+          const vueI18nPath: string = i18nOptions.vueI18n
+          // Deduplicate: _layers[0].cwd is the root, which is already first.
+          const seen = new Set<string>()
+          const candidateDirs = [
+            nuxt.options.rootDir,
+            ...nuxt.options._layers.map(l => l.cwd),
+          ].filter((dir) => {
+            if (seen.has(dir)) return false
+            seen.add(dir)
+            return true
+          })
 
-            // Import the i18n config file
-            const configModule = await import(pathToFileURL(configPath).href)
-            const configResult
-              = typeof configModule.default === 'function'
-                ? configModule.default()
-                : configModule.default
+          for (const baseDir of candidateDirs) {
+            const configPath = resolvePath(baseDir, vueI18nPath)
+            if (!existsSync(configPath)) continue
+            try {
+              const { pathToFileURL } = await import('node:url')
 
-            if (configResult && configResult.messages) {
-              messages = configResult.messages
-              logger.success(
-                `${LOGGER_PREFIX} Loaded i18n messages for ${Object.keys(messages).length} locale(s)`,
+              // Import the i18n config file
+              const configModule = await import(pathToFileURL(configPath).href)
+              const configResult
+                = typeof configModule.default === 'function'
+                  ? configModule.default()
+                  : configModule.default
+
+              if (configResult && configResult.messages) {
+                messages = configResult.messages
+                logger.success(
+                  `${LOGGER_PREFIX} Loaded i18n messages for ${Object.keys(messages).length} locale(s)`,
+                )
+              }
+              break
+            }
+            catch (error) {
+              logger.warn(
+                `${LOGGER_PREFIX} Could not load i18n messages from config file: ${error}`,
               )
             }
-          }
-          catch (error) {
-            logger.warn(
-              `${LOGGER_PREFIX} Could not load i18n messages from config file: ${error}`,
-            )
           }
         }
         else if (
@@ -123,6 +140,55 @@ export default defineNuxtModule<ModuleOptions>({
         ) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           messages = (i18nOptions.vueI18n as any).messages || {}
+        }
+
+        // When vueI18n is not configured, try loading individual locale files.
+        // @nuxtjs/i18n supports locale files via locales[].file (or .files).
+        // Default search path: <layer_rootDir>/<restructureDir>/<langDir>/<file>
+        // where restructureDir defaults to "i18n" and langDir defaults to "locales".
+        if (Object.keys(messages).length === 0 && i18nOptions.locales?.length) {
+          const restructureDir: string = i18nOptions.restructureDir ?? 'i18n'
+          const langDir: string = i18nOptions.langDir ?? 'locales'
+
+          for (const layer of nuxt.options._layers) {
+            for (const locale of i18nOptions.locales) {
+              if (typeof locale !== 'object' || !locale.code) continue
+              const files: string[] = locale.file
+                ? [locale.file]
+                : (locale.files ?? [])
+
+              for (const file of files) {
+                // Try the restructured path first (Nuxt 4 + @nuxtjs/i18n v10 default),
+                // then a flat langDir path as fallback.
+                const candidates = [
+                  join(layer.cwd, restructureDir, langDir, file),
+                  join(layer.cwd, langDir, file),
+                ]
+                for (const filePath of candidates) {
+                  if (!existsSync(filePath)) continue
+                  try {
+                    const content = JSON.parse(readFileSync(filePath, 'utf-8'))
+                    // defu keeps existing keys (higher-priority layers) and fills
+                    // in missing keys from the current file (lower-priority layer).
+                    // _layers[0] = root (highest priority), _layers[N] = base layers.
+                    messages[locale.code] = defu(messages[locale.code] || {}, content)
+                    break
+                  }
+                  catch (error) {
+                    logger.warn(
+                      `${LOGGER_PREFIX} Failed to parse i18n locale file "${filePath}": ${(error as Error).message}`,
+                    )
+                  }
+                }
+              }
+            }
+          }
+
+          if (Object.keys(messages).length > 0) {
+            logger.success(
+              `${LOGGER_PREFIX} Loaded i18n messages for ${Object.keys(messages).length} locale(s) from locale files`,
+            )
+          }
         }
 
         // Store essential i18n configuration
@@ -230,12 +296,30 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.rollupConfig.plugins
           = nitroConfig.rollupConfig.plugins || []
 
-        // Mark vue-i18n as external to avoid build errors when it's not installed
-        // It's dynamically imported only when needed
-        nitroConfig.rollupConfig.external
-          = nitroConfig.rollupConfig.external || []
-        if (Array.isArray(nitroConfig.rollupConfig.external)) {
-          nitroConfig.rollupConfig.external.push('vue-i18n')
+        // When the @nuxtjs/i18n module is present (hasI18n), bundle vue-i18n
+        // into the Nitro server so it is always available at runtime
+        // regardless of the user's package manager isolation settings
+        // (e.g. pnpm strict mode). When @nuxtjs/i18n is NOT present we keep
+        // vue-i18n external so that a missing optional installation does not
+        // cause a build error.
+        if (hasI18n) {
+          nitroConfig.externals = nitroConfig.externals || {}
+          const inline: string[] = Array.isArray(nitroConfig.externals.inline)
+            ? nitroConfig.externals.inline as string[]
+            : []
+          if (!inline.includes('vue-i18n')) {
+            inline.push('vue-i18n')
+          }
+          nitroConfig.externals.inline = inline
+        }
+        else {
+          // Mark vue-i18n as external to avoid build errors when it's not installed
+          // It's dynamically imported only when needed
+          nitroConfig.rollupConfig.external
+            = nitroConfig.rollupConfig.external || []
+          if (Array.isArray(nitroConfig.rollupConfig.external)) {
+            nitroConfig.rollupConfig.external.push('vue-i18n')
+          }
         }
 
         // Add Vue plugin with strict include pattern

@@ -9,11 +9,7 @@ const bodySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const { name, locale, props } = await readValidatedBody(
-    event,
-    bodySchema.parse,
-  )
+  const { name, locale, props } = await readValidatedBody(event, bodySchema.parse)
 
-  // Intentionally do NOT pass event - tests that i18n works without event context
   return renderEmailComponent(name, props, { locale })
 })

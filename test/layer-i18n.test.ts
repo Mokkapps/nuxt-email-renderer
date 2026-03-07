@@ -2,12 +2,17 @@ import { resolve } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
 
-describe('i18n support', async () => {
+describe('i18n with layers', async () => {
   await setup({
-    rootDir: resolve(__dirname, './fixtures/i18n'),
+    rootDir: resolve(__dirname, './fixtures/layer-i18n'),
   })
 
-  it('renders email with default locale (en)', async () => {
+  it('renders the index page', async () => {
+    const html = await $fetch('/')
+    expect(html).toContain('<div>Layer i18n Test</div>')
+  })
+
+  it('renders email with default locale (en) using locale files from a layer', async () => {
     const response = await $fetch('/api/send-email', {
       method: 'POST',
       body: {
@@ -22,7 +27,7 @@ describe('i18n support', async () => {
     expect(response).toContain('Click here')
   })
 
-  it('renders email with German locale (de)', async () => {
+  it('renders email with German locale (de) using locale files from a layer', async () => {
     const response = await $fetch('/api/send-email', {
       method: 'POST',
       body: {
@@ -38,7 +43,7 @@ describe('i18n support', async () => {
     expect(response).toContain('Hier klicken')
   })
 
-  it('renders email with Spanish locale (es)', async () => {
+  it('renders email with Spanish locale (es) using locale files from a layer', async () => {
     const response = await $fetch('/api/send-email', {
       method: 'POST',
       body: {

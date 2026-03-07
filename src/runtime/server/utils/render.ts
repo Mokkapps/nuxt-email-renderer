@@ -1,5 +1,5 @@
 import { renderToString } from 'vue/server-renderer'
-import { createError, type H3Event } from 'h3'
+import { createError } from 'h3'
 import type { AllowedComponentProps, Component, VNodeProps } from 'vue'
 import { createSSRApp } from 'vue'
 import type { Options } from './options'
@@ -18,92 +18,47 @@ async function registerEmailComponents(app: ReturnType<typeof createSSRApp>) {
   }
 }
 
+/**
+ * Install vue-i18n using messages loaded into runtimeConfig at build time.
+ * Throws a descriptive error when vue-i18n is not installed.
+ */
 async function setupI18n(
   app: ReturnType<typeof createSSRApp>,
   locale?: string,
-  event?: H3Event,
-) {
-  try {
-    if (event && setupI18nFromEvent) {
-      const ok = await setupI18nFromEvent(app, event, locale)
-      if (ok) {
-        return true
-      }
-    }
-    return await setupI18nFromRuntimeConfig(app, locale)
-  }
-  catch (error) {
-    console.warn('[nuxt-email-renderer] Failed to setup i18n:', error)
+): Promise<boolean> {
+  const { useRuntimeConfig } = await import('nitropack/runtime')
+  const config = useRuntimeConfig()
+
+  if (!config.public?.i18n) {
     return false
   }
-}
 
-// Simplified event context approach
-async function setupI18nFromEvent(
-  app: ReturnType<typeof createSSRApp>,
-  event: H3Event,
-  locale?: string,
-): Promise<boolean> {
+  const i18nConfig = config.public.i18n as Record<string, unknown>
+  const messages = (i18nConfig.messages || {}) as Record<string, unknown>
+  const defaultLocale = (i18nConfig.defaultLocale || i18nConfig.locale || 'en') as string
+
+  let createI18n: (typeof import('vue-i18n'))['createI18n']
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const eventContext = event.context as Record<string, any>
-    const i18nInstance = eventContext.i18n || eventContext.$i18n
-    if (!i18nInstance) {
-      return false
-    }
-
-    const { createI18n } = await import('vue-i18n')
-    const messages = i18nInstance.messages || {}
-    const instanceLocale
-      = i18nInstance.locale || i18nInstance.defaultLocale || 'en'
-    const i18n = createI18n({
-      legacy: false,
-      locale: locale || instanceLocale,
-      messages,
-      ...(i18nInstance.options || {}),
-    })
-    app.use(i18n)
-    return true
+    ({ createI18n } = await import('vue-i18n'))
   }
   catch {
-    return false
+    const msg
+      = '[nuxt-email-renderer] vue-i18n is required for email template '
+        + 'translations but could not be imported. '
+        + 'Please add "vue-i18n" as a dependency of your project '
+        + '(e.g. `pnpm add vue-i18n`).'
+    console.error(msg)
+    throw new Error(msg)
   }
-}
 
-async function setupI18nFromRuntimeConfig(
-  app: ReturnType<typeof createSSRApp>,
-  locale?: string,
-): Promise<boolean> {
-  try {
-    const { useRuntimeConfig } = await import('nitropack/runtime')
-    const config = useRuntimeConfig()
+  app.use(createI18n({
+    legacy: false,
+    locale: locale || defaultLocale,
+    messages,
+    fallbackLocale: defaultLocale,
+  }))
 
-    if (!config.public?.i18n) {
-      return false
-    }
-
-    const { createI18n } = await import('vue-i18n')
-    const i18nConfig = config.public.i18n as Record<string, unknown>
-
-    // Get messages from runtime config (loaded during module setup)
-    const messages = (i18nConfig.messages || {}) as Record<string, unknown>
-    const defaultLocale = (i18nConfig.defaultLocale
-      || i18nConfig.locale
-      || 'en') as string
-
-    const i18n = createI18n({
-      legacy: false,
-      locale: locale || defaultLocale,
-      messages: messages as never,
-      fallbackLocale: defaultLocale,
-    })
-
-    app.use(i18n)
-    return true
-  }
-  catch {
-    return false
-  }
+  return true
 }
 
 export type RenderOptions = Options & {
@@ -112,11 +67,6 @@ export type RenderOptions = Options & {
    * Only applies if @nuxtjs/i18n is installed.
    */
   locale?: string
-  /**
-   * The H3 event context, used to extract i18n configuration.
-   * @internal
-   */
-  event?: H3Event
 }
 
 export type ExtractComponentProps<TComponent> = TComponent extends new () => {
@@ -155,7 +105,7 @@ export async function render<T extends Component>(
   await registerEmailComponents(App)
 
   // Always try to setup i18n to support $t() in email templates when i18n is configured
-  await setupI18n(App, options?.locale, options?.event)
+  await setupI18n(App, options?.locale)
 
   const markup = await renderToString(App)
 

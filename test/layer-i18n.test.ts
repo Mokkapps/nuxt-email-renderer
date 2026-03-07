@@ -43,16 +43,34 @@ describe('i18n with layers', async () => {
     expect(response).toContain('Hier klicken')
   })
 
-  it('$t is always a function even when locale files are used', async () => {
-    // Should not throw "_ctx.$t is not a function"
-    await expect(
-      $fetch('/api/send-email', {
-        method: 'POST',
-        body: {
-          name: 'Welcome',
-          props: { name: 'Test' },
-        },
-      }),
-    ).resolves.toBeTruthy()
+  it('renders email with Spanish locale (es) using locale files from a layer', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: {
+        name: 'Welcome',
+        locale: 'es',
+        props: { name: 'Juan' },
+      },
+    })
+
+    expect(response).toContain('Bienvenido')
+    expect(response).toContain('¡Hola, Juan!')
+    expect(response).toContain('Este es un correo electrónico de prueba')
+    expect(response).toContain('Haz clic aquí')
+  })
+
+  it('falls back to default locale when invalid locale is provided', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: {
+        name: 'Welcome',
+        locale: 'invalid',
+        props: { name: 'Test' },
+      },
+    })
+
+    // Should fall back to English
+    expect(response).toContain('Welcome')
+    expect(response).toContain('Hello, Test!')
   })
 })

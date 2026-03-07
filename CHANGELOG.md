@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.5.4
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.3...v2.5.4)
+
+### 🩹 Fixes
+
+- Support $t in email templates when using layers with @nuxtjs/i18n v10 ([2d95f6f](https://github.com/mokkapps/nuxt-email-renderer/commit/2d95f6f))
+- Throw descriptive error when vue-i18n is missing instead of silent fallback ([482714f](https://github.com/mokkapps/nuxt-email-renderer/commit/482714f))
+
+### 💅 Refactors
+
+- Simplify i18n integration - single setupI18n function, no event context path ([ee38745](https://github.com/mokkapps/nuxt-email-renderer/commit/ee38745))
+
+### ✅ Tests
+
+- Improve i18n test coverage and remove redundant no-event handler ([f548ed0](https://github.com/mokkapps/nuxt-email-renderer/commit/f548ed0))
+
 ## v2.5.3
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.2...v2.5.3)

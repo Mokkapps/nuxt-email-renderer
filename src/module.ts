@@ -174,8 +174,10 @@ export default defineNuxtModule<ModuleOptions>({
                     messages[locale.code] = defu(messages[locale.code] || {}, content)
                     break
                   }
-                  catch {
-                    // ignore parse errors
+                  catch (error) {
+                    logger.warn(
+                      `${LOGGER_PREFIX} Failed to parse i18n locale file "${filePath}": ${(error as Error).message}`,
+                    )
                   }
                 }
               }

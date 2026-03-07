@@ -23,55 +23,18 @@ async function setupI18n(
   locale?: string,
   event?: H3Event,
 ) {
-  try {
-    if (event) {
-      const ok = await setupI18nFromEvent(app, event, locale)
-      if (ok) {
-        return true
-      }
+  if (event) {
+    const ok = await setupI18nFromEvent(app, event, locale)
+    if (ok) {
+      return true
     }
-    return await setupI18nFromRuntimeConfig(app, locale)
   }
-  catch (error) {
-    console.warn('[nuxt-email-renderer] Failed to setup i18n:', error)
-    return false
-  }
+  return await setupI18nFromRuntimeConfig(app, locale)
 }
 
 /**
- * Install a minimal $t plugin on the Vue app using raw messages.
- * This is used as a fallback when vue-i18n is not available.
- * Supports named interpolation ({name}) but not positional (array) params.
- */
-function installFallbackI18nPlugin(
-  app: ReturnType<typeof createSSRApp>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  messages: Record<string, any>,
-  locale: string,
-  fallbackLocale: string,
-) {
-  const t = (key: string, params?: Record<string, unknown> | unknown[]) => {
-    const localeMessages
-      = (messages[locale] || messages[fallbackLocale] || {}) as Record<
-        string,
-        string
-      >
-    const message = (localeMessages[key] ?? key) as string
-    if (!params) return message
-    // Named params only; array-style positional params are not supported in
-    // this lightweight fallback (they require the full vue-i18n runtime).
-    const namedParams = Array.isArray(params) ? {} : (params as Record<string, unknown>)
-    return message.replace(
-      /\{(\w+)\}/g,
-      (_, k) => String(namedParams[k] ?? `{${k}}`),
-    )
-  }
-  app.config.globalProperties.$t = t
-}
-
-/**
- * Try to install vue-i18n on the app. Returns true on success.
- * Falls back to a minimal translation plugin if vue-i18n is unavailable.
+ * Install vue-i18n on the app. Throws a descriptive error when vue-i18n is
+ * not installed so consumers get a clear actionable message in the logs.
  */
 async function installI18nPlugin(
   app: ReturnType<typeof createSSRApp>,
@@ -80,23 +43,28 @@ async function installI18nPlugin(
   locale: string,
   fallbackLocale: string,
 ): Promise<boolean> {
+  let createI18n: (typeof import('vue-i18n'))['createI18n']
   try {
-    const { createI18n } = await import('vue-i18n')
-    const i18n = createI18n({
-      legacy: false,
-      locale,
-      messages,
-      fallbackLocale,
-    })
-    app.use(i18n)
-    return true
+    ({ createI18n } = await import('vue-i18n'))
   }
   catch {
-    // vue-i18n not available – install a minimal fallback plugin so $t is
-    // always a function in email templates.
-    installFallbackI18nPlugin(app, messages, locale, fallbackLocale)
-    return true
+    const msg
+      = '[nuxt-email-renderer] vue-i18n is required for email template '
+        + 'translations but could not be imported. '
+        + 'Please add "vue-i18n" as a dependency of your project '
+        + '(e.g. `pnpm add vue-i18n`).'
+    console.error(msg)
+    throw new Error(msg)
   }
+
+  const i18n = createI18n({
+    legacy: false,
+    locale,
+    messages,
+    fallbackLocale,
+  })
+  app.use(i18n)
+  return true
 }
 
 // Attempt to extract i18n configuration from the H3 event context.
@@ -107,72 +75,62 @@ async function setupI18nFromEvent(
   event: H3Event,
   locale?: string,
 ): Promise<boolean> {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const eventContext = event.context as Record<string, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const eventContext = event.context as Record<string, any>
 
-    // @nuxtjs/i18n v10 stores its context under event.context.nuxtI18n.
-    // However, messages there may be empty placeholders when locale files are
-    // used (they are loaded lazily). Only proceed when messages are populated;
-    // otherwise fall through to the runtimeConfig path which has messages
-    // loaded at build time.
-    const nuxtI18nCtx = eventContext.nuxtI18n
-    if (nuxtI18nCtx?.vueI18nOptions) {
-      const vueI18nOptions = nuxtI18nCtx.vueI18nOptions
-      const messages = (vueI18nOptions.messages || {}) as Record<string, unknown>
-      const defaultLocale = (vueI18nOptions.defaultLocale || vueI18nOptions.locale || 'en') as string
-      const resolvedLocale = locale || defaultLocale
+  // @nuxtjs/i18n v10 stores its context under event.context.nuxtI18n.
+  // However, messages there may be empty placeholders when locale files are
+  // used (they are loaded lazily). Only proceed when messages are populated;
+  // otherwise fall through to the runtimeConfig path which has messages
+  // loaded at build time.
+  const nuxtI18nCtx = eventContext.nuxtI18n
+  if (nuxtI18nCtx?.vueI18nOptions) {
+    const vueI18nOptions = nuxtI18nCtx.vueI18nOptions
+    const messages = (vueI18nOptions.messages || {}) as Record<string, unknown>
+    const defaultLocale = (vueI18nOptions.defaultLocale || vueI18nOptions.locale || 'en') as string
+    const resolvedLocale = locale || defaultLocale
 
-      // Only use the event context messages when they contain actual translations
-      // for the requested (or default) locale.
-      const localeMsg = (messages[resolvedLocale] || messages[defaultLocale] || {}) as Record<string, unknown>
-      if (Object.keys(localeMsg).length > 0) {
-        return await installI18nPlugin(app, messages, resolvedLocale, defaultLocale)
-      }
-      // Empty messages – fall through to runtimeConfig below
-      return false
+    // Only use the event context messages when they contain actual translations
+    // for the requested (or default) locale.
+    const localeMsg = (messages[resolvedLocale] || messages[defaultLocale] || {}) as Record<string, unknown>
+    if (Object.keys(localeMsg).length > 0) {
+      return await installI18nPlugin(app, messages, resolvedLocale, defaultLocale)
     }
-
-    // Legacy: some setups expose the i18n instance directly on the event context
-    const i18nInstance = eventContext.i18n || eventContext.$i18n
-    if (!i18nInstance) {
-      return false
-    }
-
-    const messages = (i18nInstance.messages || {}) as Record<string, unknown>
-    const instanceLocale = (i18nInstance.locale || i18nInstance.defaultLocale || 'en') as string
-    return await installI18nPlugin(app, messages, locale || instanceLocale, instanceLocale)
-  }
-  catch {
+    // Empty messages – fall through to runtimeConfig below
     return false
   }
+
+  // Legacy: some setups expose the i18n instance directly on the event context
+  const i18nInstance = eventContext.i18n || eventContext.$i18n
+  if (!i18nInstance) {
+    return false
+  }
+
+  const messages = (i18nInstance.messages || {}) as Record<string, unknown>
+  const instanceLocale = (i18nInstance.locale || i18nInstance.defaultLocale || 'en') as string
+  return await installI18nPlugin(app, messages, locale || instanceLocale, instanceLocale)
 }
 
 async function setupI18nFromRuntimeConfig(
   app: ReturnType<typeof createSSRApp>,
   locale?: string,
 ): Promise<boolean> {
-  try {
-    const { useRuntimeConfig } = await import('nitropack/runtime')
-    const config = useRuntimeConfig()
+  const { useRuntimeConfig } = await import('nitropack/runtime')
+  const config = useRuntimeConfig()
 
-    if (!config.public?.i18n) {
-      return false
-    }
-
-    const i18nConfig = config.public.i18n as Record<string, unknown>
-
-    // Get messages from runtime config (loaded during module setup)
-    const messages = (i18nConfig.messages || {}) as Record<string, unknown>
-    const defaultLocale = (i18nConfig.defaultLocale
-      || i18nConfig.locale
-      || 'en') as string
-
-    return await installI18nPlugin(app, messages, locale || defaultLocale, defaultLocale)
-  }
-  catch {
+  if (!config.public?.i18n) {
     return false
   }
+
+  const i18nConfig = config.public.i18n as Record<string, unknown>
+
+  // Get messages from runtime config (loaded during module setup)
+  const messages = (i18nConfig.messages || {}) as Record<string, unknown>
+  const defaultLocale = (i18nConfig.defaultLocale
+    || i18nConfig.locale
+    || 'en') as string
+
+  return await installI18nPlugin(app, messages, locale || defaultLocale, defaultLocale)
 }
 
 export type RenderOptions = Options & {

@@ -11,5 +11,5 @@ const bodySchema = z.object({
 export default defineEventHandler(async (event) => {
   const { name, locale, props } = await readValidatedBody(event, bodySchema.parse)
 
-  return renderEmailComponent(name, props, { locale, event })
+  return renderEmailComponent(name, props, { locale })
 })

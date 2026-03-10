@@ -191,11 +191,14 @@ export default defineNuxtModule<ModuleOptions>({
           }
         }
 
-        // Store essential i18n configuration
+        // Store essential i18n configuration.
+        // NOTE: We intentionally do NOT set `locales` here. @nuxtjs/i18n already
+        // writes its own processed locales into runtimeConfig.public.i18n.locales.
+        // defu concatenates arrays, so adding locales a second time would produce
+        // duplicates visible to any code that reads useI18n().locales.
         nuxt.options.runtimeConfig.public.i18n = defu(publicI18n, {
           defaultLocale:
             i18nOptions.defaultLocale || i18nOptions.locale || 'en',
-          locales: i18nOptions.locales || [],
           messages,
           vueI18n:
             typeof i18nOptions.vueI18n === 'object' ? i18nOptions.vueI18n : {},

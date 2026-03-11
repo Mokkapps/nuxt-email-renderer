@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.5.5
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.4...v2.5.5)
+
+### 🩹 Fixes
+
+- Remove duplicate locales in runtimeConfig.public.i18n caused by defu array concatenation ([7aa8e8b](https://github.com/mokkapps/nuxt-email-renderer/commit/7aa8e8b))
+
 ## v2.5.4
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.3...v2.5.4)

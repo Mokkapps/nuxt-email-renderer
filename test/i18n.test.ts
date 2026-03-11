@@ -68,4 +68,17 @@ describe('i18n support', async () => {
     expect(response).toContain('Welcome')
     expect(response).toContain('Hello, Test!')
   })
+
+  it('does not duplicate locales in runtimeConfig.public.i18n', async () => {
+    const locales = await $fetch<Array<{ code: string }>>('/api/i18n-locales')
+
+    // Each locale code must appear exactly once – no duplicates caused by
+    // nuxt-email-renderer writing locales on top of what @nuxtjs/i18n already set.
+    const codes = locales.map(l => l.code)
+    const uniqueCodes = [...new Set(codes)]
+    expect(codes.length).toBe(uniqueCodes.length)
+
+    // The expected locales from the fixture nuxt.config.ts
+    expect(uniqueCodes.sort()).toEqual(['de', 'en', 'es'])
+  })
 })

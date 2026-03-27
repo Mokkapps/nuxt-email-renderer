@@ -10,6 +10,7 @@ import {
 import { existsSync, readFileSync } from 'node:fs'
 import { defu } from 'defu'
 import vue from '@vitejs/plugin-vue'
+import { nitroInlineAssetPlugin } from './inline-asset-plugin'
 import { setupDevToolsUI } from './devtools'
 import {
   generateTemplateMapping,
@@ -343,10 +344,11 @@ export default defineNuxtModule<ModuleOptions>({
         })
 
         if (Array.isArray(nitroConfig.rollupConfig.plugins)) {
+          nitroConfig.rollupConfig.plugins.unshift(nitroInlineAssetPlugin() as never)
           nitroConfig.rollupConfig.plugins.unshift(vuePlugin as never)
         }
         else {
-          nitroConfig.rollupConfig.plugins = [vuePlugin as never]
+          nitroConfig.rollupConfig.plugins = [nitroInlineAssetPlugin() as never, vuePlugin as never]
         }
 
         logger.success(

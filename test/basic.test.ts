@@ -51,15 +51,4 @@ describe('E2E', async () => {
     expect(response).toContain('<!DOCTYPE html')
   })
 
-  it('inlines supported local assets imported with ?inline', async () => {
-    const response = await $fetch('/api/send-email', {
-      method: 'POST',
-      body: { name: 'InlineAsset' },
-    })
-
-    expect(typeof response).toBe('string')
-    expect(response).toContain('<!DOCTYPE html')
-    expect(response).toContain('data:image/svg+xml;base64,')
-    expect(response).toContain('alt="Inline Logo"')
-  })
 })

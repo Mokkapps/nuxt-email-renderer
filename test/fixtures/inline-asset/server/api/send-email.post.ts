@@ -1,0 +1,14 @@
+import z from 'zod'
+import { defineEventHandler, readValidatedBody } from 'h3'
+import { renderEmailComponent } from '#imports'
+
+const bodySchema = z.object({
+  name: z.string().min(1),
+  props: z.custom<Record<string, any>>().optional(),
+})
+
+export default defineEventHandler(async (event) => {
+  const { name, props } = await readValidatedBody(event, bodySchema.parse)
+
+  return renderEmailComponent(name, props)
+})

@@ -50,4 +50,5 @@ describe('E2E', async () => {
     expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
   })
+
 })

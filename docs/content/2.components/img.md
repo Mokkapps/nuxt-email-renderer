@@ -35,6 +35,44 @@ Add images to your email templates:
 </template>
 ```
 
+## Inline Local Assets
+
+You can import local image files with `?inline` inside email templates and reusable email components. During the Nitro build, Nuxt Email Renderer converts supported files into `data:` URLs so they can be used directly with `EImg`.
+
+```vue [app/emails/WelcomeEmail.vue]
+<script setup lang="ts">
+import heroLogoSrc from '~/app/assets/hero-logo.png?inline'
+</script>
+
+<template>
+  <EHtml>
+    <EBody>
+      <EContainer>
+        <EImg
+          :src="heroLogoSrc"
+          alt="Company Logo"
+          :width="200"
+          :height="60"
+        />
+      </EContainer>
+    </EBody>
+  </EHtml>
+</template>
+```
+
+Supported file types:
+
+- `.gif`
+- `.jpg`
+- `.jpeg`
+- `.png`
+- `.svg`
+- `.webp`
+
+::note
+Relative `?inline` imports are resolved from the file that imports them. This makes inline assets a good fit for logos, icons, and other small branded files that should be embedded directly in the rendered HTML.
+::
+
 ## Props
 
 | Prop | Type | Required | Description |
@@ -73,6 +111,8 @@ Add images to your email templates:
   />
 </template>
 ```
+
+If you want to ship the image directly inside the rendered email HTML, use a local `?inline` import instead of a relative URL.
 
 ## Accessibility
 

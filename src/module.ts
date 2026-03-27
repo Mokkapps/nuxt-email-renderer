@@ -344,11 +344,16 @@ export default defineNuxtModule<ModuleOptions>({
         })
 
         if (Array.isArray(nitroConfig.rollupConfig.plugins)) {
-          nitroConfig.rollupConfig.plugins.unshift(nitroInlineAssetPlugin() as never)
-          nitroConfig.rollupConfig.plugins.unshift(vuePlugin as never)
+          nitroConfig.rollupConfig.plugins.unshift(
+            nitroInlineAssetPlugin() as never,
+            vuePlugin as never,
+          )
         }
         else {
-          nitroConfig.rollupConfig.plugins = [nitroInlineAssetPlugin() as never, vuePlugin as never]
+          nitroConfig.rollupConfig.plugins = [
+            nitroInlineAssetPlugin() as never,
+            vuePlugin as never,
+          ]
         }
 
         logger.success(

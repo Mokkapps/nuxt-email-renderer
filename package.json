@@ -66,7 +66,7 @@
     "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.1.5",
     "changelogen": "^0.6.2",
-    "eslint": "^10.3.0",
+    "eslint": "^9.39.4",
     "happy-dom": "^20.9.0",
     "jsdom": "^29.1.1",
     "nuxt": "4.4.4",
@@ -92,7 +92,8 @@
   "resolutions": {
     "nuxt": "^4.4.4",
     "typescript": "^6.0.3",
-    "vite": "~7.0.6"
+    "vite": "~7.0.6",
+    "eslint-flat-config-utils": "3.0.0"
   },
   "packageManager": "pnpm@10.28.2"
 }

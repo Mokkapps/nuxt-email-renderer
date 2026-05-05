@@ -23,7 +23,7 @@ export function setupDevToolsUI(nuxt: Nuxt, resolver: Resolver) {
   else {
     nuxt.hook('vite:extendConfig', (config) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const serverConfig = (config as any)
+      const serverConfig = config as any
       serverConfig.server = serverConfig.server || {}
       serverConfig.server.proxy = serverConfig.server.proxy || {}
       serverConfig.server.proxy[DEVTOOLS_UI_ROUTE] = {

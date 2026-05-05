@@ -50,14 +50,17 @@ export default defineNuxtModule<ModuleOptions>({
     const { resolve } = createResolver(import.meta.url)
 
     // Configure Nitro
-    nuxt.options.nitro ||= {}
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nuxtOptions = nuxt.options as any
+
+    nuxtOptions.nitro ||= {}
 
     // Configure esbuild for TypeScript support
-    nuxt.options.nitro.esbuild = nuxt.options.nitro.esbuild || {}
-    nuxt.options.nitro.esbuild.options
-      = nuxt.options.nitro.esbuild.options || {}
-    nuxt.options.nitro.esbuild.options.target
-      = nuxt.options.nitro.esbuild.options.target || 'es2020'
+    nuxtOptions.nitro.esbuild = nuxtOptions.nitro.esbuild || {}
+    nuxtOptions.nitro.esbuild.options
+      = nuxtOptions.nitro.esbuild.options || {}
+    nuxtOptions.nitro.esbuild.options.target
+      = nuxtOptions.nitro.esbuild.options.target || 'es2020'
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
@@ -78,7 +81,8 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     // Check if @nuxtjs/i18n module is installed and configure i18n support
-    nuxt.hook('nitro:config', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(nuxt as any).hook('nitro:config', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (hasI18n && (nuxt.options as any).i18n) {
         // Store i18n configuration in runtime config for server-side email rendering
@@ -255,12 +259,12 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions
     ).emailsDir = templatesDir
 
-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
+    nuxtOptions.nitro.alias = nuxtOptions.nitro.alias || {}
     // Inline runtime in Nitro bundle
     // Let Nuxt/Nitro handle Vue dependencies to avoid conflicts with other modules
-    nuxt.options.nitro.externals = defu(
-      typeof nuxt.options.nitro.externals === 'object'
-        ? nuxt.options.nitro.externals
+    nuxtOptions.nitro.externals = defu(
+      typeof nuxtOptions.nitro.externals === 'object'
+        ? nuxtOptions.nitro.externals
         : {},
       {
         inline: [resolve('./runtime')],
@@ -275,7 +279,8 @@ export default defineNuxtModule<ModuleOptions>({
     ])
 
     // Generate virtual module containing all email templates
-    nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(nuxt.hooks as any).hook('nitro:config', async (nitroConfig: any) => {
       try {
         // Scan all layer template directories and merge the mappings
         // Process in reverse order so higher-priority layers (earlier in array) override lower-priority ones
@@ -386,7 +391,8 @@ export default defineNuxtModule<ModuleOptions>({
       })
 
       // Configure Nitro dev storage for the primary templates directory
-      nuxt.hooks.hook('nitro:config', (nitroConfig) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(nuxt.hooks as any).hook('nitro:config', (nitroConfig: any) => {
         nitroConfig.devStorage = nitroConfig.devStorage || {}
         nitroConfig.devStorage['emails'] = {
           driver: 'fs',
@@ -396,10 +402,10 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     // Add all layer template directories as Nitro server assets
-    nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
+    nuxtOptions.nitro.serverAssets = nuxtOptions.nitro.serverAssets || []
     for (const [index, dir] of templatesDirs.entries()) {
       const layerName = basename(dirname(dir))
-      nuxt.options.nitro.serverAssets.push({
+      nuxtOptions.nitro.serverAssets.push({
         baseName: index === 0 ? 'emails' : `emails_${layerName}_${index}`,
         dir,
       })

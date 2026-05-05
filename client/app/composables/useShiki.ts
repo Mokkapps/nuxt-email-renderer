@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { type BundledLanguage, type BundledTheme, getSingletonHighlighter, type HighlighterGeneric } from 'shiki'
 import { consola } from 'consola'
 

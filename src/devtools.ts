@@ -22,18 +22,21 @@ export function setupDevToolsUI(nuxt: Nuxt, resolver: Resolver) {
   // In local development, start a separate Nuxt Server and proxy to serve the client
   else {
     nuxt.hook('vite:extendConfig', (config) => {
-      config.server = config.server || {}
-      config.server.proxy = config.server.proxy || {}
-      config.server.proxy[DEVTOOLS_UI_ROUTE] = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const serverConfig = (config as any)
+      serverConfig.server = serverConfig.server || {}
+      serverConfig.server.proxy = serverConfig.server.proxy || {}
+      serverConfig.server.proxy[DEVTOOLS_UI_ROUTE] = {
         target: 'http://localhost:' + DEVTOOLS_UI_LOCAL_PORT + DEVTOOLS_UI_ROUTE,
         changeOrigin: true,
         followRedirects: true,
-        rewrite: path => path.replace(DEVTOOLS_UI_ROUTE, ''),
+        rewrite: (path: string) => path.replace(DEVTOOLS_UI_ROUTE, ''),
       }
     })
   }
 
-  nuxt.hook('devtools:customTabs', (tabs) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(nuxt as any).hook('devtools:customTabs', (tabs: any[]) => {
     tabs.push({
       // unique identifier
       name: 'nuxt-email-renderer',

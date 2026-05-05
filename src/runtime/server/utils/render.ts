@@ -54,7 +54,8 @@ async function setupI18n(
   app.use(createI18n({
     legacy: false,
     locale: locale || defaultLocale,
-    messages,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    messages: messages as any,
     fallbackLocale: defaultLocale,
   }))
 

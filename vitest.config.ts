@@ -16,12 +16,15 @@ export default defineConfig({
           name: 'module',
         },
       }),
-      await defineVitestProject({
+      {
         test: {
           include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
           name: 'module-e2e',
+          environment: 'node',
+          hookTimeout: 180_000,
+          testTimeout: 60_000,
         },
-      }),
+      },
     ],
   },
 })

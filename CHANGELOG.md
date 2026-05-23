@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.7.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.6.0...v2.7.0)
+
+### 🏡 Chore
+
+- Remove unnecessary blank line in basic.test.ts ([0656870](https://github.com/mokkapps/nuxt-email-renderer/commit/0656870))
+- Upgrade dependencies within current major versions ([29cc4da](https://github.com/mokkapps/nuxt-email-renderer/commit/29cc4da))
+- Upgrade @nuxt/test-utils to v4 and Vitest 4 ([036697f](https://github.com/mokkapps/nuxt-email-renderer/commit/036697f))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.6.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.5.5...v2.6.0)

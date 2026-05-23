@@ -1,6 +1,7 @@
 import z from 'zod'
-import { defineEventHandler, readValidatedBody } from 'h3'
+import { defineEventHandler } from 'h3'
 import { renderEmailComponent } from '#imports'
+import { readJsonBody } from '../../../_helpers/read-json-body'
 
 const bodySchema = z.object({
   name: z.string().min(1),
@@ -9,10 +10,7 @@ const bodySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const { name, locale, props } = await readValidatedBody(
-    event,
-    bodySchema.parse,
-  )
+  const { name, locale, props } = bodySchema.parse(await readJsonBody(event))
 
   return renderEmailComponent(name, props, { locale })
 })

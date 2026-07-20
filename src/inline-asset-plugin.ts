@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises'
-import { dirname, extname, isAbsolute, resolve } from 'node:path'
+import { posix, extname, isAbsolute } from 'node:path'
 
 const INLINE_IMAGE_MIME_TYPES: Record<string, string> = {
   '.gif': 'image/gif',
@@ -8,6 +8,11 @@ const INLINE_IMAGE_MIME_TYPES: Record<string, string> = {
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
+}
+
+/** Normalize a path to forward slashes (no-op on POSIX, converts backslashes on Windows). */
+function toForwardSlashes(p: string): string {
+  return p.replace(/\\/g, '/')
 }
 
 /**
@@ -26,10 +31,11 @@ export function nitroInlineAssetPlugin() {
       const cleanSource = source.slice(0, -'?inline'.length)
 
       if (source.startsWith('.') && importer) {
-        return `${resolve(dirname(importer), cleanSource)}?inline`
+        const dir = posix.dirname(toForwardSlashes(importer))
+        return `${posix.join(dir, cleanSource)}?inline`
       }
 
-      if (isAbsolute(cleanSource)) {
+      if (isAbsolute(cleanSource) || posix.isAbsolute(cleanSource)) {
         return source
       }
 

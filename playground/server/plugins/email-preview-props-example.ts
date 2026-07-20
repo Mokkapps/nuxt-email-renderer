@@ -9,7 +9,6 @@ export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook(
     'nuxt-email-renderer:devtools:resolveProps',
     (context: DevtoolsPreviewPropsContext) => {
-
       console.info('Resolving props for template:', context.templateName, context.props)
 
       if (context.templateName !== 'AwsVerifyEmail') {

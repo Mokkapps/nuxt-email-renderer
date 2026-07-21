@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const cleanTemplateName = templateName.endsWith('.vue')
-      ? templateName.replace('.vue', '')
+      ? templateName.replace(/\.vue$/, '')
       : templateName
 
     const previewPropsContext: DevtoolsPreviewPropsContext = {
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       previewPropsContext,
     )
 
-    if (isInvalidProps(previewPropsContext.props)) {
+    if (!isPlainObject(previewPropsContext.props)) {
       throw createError({
         statusCode: 500,
         statusMessage: '[nuxt-email-renderer] Invalid props returned by "nuxt-email-renderer:devtools:resolveProps" hook. Expected a plain object.',
@@ -67,11 +67,11 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-function isInvalidProps(value: unknown): value is null | undefined | unknown[] {
-  return (
-    value === null
-    || value === undefined
-    || Array.isArray(value)
-    || typeof value !== 'object'
-  )
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    return false
+  }
+
+  const proto = Object.getPrototypeOf(value)
+  return proto === Object.prototype || proto === null
 }

@@ -476,6 +476,23 @@ export {}
       },
     })
 
+    addTypeTemplate({
+      filename: 'types/nuxt-email-renderer-hooks.d.ts',
+      getContents: () => {
+        return `
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    'nuxt-email-renderer:devtools:resolveProps': (
+      context: import('nuxt-email-renderer').DevtoolsPreviewPropsContext
+    ) => void | Promise<void>
+  }
+}
+
+export {}
+`
+      },
+    })
+
     if (options.devtools) setupDevToolsUI(nuxt, resolver)
   },
 })

@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.9.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.8.0...v2.9.0)
+
+### 🚀 Enhancements
+
+- Dynamic content in devtools preview via hook ([b6da7de](https://github.com/mokkapps/nuxt-email-renderer/commit/b6da7de))
+
+### 🩹 Fixes
+
+- Update path handling in nitroInlineAssetPlugin for OS consistency ([35a1175](https://github.com/mokkapps/nuxt-email-renderer/commit/35a1175))
+
+### ❤️ Contributors
+
+- David De Sloovere <david.desloovere@alistar.net>
+
 ## v2.8.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.7.0...v2.8.0)

@@ -1,5 +1,33 @@
 # Changelog
 
+## v2.10.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.9.0...v2.10.0)
+
+### 🚀 Enhancements
+
+- Add codeHighlighting option to exclude ECodeBlock and Shiki ([e7d13a1](https://github.com/mokkapps/nuxt-email-renderer/commit/e7d13a1))
+
+### 💅 Refactors
+
+- Address review feedback on component path filtering ([55ac030](https://github.com/mokkapps/nuxt-email-renderer/commit/55ac030))
+
+### 📖 Documentation
+
+- Clarify codeHighlighting excludes ECodeBlock and Shiki ([48a6898](https://github.com/mokkapps/nuxt-email-renderer/commit/48a6898))
+
+### 🏡 Chore
+
+- Refine destructuring naming in component filter ([b0a54da](https://github.com/mokkapps/nuxt-email-renderer/commit/b0a54da))
+
+### ✅ Tests
+
+- Tighten component filtering assertions ([90713b3](https://github.com/mokkapps/nuxt-email-renderer/commit/90713b3))
+
+### 🎨 Styles
+
+- Simplify boolean assignment and test assertions ([8528d99](https://github.com/mokkapps/nuxt-email-renderer/commit/8528d99))
+
 ## v2.9.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.8.0...v2.9.0)

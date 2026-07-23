@@ -69,10 +69,10 @@ export default defineNuxtModule<ModuleOptions>({
       = nuxt.options.nitro.esbuild.options || {}
     nuxt.options.nitro.esbuild.options.target
       = nuxt.options.nitro.esbuild.options.target || 'es2020'
-    nuxt.options.nitro.esbuild.options.define = {
-      ...(nuxt.options.nitro.esbuild.options.define || {}),
-      __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__: JSON.stringify(options.codeHighlighting),
-    }
+    const esbuildDefines = nuxt.options.nitro.esbuild.options.define || {}
+    esbuildDefines.__NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
+      = JSON.stringify(options.codeHighlighting)
+    nuxt.options.nitro.esbuild.options.define = esbuildDefines
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,

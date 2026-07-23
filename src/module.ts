@@ -92,8 +92,6 @@ export default defineNuxtModule<ModuleOptions>({
       return false
     })
 
-    const enabledEmailComponentPaths = getEnabledEmailComponentPaths(options.codeHighlighting)
-
     // Check if @nuxtjs/i18n module is installed and configure i18n support
     nuxt.hook('nitro:config', async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -450,6 +448,7 @@ export default defineNuxtModule<ModuleOptions>({
     addTypeTemplate({
       filename: 'types/nuxt-email-renderer-components.d.ts',
       getContents: async () => {
+        const enabledEmailComponentPaths = getEnabledEmailComponentPaths(options.codeHighlighting)
         const componentNames = Object.keys(enabledEmailComponentPaths)
 
         // Generate type declarations for each component

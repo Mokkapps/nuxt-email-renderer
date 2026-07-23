@@ -28,6 +28,6 @@ export function getEnabledEmailComponentPaths(codeHighlighting: boolean) {
     return emailComponentPaths
   }
 
-  const { ECodeBlock: _unusedECodeBlock, ...pathsWithoutCodeBlock } = emailComponentPaths
+  const { ECodeBlock: _removed, ...pathsWithoutCodeBlock } = emailComponentPaths
   return pathsWithoutCodeBlock
 }

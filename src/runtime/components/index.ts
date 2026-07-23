@@ -1,9 +1,8 @@
 declare const __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__: boolean | undefined
 
-const isCodeHighlightingEnabled
-  = typeof __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__ === 'boolean'
-    ? __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
-    : true
+const isCodeHighlightingEnabled = typeof __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__ === 'boolean'
+  ? __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
+  : true
 
 export const emailComponents = {
   EBody: () => import('./body/EBody.vue'),

@@ -1,7 +1,18 @@
+declare const __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__: boolean | undefined
+
+const codeHighlightingEnabled
+  = typeof __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__ === 'boolean'
+    ? __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
+    : true
+
 export const emailComponents = {
   EBody: () => import('./body/EBody.vue'),
   EButton: () => import('./button/EButton.vue'),
-  ECodeBlock: () => import('./code-block/ECodeBlock.vue'),
+  ...(codeHighlightingEnabled
+    ? {
+        ECodeBlock: () => import('./code-block/ECodeBlock.vue'),
+      }
+    : {}),
   ECodeInline: () => import('./code-inline/ECodeInline.vue'),
   EColumn: () => import('./column/EColumn.vue'),
   EContainer: () => import('./container/EContainer.vue'),

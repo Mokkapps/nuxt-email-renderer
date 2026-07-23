@@ -1,0 +1,18 @@
+import { describe, it, expect } from 'vitest'
+import {
+  getEnabledEmailComponentPaths,
+} from '../src/runtime/server/utils/virtual-components'
+
+describe('virtual email components', () => {
+  it('excludes ECodeBlock when code highlighting is disabled', () => {
+    const components = getEnabledEmailComponentPaths(false)
+
+    expect(components).not.toHaveProperty('ECodeBlock')
+  })
+
+  it('keeps ECodeBlock when code highlighting is enabled', () => {
+    const components = getEnabledEmailComponentPaths(true)
+
+    expect(components).toHaveProperty('ECodeBlock')
+  })
+})

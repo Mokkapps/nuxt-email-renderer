@@ -16,6 +16,9 @@ import {
   generateTemplateMapping,
   generateVirtualModule,
 } from './runtime/server/utils/virtual-templates'
+import {
+  getEnabledEmailComponentPaths,
+} from './runtime/server/utils/virtual-components'
 
 export interface ModuleOptions {
   /**
@@ -30,6 +33,13 @@ export interface ModuleOptions {
    * @default true
    */
   devtools: boolean
+  /**
+   * Enable the ECodeBlock component and Shiki code highlighting.
+   * Disable this when you don't use ECodeBlock to avoid bundling Shiki.
+   *
+   * @default true
+   */
+  codeHighlighting: boolean
 }
 
 const LOGGER_PREFIX = 'Nuxt Email Renderer:'
@@ -43,6 +53,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults() {
     return {
       devtools: true,
+      codeHighlighting: true,
     }
   },
   setup(options, nuxt) {
@@ -58,6 +69,10 @@ export default defineNuxtModule<ModuleOptions>({
       = nuxt.options.nitro.esbuild.options || {}
     nuxt.options.nitro.esbuild.options.target
       = nuxt.options.nitro.esbuild.options.target || 'es2020'
+    const esbuildDefines = nuxt.options.nitro.esbuild.options.define || {}
+    esbuildDefines.__NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
+      = JSON.stringify(options.codeHighlighting)
+    nuxt.options.nitro.esbuild.options.define = esbuildDefines
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
@@ -285,7 +300,6 @@ export default defineNuxtModule<ModuleOptions>({
           Object.assign(templateMapping, dirMapping)
         }
         const virtualModuleContent = generateVirtualModule(templateMapping)
-
         // Add virtual module to Nitro
         nitroConfig.virtual = nitroConfig.virtual || {}
         nitroConfig.virtual['#email-templates'] = virtualModuleContent
@@ -434,9 +448,8 @@ export default defineNuxtModule<ModuleOptions>({
     addTypeTemplate({
       filename: 'types/nuxt-email-renderer-components.d.ts',
       getContents: async () => {
-        // Dynamically import the emailComponents to get the component list
-        const { emailComponents } = await import('./runtime/components/index')
-        const componentNames = Object.keys(emailComponents)
+        const enabledEmailComponentPaths = getEnabledEmailComponentPaths(options.codeHighlighting)
+        const componentNames = Object.keys(enabledEmailComponentPaths)
 
         // Generate type declarations for each component
         // Use DefineComponent generic type instead of importing actual files

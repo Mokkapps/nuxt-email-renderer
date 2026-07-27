@@ -96,7 +96,7 @@ export default defineNuxtConfig({
 })
 ```
 
-The specified CSS files are read at build time and injected as a `<style>` tag with `data-id="__nuxt-email-global-style"` in the `<head>` of every rendered email. Multiple files are supported and their contents are concatenated.
+The specified CSS files are read at build time and injected as a `<style>` tag with `data-id="__nuxt-email-global-style"` in the `<head>` of every rendered email. When multiple files are specified, their contents are concatenated **in array order** — so later entries can override earlier ones using CSS specificity or cascade rules.
 
 ::callout{type="info"}
 **Relative paths**: Paths in `globalCss` are resolved relative to your Nuxt project root. Both `assets/css/variables.css` and `./assets/css/variables.css` are supported.

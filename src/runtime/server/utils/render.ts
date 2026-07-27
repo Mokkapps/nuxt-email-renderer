@@ -135,7 +135,9 @@ export async function render<T extends Component>(
 
   let doc = `${doctype}${cleanup(markup)}`
 
-  // Inject global CSS (from nuxtEmailRenderer.globalCss module option) into <head>
+  // Inject global CSS (from nuxtEmailRenderer.globalCss module option) into <head>.
+  // The CSS content is a build-time static string from files explicitly listed by the
+  // developer in nuxt.config.ts, so it is treated as trusted project-owned content.
   const globalCss = await getGlobalCss()
   if (globalCss) {
     doc = doc.replace(

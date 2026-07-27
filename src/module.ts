@@ -324,12 +324,12 @@ export default defineNuxtModule<ModuleOptions>({
         if (options.globalCss?.length) {
           const cssChunks: string[] = []
           for (const cssPath of options.globalCss) {
-            const absolutePath = resolvePath(nuxt.options.rootDir, cssPath)
-            if (existsSync(absolutePath)) {
-              cssChunks.push(readFileSync(absolutePath, 'utf-8'))
+            const resolvedPath = resolvePath(nuxt.options.rootDir, cssPath)
+            if (existsSync(resolvedPath)) {
+              cssChunks.push(readFileSync(resolvedPath, 'utf-8'))
             }
             else {
-              logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${absolutePath}`)
+              logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${resolvedPath}`)
             }
           }
           globalCssContent = cssChunks.join('\n')

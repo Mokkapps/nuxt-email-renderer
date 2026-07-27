@@ -40,6 +40,20 @@ export interface ModuleOptions {
    * @default true
    */
   codeHighlighting: boolean
+  /**
+   * Paths to CSS files (relative to the project root) whose content is automatically
+   * injected into **every** rendered email as a `<style>` tag inside `<head>`.
+   * Use this to share CSS custom properties (variables), resets, or font declarations
+   * between your website and email templates.
+   *
+   * @example
+   * ```ts
+   * nuxtEmailRenderer: {
+   *   globalCss: ['assets/css/variables.css']
+   * }
+   * ```
+   */
+  globalCss?: string[]
 }
 
 const LOGGER_PREFIX = 'Nuxt Email Renderer:'
@@ -304,9 +318,28 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.virtual = nitroConfig.virtual || {}
         nitroConfig.virtual['#email-templates'] = virtualModuleContent
 
+        // Generate virtual module for global CSS
+        // Always create the module so render.ts can safely import it (empty string when unconfigured)
+        let globalCssContent = ''
+        if (options.globalCss?.length) {
+          const cssChunks: string[] = []
+          for (const cssPath of options.globalCss) {
+            const absolutePath = resolvePath(nuxt.options.rootDir, cssPath)
+            if (existsSync(absolutePath)) {
+              cssChunks.push(readFileSync(absolutePath, 'utf-8'))
+            }
+            else {
+              logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${absolutePath}`)
+            }
+          }
+          globalCssContent = cssChunks.join('\n')
+        }
+        nitroConfig.virtual['#nuxt-email-global-css'] = `export default ${JSON.stringify(globalCssContent)};`
+
         // Create alias for the virtual module
         nitroConfig.alias = nitroConfig.alias || {}
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
+        nitroConfig.alias['#nuxt-email-global-css'] = 'virtual:#nuxt-email-global-css'
 
         // Configure Vue plugin for Nitro server build
         // We need Vue compilation for email templates in the server bundle

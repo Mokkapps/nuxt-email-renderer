@@ -11,6 +11,17 @@ import { cleanup } from './cleanup'
 import { emailComponents } from '../../components'
 import { SUBJECT_INJECTION_KEY } from '../../components/subject/ESubject.vue'
 
+async function getGlobalCss(): Promise<string> {
+  try {
+    // @ts-expect-error - #nuxt-email-global-css is a Nitro virtual module generated at build time
+    const { default: css } = await import('#nuxt-email-global-css')
+    return css || ''
+  }
+  catch {
+    return ''
+  }
+}
+
 async function registerEmailComponents(app: ReturnType<typeof createSSRApp>) {
   for (const [name, componentImporter] of Object.entries(emailComponents)) {
     const component = await componentImporter()
@@ -122,7 +133,16 @@ export async function render<T extends Component>(
     return decodedSubject ? { html: plainText, subject: decodedSubject } : plainText
   }
 
-  const doc = `${doctype}${cleanup(markup)}`
+  let doc = `${doctype}${cleanup(markup)}`
+
+  // Inject global CSS (from nuxtEmailRenderer.globalCss module option) into <head>
+  const globalCss = await getGlobalCss()
+  if (globalCss) {
+    doc = doc.replace(
+      /(<\/head>)/i,
+      `<style data-id="__nuxt-email-global-style">${globalCss}</style>$1`,
+    )
+  }
 
   const html = options && options.pretty ? pretty(doc) : doc
 

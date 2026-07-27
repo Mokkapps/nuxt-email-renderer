@@ -49,12 +49,20 @@ describe('nitroInlineAssetPlugin', async () => {
       expect(await plugin.load('/some/file.html?inline')).toBeNull()
     })
 
-    it('returns a base64 data URL module for a supported file', async () => {
+    it('returns a base64 data URL module for a supported image file', async () => {
       const svgPath = resolve(__dirname, 'fixtures/inline-asset/emails/assets/logo.svg')
       const result = await plugin.load(`${svgPath}?inline`)
 
       expect(result).toContain('export default "data:image/svg+xml;base64,')
       expect(result).toMatch(/";$/)
+    })
+
+    it('returns raw CSS string module for a .css file', async () => {
+      const cssPath = resolve(__dirname, 'fixtures/inline-asset/emails/css/brand.css')
+      const result = await plugin.load(`${cssPath}?inline`)
+
+      expect(result).toContain('export default ')
+      expect(result).toContain('--brand-color')
     })
   })
 
@@ -68,5 +76,17 @@ describe('nitroInlineAssetPlugin', async () => {
     expect(response).toContain('<!DOCTYPE html')
     expect(response).toContain('data:image/svg+xml;base64,')
     expect(response).toContain('alt="Inline Logo"')
+  })
+
+  it('inlines CSS files imported with ?inline in rendered email', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'InlineCss' },
+    })
+
+    expect(typeof response).toBe('string')
+    expect(response).toContain('<!DOCTYPE html')
+    expect(response).toContain('--brand-color')
+    expect(response).toContain('data-id="__nuxt-email-style"')
   })
 })

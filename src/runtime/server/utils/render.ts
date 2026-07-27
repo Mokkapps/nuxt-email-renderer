@@ -11,6 +11,27 @@ import { cleanup } from './cleanup'
 import { emailComponents } from '../../components'
 import { SUBJECT_INJECTION_KEY } from '../../components/subject/ESubject.vue'
 
+interface NuxtEmailPrivateRuntimeConfig {
+  nuxtEmailRenderer?: {
+    globalCss?: string
+  }
+}
+
+let _cachedGlobalCss: string | undefined
+
+async function getGlobalCss(): Promise<string> {
+  if (_cachedGlobalCss !== undefined) return _cachedGlobalCss
+  try {
+    const { useRuntimeConfig } = await import('nitropack/runtime')
+    const config = useRuntimeConfig() as unknown as NuxtEmailPrivateRuntimeConfig
+    _cachedGlobalCss = config.nuxtEmailRenderer?.globalCss || ''
+  }
+  catch {
+    _cachedGlobalCss = ''
+  }
+  return _cachedGlobalCss
+}
+
 async function registerEmailComponents(app: ReturnType<typeof createSSRApp>) {
   for (const [name, componentImporter] of Object.entries(emailComponents)) {
     const component = await componentImporter()
@@ -122,7 +143,18 @@ export async function render<T extends Component>(
     return decodedSubject ? { html: plainText, subject: decodedSubject } : plainText
   }
 
-  const doc = `${doctype}${cleanup(markup)}`
+  let doc = `${doctype}${cleanup(markup)}`
+
+  // Inject global CSS (from nuxtEmailRenderer.globalCss module option) into <head>.
+  // The CSS content is a build-time static string from files explicitly listed by the
+  // developer in nuxt.config.ts, so it is treated as trusted project-owned content.
+  const globalCss = await getGlobalCss()
+  if (globalCss) {
+    doc = doc.replace(
+      /(<\/head>)/i,
+      `<style data-id="__nuxt-email-global-style">${globalCss}</style>$1`,
+    )
+  }
 
   const html = options && options.pretty ? pretty(doc) : doc
 

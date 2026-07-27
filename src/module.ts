@@ -40,6 +40,20 @@ export interface ModuleOptions {
    * @default true
    */
   codeHighlighting: boolean
+  /**
+   * Paths to CSS files (relative to the project root) whose content is automatically
+   * injected into **every** rendered email as a `<style>` tag inside `<head>`.
+   * Use this to share CSS custom properties (variables), resets, or font declarations
+   * between your website and email templates.
+   *
+   * @example
+   * ```ts
+   * nuxtEmailRenderer: {
+   *   globalCss: ['assets/css/variables.css']
+   * }
+   * ```
+   */
+  globalCss?: string[]
 }
 
 const LOGGER_PREFIX = 'Nuxt Email Renderer:'
@@ -288,6 +302,30 @@ export default defineNuxtModule<ModuleOptions>({
         from: resolver.resolve('runtime/server/utils/render'),
       },
     ])
+
+    // Compile global CSS file contents at setup time and store in private
+    // (server-only) runtimeConfig so render.ts can access them at runtime
+    // via useRuntimeConfig() — this avoids a '#' virtual module import
+    // that Vite's import-analysis rejects during unit tests.
+    const globalCssContent = (() => {
+      if (!options.globalCss?.length) return ''
+      const cssContents: string[] = []
+      for (const cssPath of options.globalCss) {
+        const resolvedPath = resolvePath(nuxt.options.rootDir, cssPath)
+        if (existsSync(resolvedPath)) {
+          cssContents.push(readFileSync(resolvedPath, 'utf-8'))
+        }
+        else {
+          logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${resolvedPath}`)
+        }
+      }
+      return cssContents.join('\n')
+    })()
+
+    // Expose the compiled CSS on the private (server-side) runtimeConfig so
+    // render.ts can retrieve it with useRuntimeConfig() at request time.
+    ;(nuxt.options.runtimeConfig as Record<string, unknown>).nuxtEmailRenderer
+      = { globalCss: globalCssContent }
 
     // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {

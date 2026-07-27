@@ -10,6 +10,8 @@ const INLINE_IMAGE_MIME_TYPES: Record<string, string> = {
   '.webp': 'image/webp',
 }
 
+const INLINE_TEXT_EXTENSIONS = new Set(['.css'])
+
 /** Normalize a path to forward slashes (no-op on POSIX, converts backslashes on Windows). */
 function toForwardSlashes(p: string): string {
   return p.replace(/\\/g, '/')
@@ -17,7 +19,8 @@ function toForwardSlashes(p: string): string {
 
 /**
  * Adds `?inline` support to Nitro's Rollup build so server-side templates can import local
- * images as data URLs. Imports without `?inline` are ignored and continue through the default
+ * images as data URLs and CSS files as raw strings.
+ * Imports without `?inline` are ignored and continue through the default
  * Nitro/Rollup pipeline unchanged.
  */
 export function nitroInlineAssetPlugin() {
@@ -47,7 +50,14 @@ export function nitroInlineAssetPlugin() {
       }
 
       const filePath = id.slice(0, -'?inline'.length)
-      const mimeType = INLINE_IMAGE_MIME_TYPES[extname(filePath).toLowerCase()]
+      const ext = extname(filePath).toLowerCase()
+
+      if (INLINE_TEXT_EXTENSIONS.has(ext)) {
+        const content = await readFile(filePath, 'utf-8')
+        return `export default ${JSON.stringify(content)};`
+      }
+
+      const mimeType = INLINE_IMAGE_MIME_TYPES[ext]
       if (!mimeType) {
         return null
       }

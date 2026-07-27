@@ -11,15 +11,25 @@ import { cleanup } from './cleanup'
 import { emailComponents } from '../../components'
 import { SUBJECT_INJECTION_KEY } from '../../components/subject/ESubject.vue'
 
+interface NuxtEmailPrivateRuntimeConfig {
+  nuxtEmailRenderer?: {
+    globalCss?: string
+  }
+}
+
+let _cachedGlobalCss: string | undefined
+
 async function getGlobalCss(): Promise<string> {
+  if (_cachedGlobalCss !== undefined) return _cachedGlobalCss
   try {
-    // @ts-expect-error - #nuxt-email-global-css is a Nitro virtual module generated at build time
-    const { default: globalCssContent } = await import('#nuxt-email-global-css')
-    return globalCssContent || ''
+    const { useRuntimeConfig } = await import('nitropack/runtime')
+    const config = useRuntimeConfig() as unknown as NuxtEmailPrivateRuntimeConfig
+    _cachedGlobalCss = config.nuxtEmailRenderer?.globalCss || ''
   }
   catch {
-    return ''
+    _cachedGlobalCss = ''
   }
+  return _cachedGlobalCss
 }
 
 async function registerEmailComponents(app: ReturnType<typeof createSSRApp>) {

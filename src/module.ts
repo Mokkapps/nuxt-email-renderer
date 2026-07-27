@@ -303,6 +303,30 @@ export default defineNuxtModule<ModuleOptions>({
       },
     ])
 
+    // Compile global CSS file contents at setup time and store in private
+    // (server-only) runtimeConfig so render.ts can access them at runtime
+    // via useRuntimeConfig() — this avoids a '#' virtual module import
+    // that Vite's import-analysis rejects during unit tests.
+    const globalCssContent = (() => {
+      if (!options.globalCss?.length) return ''
+      const cssContents: string[] = []
+      for (const cssPath of options.globalCss) {
+        const resolvedPath = resolvePath(nuxt.options.rootDir, cssPath)
+        if (existsSync(resolvedPath)) {
+          cssContents.push(readFileSync(resolvedPath, 'utf-8'))
+        }
+        else {
+          logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${resolvedPath}`)
+        }
+      }
+      return cssContents.join('\n')
+    })()
+
+    // Expose the compiled CSS on the private (server-side) runtimeConfig so
+    // render.ts can retrieve it with useRuntimeConfig() at request time.
+    ;(nuxt.options.runtimeConfig as Record<string, unknown>).nuxtEmailRenderer
+      = { globalCss: globalCssContent }
+
     // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
       try {
@@ -318,28 +342,9 @@ export default defineNuxtModule<ModuleOptions>({
         nitroConfig.virtual = nitroConfig.virtual || {}
         nitroConfig.virtual['#email-templates'] = virtualModuleContent
 
-        // Generate virtual module for global CSS
-        // Always create the module so render.ts can safely import it (empty string when unconfigured)
-        let globalCssContent = ''
-        if (options.globalCss?.length) {
-          const cssContents: string[] = []
-          for (const cssPath of options.globalCss) {
-            const resolvedPath = resolvePath(nuxt.options.rootDir, cssPath)
-            if (existsSync(resolvedPath)) {
-              cssContents.push(readFileSync(resolvedPath, 'utf-8'))
-            }
-            else {
-              logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${resolvedPath}`)
-            }
-          }
-          globalCssContent = cssContents.join('\n')
-        }
-        nitroConfig.virtual['#nuxt-email-global-css'] = `export default ${JSON.stringify(globalCssContent)};`
-
         // Create alias for the virtual module
         nitroConfig.alias = nitroConfig.alias || {}
         nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
-        nitroConfig.alias['#nuxt-email-global-css'] = 'virtual:#nuxt-email-global-css'
 
         // Configure Vue plugin for Nitro server build
         // We need Vue compilation for email templates in the server bundle

@@ -14,8 +14,8 @@ import { SUBJECT_INJECTION_KEY } from '../../components/subject/ESubject.vue'
 async function getGlobalCss(): Promise<string> {
   try {
     // @ts-expect-error - #nuxt-email-global-css is a Nitro virtual module generated at build time
-    const { default: css } = await import('#nuxt-email-global-css')
-    return css || ''
+    const { default: globalCssContent } = await import('#nuxt-email-global-css')
+    return globalCssContent || ''
   }
   catch {
     return ''

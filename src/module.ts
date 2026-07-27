@@ -322,17 +322,17 @@ export default defineNuxtModule<ModuleOptions>({
         // Always create the module so render.ts can safely import it (empty string when unconfigured)
         let globalCssContent = ''
         if (options.globalCss?.length) {
-          const cssChunks: string[] = []
+          const cssContents: string[] = []
           for (const cssPath of options.globalCss) {
             const resolvedPath = resolvePath(nuxt.options.rootDir, cssPath)
             if (existsSync(resolvedPath)) {
-              cssChunks.push(readFileSync(resolvedPath, 'utf-8'))
+              cssContents.push(readFileSync(resolvedPath, 'utf-8'))
             }
             else {
               logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${resolvedPath}`)
             }
           }
-          globalCssContent = cssChunks.join('\n')
+          globalCssContent = cssContents.join('\n')
         }
         nitroConfig.virtual['#nuxt-email-global-css'] = `export default ${JSON.stringify(globalCssContent)};`
 

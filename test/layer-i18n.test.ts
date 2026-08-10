@@ -27,7 +27,7 @@ describe('i18n with layers', async () => {
     expect(response).toContain('Click here')
   })
 
-  it('renders email with German locale (de) using locale files from a layer', async () => {
+  it('renders email with German locale (de) using YAML locale files from a layer', async () => {
     const response = await $fetch('/api/send-email', {
       method: 'POST',
       body: {
@@ -43,7 +43,7 @@ describe('i18n with layers', async () => {
     expect(response).toContain('Hier klicken')
   })
 
-  it('renders email with Spanish locale (es) using locale files from a layer', async () => {
+  it('renders email with Spanish locale (es) using YML locale files from a layer', async () => {
     const response = await $fetch('/api/send-email', {
       method: 'POST',
       body: {

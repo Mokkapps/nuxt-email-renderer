@@ -9,6 +9,7 @@ import {
 } from '@nuxt/kit'
 import { existsSync, readFileSync } from 'node:fs'
 import { defu } from 'defu'
+import { parse as parseYaml } from 'yaml'
 import vue from '@vitejs/plugin-vue'
 import { nitroInlineAssetPlugin } from './inline-asset-plugin'
 import { setupDevToolsUI } from './devtools'
@@ -57,6 +58,15 @@ export interface ModuleOptions {
 }
 
 const LOGGER_PREFIX = 'Nuxt Email Renderer:'
+
+/** Parse a locale message file. Supports JSON and YAML (.yaml / .yml). */
+function parseLocaleFile(filePath: string): Record<string, unknown> {
+  const raw = readFileSync(filePath, 'utf-8')
+  if (/\.ya?ml$/i.test(filePath)) {
+    return parseYaml(raw) as Record<string, unknown>
+  }
+  return JSON.parse(raw)
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -197,7 +207,7 @@ export default defineNuxtModule<ModuleOptions>({
                 for (const filePath of candidates) {
                   if (!existsSync(filePath)) continue
                   try {
-                    const content = JSON.parse(readFileSync(filePath, 'utf-8'))
+                    const content = parseLocaleFile(filePath)
                     // defu keeps existing keys (higher-priority layers) and fills
                     // in missing keys from the current file (lower-priority layer).
                     // _layers[0] = root (highest priority), _layers[N] = base layers.

@@ -51,6 +51,7 @@
     "js-beautify": "^1.15.4",
     "marked": "7.0.5",
     "shiki": "^3.23.0",
+    "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

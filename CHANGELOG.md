@@ -1,5 +1,27 @@
 # Changelog
 
+## v2.11.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.10.0...v2.11.0)
+
+### 🚀 Enhancements
+
+- Add globalCss option and CSS ?inline import support ([eaf1956](https://github.com/mokkapps/nuxt-email-renderer/commit/eaf1956))
+- Support YAML locale files for i18n ([359f9cb](https://github.com/mokkapps/nuxt-email-renderer/commit/359f9cb))
+
+### 🩹 Fixes
+
+- Rename absolutePath to resolvedPath and improve CSS injection docs and comments ([5fbf018](https://github.com/mokkapps/nuxt-email-renderer/commit/5fbf018))
+- Use runtimeConfig for global CSS instead of virtual module to fix unit tests ([07a1b4c](https://github.com/mokkapps/nuxt-email-renderer/commit/07a1b4c))
+
+### 💅 Refactors
+
+- Improve variable naming for clarity in CSS injection code ([d4487be](https://github.com/mokkapps/nuxt-email-renderer/commit/d4487be))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v2.10.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.9.0...v2.10.0)

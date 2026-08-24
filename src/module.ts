@@ -20,6 +20,9 @@ import {
 import {
   getEnabledEmailComponentPaths,
 } from './runtime/server/utils/virtual-components'
+import {
+  applyCodeHighlightingBuildConfig,
+} from './code-highlighting-build-config'
 
 export interface ModuleOptions {
   /**
@@ -87,16 +90,10 @@ export default defineNuxtModule<ModuleOptions>({
     // Configure Nitro
     nuxt.options.nitro ||= {}
 
-    // Configure esbuild for TypeScript support
-    nuxt.options.nitro.esbuild = nuxt.options.nitro.esbuild || {}
-    nuxt.options.nitro.esbuild.options
-      = nuxt.options.nitro.esbuild.options || {}
-    nuxt.options.nitro.esbuild.options.target
-      = nuxt.options.nitro.esbuild.options.target || 'es2020'
-    const esbuildDefines = nuxt.options.nitro.esbuild.options.define || {}
-    esbuildDefines.__NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
-      = JSON.stringify(options.codeHighlighting)
-    nuxt.options.nitro.esbuild.options.define = esbuildDefines
+    applyCodeHighlightingBuildConfig(
+      nuxt.options.nitro,
+      options.codeHighlighting,
+    )
 
     nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
       nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
@@ -339,6 +336,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
+      applyCodeHighlightingBuildConfig(
+        nitroConfig,
+        options.codeHighlighting,
+      )
+
       try {
         // Scan all layer template directories and merge the mappings
         // Process in reverse order so higher-priority layers (earlier in array) override lower-priority ones

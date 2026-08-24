@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.11.1
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.11.0...v2.11.1)
+
+### 🩹 Fixes
+
+- Propagate code highlighting flag to Nitro replace ([1185b94](https://github.com/mokkapps/nuxt-email-renderer/commit/1185b94))
+
 ## v2.11.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.10.0...v2.11.0)

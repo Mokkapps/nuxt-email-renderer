@@ -29,6 +29,32 @@ describe('<EContainer> component', () => {
     expect(html).toContain('data-testid="container-test"')
   })
 
+  it('applies padding to the inner td, not the table', async () => {
+    const component = {
+      render() {
+        return h(EContainer, { style: { padding: '20px' } }, {
+          default: () => 'Content',
+        })
+      },
+    }
+    const html = await render(component)
+    expect(html).toContain('<td style="padding:20px;">')
+    expect(html).not.toContain('<table style="max-width:37.5em;padding:20px;">')
+  })
+
+  it('splits padding and non-padding styles correctly', async () => {
+    const component = {
+      render() {
+        return h(EContainer, { style: { padding: '10px', backgroundColor: 'blue' } }, {
+          default: () => 'Content',
+        })
+      },
+    }
+    const html = await render(component)
+    expect(html).toContain('<td style="padding:10px;">')
+    expect(html).toContain('style="max-width:37.5em;background-color:blue;"')
+  })
+
   it('renders correctly', async () => {
     const component = {
       render() {

@@ -69,3 +69,25 @@ export function nitroInlineAssetPlugin() {
     },
   }
 }
+
+/** Hide handled assets from Vite's CSS transforms after loading them as JavaScript. */
+export function viteInlineAssetPlugin() {
+  const plugin = nitroInlineAssetPlugin()
+  const prefix = '\0nuxt-email-inline:'
+  return {
+    name: 'nuxt-email:inline-assets',
+    enforce: 'pre' as const,
+    resolveId(source: string, importer?: string) {
+      const resolved = plugin.resolveId(source, importer)
+      if (!resolved) return null
+      const path = resolved.slice(0, -'?inline'.length)
+      const extension = extname(path).toLowerCase()
+      if (!INLINE_TEXT_EXTENSIONS.has(extension) && !INLINE_IMAGE_MIME_TYPES[extension]) return null
+      return `${prefix}${path}.mjs`
+    },
+    load(id: string) {
+      if (!id.startsWith(prefix)) return null
+      return plugin.load(`${id.slice(prefix.length, -'.mjs'.length)}?inline`)
+    },
+  }
+}

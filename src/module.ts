@@ -11,7 +11,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { defu } from 'defu'
 import { parse as parseYaml } from 'yaml'
 import vue from '@vitejs/plugin-vue'
-import { nitroInlineAssetPlugin } from './inline-asset-plugin'
+import { nitroInlineAssetPlugin, viteInlineAssetPlugin } from './inline-asset-plugin'
 import { setupDevToolsUI } from './devtools'
 import {
   generateTemplateMapping,
@@ -284,6 +284,82 @@ export default defineNuxtModule<ModuleOptions>({
       logger.warn(`${LOGGER_PREFIX} No email templates directory found. Configure emailsDir or create an 'emails' or 'app/emails' directory.`)
     }
 
+    // Nitro's Vite environment already runs Nuxt's Vue compiler. Give email
+    // files one dedicated compiler so their whitespace settings stay isolated
+    // from the application's components.
+    const usesNitroVite = 'nitroViteEnvironment' in nuxt.options.experimental
+      && nuxt.options.experimental.nitroViteEnvironment
+    const createEmailVuePlugin = (include: string | RegExp = '**/*.vue') => vue({
+      include,
+      isProduction: !nuxt.options.dev,
+      template: {
+        compilerOptions: { whitespace: 'preserve' },
+      },
+    })
+
+    if (usesNitroVite) {
+      const emailDirs = [...templatesDirs, resolve('./runtime/components')]
+      // Match either separator: Rolldown ids outside Vite keep Windows backslashes.
+      const dirPatterns = emailDirs.map(dir => dir.split(/[\\/]/)
+        .map(segment => segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('[\\\\/]'))
+      const emailFiles = new RegExp(`^(?:${dirPatterns.join('|')})[\\\\/].*\\.vue(?:\\?|$)`)
+      // The exclude applies to every environment, so the email compiler must too.
+      nuxt.options.vite.vue ||= {}
+      const exclude = nuxt.options.vite.vue.exclude
+      nuxt.options.vite.vue.exclude = [
+        ...(Array.isArray(exclude) ? exclude : exclude ? [exclude] : []),
+        emailFiles,
+      ]
+      // plugin-vue handles every `?vue` sub-request regardless of `include`.
+      // Leave other components' sub-requests to Nuxt's compiler, otherwise
+      // their scoped styles are scoped twice.
+      const emailVuePlugin = createEmailVuePlugin(emailFiles)
+      type Handler = (this: unknown, ...args: unknown[]) => unknown
+      const { load, transform } = emailVuePlugin as unknown as Record<'load' | 'transform', { handler: Handler }>
+      const isOtherSubRequest = (id: unknown) => typeof id === 'string' && /[?&]vue\b/.test(id) && !emailFiles.test(id)
+      nuxt.options.vite.plugins ||= []
+      nuxt.options.vite.plugins.push(
+        {
+          ...viteInlineAssetPlugin(),
+          applyToEnvironment: environment => environment.name === 'nitro',
+        },
+        {
+          ...emailVuePlugin,
+          name: 'nuxt-email:vue',
+          // User plugins run after Nuxt's, whose SSR style plugin parses `.vue`
+          // files as compiled JavaScript. Compile email files before it.
+          enforce: 'pre',
+          load: {
+            ...load,
+            handler(...args: unknown[]) {
+              return isOtherSubRequest(args[0]) ? null : load.handler.apply(this, args)
+            },
+          },
+          transform: {
+            handler(...args: unknown[]) {
+              return isOtherSubRequest(args[1]) ? null : transform.handler.apply(this, args)
+            },
+          },
+        } as typeof emailVuePlugin,
+      )
+
+      // Prerendering uses Rolldown outside Vite and needs its own compiler.
+      nuxt.hook('nitro:init', (nitro) => {
+        nitro.hooks.hook('prerender:config', (config) => {
+          // `config` is a shallow copy of Nitro's options; don't mutate the shared rollupConfig.
+          config.rollupConfig = {
+            ...config.rollupConfig,
+            plugins: [
+              nitroInlineAssetPlugin() as never,
+              createEmailVuePlugin(emailFiles) as never,
+              ...(Array.isArray(config.rollupConfig?.plugins) ? config.rollupConfig.plugins : []),
+            ],
+          }
+        })
+      })
+    }
+
     // The primary templates directory is the highest-priority one (first layer)
     const templatesDir = templatesDirs[0]
 
@@ -390,34 +466,17 @@ export default defineNuxtModule<ModuleOptions>({
           }
         }
 
-        // Add Vue plugin with strict include pattern
-        // Use array format to be very explicit about what to include
-        const vuePlugin = vue({
-          include: '**/*.vue', // Only .vue files, nothing else
-          isProduction: !nuxt.options.dev,
-          script: {
-            defineModel: true,
-            propsDestructure: true,
-          },
-          template: {
-            compilerOptions: {
-              // Preserve whitespace for email client compatibility
-              whitespace: 'preserve',
-            },
-          },
-        })
-
-        if (Array.isArray(nitroConfig.rollupConfig.plugins)) {
-          nitroConfig.rollupConfig.plugins.unshift(
+        if (!usesNitroVite) {
+          const plugins = [
             nitroInlineAssetPlugin() as never,
-            vuePlugin as never,
-          )
-        }
-        else {
-          nitroConfig.rollupConfig.plugins = [
-            nitroInlineAssetPlugin() as never,
-            vuePlugin as never,
+            createEmailVuePlugin() as never,
           ]
+          if (Array.isArray(nitroConfig.rollupConfig.plugins)) {
+            nitroConfig.rollupConfig.plugins.unshift(...plugins)
+          }
+          else {
+            nitroConfig.rollupConfig.plugins = plugins
+          }
         }
 
         logger.success(

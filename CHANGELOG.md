@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.11.2
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.11.1...v2.11.2)
+
+### 🩹 Fixes
+
+- Compile email components with Nitro's Vite environment ([34a8565](https://github.com/mokkapps/nuxt-email-renderer/commit/34a8565))
+- Check @nuxtjs/i18n options instead of casting to any ([6f639d0](https://github.com/mokkapps/nuxt-email-renderer/commit/6f639d0))
+
+### 🤖 CI
+
+- Enable corepack before setup-node in the compatibility job ([b53be33](https://github.com/mokkapps/nuxt-email-renderer/commit/b53be33))
+
+### ❤️ Contributors
+
+- Michael Hoffmann <michael.hoffmann@mokkapps.de>
+
 ## v2.11.1
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.11.0...v2.11.1)

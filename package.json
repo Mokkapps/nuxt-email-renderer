@@ -41,6 +41,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest run --coverage",
+    "test:compatibility": "node --test compatibility/build-pipeline.test.mjs",
     "test:watch": "vitest watch"
   },
   "dependencies": {

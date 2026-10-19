@@ -11,6 +11,26 @@ on:
       - main
 
 jobs:
+  email-build-pipeline:
+    name: Email build pipeline (${{ matrix.nuxt }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        nuxt: ['4.4.6', 'npm:nuxt-nightly@5.0.0-2610111729-78f43dd']
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test:compatibility
+        env:
+          EMAIL_TEST_NUXT: ${{ matrix.nuxt }}
+
   ci:
     strategy:
       matrix:

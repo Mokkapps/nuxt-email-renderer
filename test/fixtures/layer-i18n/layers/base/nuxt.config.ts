@@ -6,7 +6,8 @@ export default defineNuxtConfig({
     locales: [
       { code: 'en', file: 'en.json' },
       { code: 'de', file: 'de.yaml' },
-      { code: 'es', file: 'es.yml' },
+      // Object form of a locale file entry, supported since @nuxtjs/i18n v10.
+      { code: 'es', files: [{ path: 'es.yml' }] },
     ],
     defaultLocale: 'en',
   },

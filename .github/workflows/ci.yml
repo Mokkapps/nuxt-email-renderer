@@ -21,10 +21,12 @@ jobs:
         nuxt: ['4.4.6', 'npm:nuxt-nightly@5.0.0-2610111729-78f43dd']
     steps:
       - uses: actions/checkout@v5
+      # setup-node caches the packageManager from package.json, so pnpm must exist first.
+      - run: corepack enable
       - uses: actions/setup-node@v5
         with:
           node-version: '24'
-      - run: corepack enable
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm test:compatibility

@@ -71,6 +71,37 @@ function parseLocaleFile(filePath: string): Record<string, unknown> {
   return JSON.parse(raw)
 }
 
+type LocaleMessages = Record<string, Record<string, unknown>>
+
+/**
+ * The @nuxtjs/i18n options this module reads. It does not depend on that
+ * module's types, so every value is checked before use.
+ */
+interface I18nOptions {
+  defaultLocale?: unknown
+  locale?: unknown
+  vueI18n?: unknown
+  restructureDir?: unknown
+  langDir?: unknown
+  locales?: unknown
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function stringOption(value: unknown): string | undefined {
+  return typeof value === 'string' && value ? value : undefined
+}
+
+/** Locale file entries are paths or, since @nuxtjs/i18n v10, `{ path, cache }` objects. */
+function localeFilePaths(locale: Record<string, unknown>): string[] {
+  const entries = locale.file ? [locale.file] : Array.isArray(locale.files) ? locale.files : []
+  return entries
+    .map(entry => isRecord(entry) ? entry.path : entry)
+    .filter((path): path is string => typeof path === 'string')
+}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-email-renderer',
@@ -115,23 +146,20 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Check if @nuxtjs/i18n module is installed and configure i18n support
     nuxt.hook('nitro:config', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (hasI18n && (nuxt.options as any).i18n) {
+      const i18nOptions = (nuxt.options as { i18n?: unknown }).i18n
+      if (hasI18n && isRecord(i18nOptions)) {
         // Store i18n configuration in runtime config for server-side email rendering
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const i18nOptions = (nuxt.options as any).i18n
-
-        const publicI18n
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          = (nuxt.options.runtimeConfig.public.i18n as any) || {}
+        const { defaultLocale, locale, vueI18n, restructureDir, langDir, locales }: I18nOptions = i18nOptions
+        const publicI18n = isRecord(nuxt.options.runtimeConfig.public.i18n)
+          ? nuxt.options.runtimeConfig.public.i18n
+          : {}
 
         // Try to load messages from vueI18n config
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let messages: Record<string, any> = {}
-        if (i18nOptions.vueI18n && typeof i18nOptions.vueI18n === 'string') {
+        let messages: LocaleMessages = {}
+        const vueI18nPath = stringOption(vueI18n)
+        if (vueI18nPath) {
           // The vueI18n path may already be absolute (resolved by @nuxtjs/i18n)
           // or relative to a layer directory. Try each layer's rootDir as a base.
-          const vueI18nPath: string = i18nOptions.vueI18n
           // Deduplicate: _layers[0].cwd is the root, which is already first.
           const seen = new Set<string>()
           const candidateDirs = [
@@ -171,35 +199,30 @@ export default defineNuxtModule<ModuleOptions>({
             }
           }
         }
-        else if (
-          i18nOptions.vueI18n
-          && typeof i18nOptions.vueI18n === 'object'
-        ) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          messages = (i18nOptions.vueI18n as any).messages || {}
+        else if (isRecord(vueI18n) && isRecord(vueI18n.messages)) {
+          messages = vueI18n.messages as LocaleMessages
         }
 
         // When vueI18n is not configured, try loading individual locale files.
         // @nuxtjs/i18n supports locale files via locales[].file (or .files).
         // Default search path: <layer_rootDir>/<restructureDir>/<langDir>/<file>
         // where restructureDir defaults to "i18n" and langDir defaults to "locales".
-        if (Object.keys(messages).length === 0 && i18nOptions.locales?.length) {
-          const restructureDir: string = i18nOptions.restructureDir ?? 'i18n'
-          const langDir: string = i18nOptions.langDir ?? 'locales'
+        if (Object.keys(messages).length === 0 && Array.isArray(locales) && locales.length) {
+          const localesRoot = stringOption(restructureDir) ?? 'i18n'
+          const localesDir = stringOption(langDir) ?? 'locales'
 
           for (const layer of nuxt.options._layers) {
-            for (const locale of i18nOptions.locales) {
-              if (typeof locale !== 'object' || !locale.code) continue
-              const files: string[] = locale.file
-                ? [locale.file]
-                : (locale.files ?? [])
+            for (const localeOption of locales) {
+              if (!isRecord(localeOption)) continue
+              const code = stringOption(localeOption.code)
+              if (!code) continue
 
-              for (const file of files) {
+              for (const file of localeFilePaths(localeOption)) {
                 // Try the restructured path first (Nuxt 4 + @nuxtjs/i18n v10 default),
                 // then a flat langDir path as fallback.
                 const candidates = [
-                  join(layer.cwd, restructureDir, langDir, file),
-                  join(layer.cwd, langDir, file),
+                  join(layer.cwd, localesRoot, localesDir, file),
+                  join(layer.cwd, localesDir, file),
                 ]
                 for (const filePath of candidates) {
                   if (!existsSync(filePath)) continue
@@ -208,7 +231,7 @@ export default defineNuxtModule<ModuleOptions>({
                     // defu keeps existing keys (higher-priority layers) and fills
                     // in missing keys from the current file (lower-priority layer).
                     // _layers[0] = root (highest priority), _layers[N] = base layers.
-                    messages[locale.code] = defu(messages[locale.code] || {}, content)
+                    messages[code] = defu(messages[code] || {}, content)
                     break
                   }
                   catch (error) {
@@ -233,16 +256,15 @@ export default defineNuxtModule<ModuleOptions>({
         // writes its own processed locales into runtimeConfig.public.i18n.locales.
         // defu concatenates arrays, so adding locales a second time would produce
         // duplicates visible to any code that reads useI18n().locales.
+        const resolvedDefaultLocale = stringOption(defaultLocale) ?? stringOption(locale) ?? 'en'
         nuxt.options.runtimeConfig.public.i18n = defu(publicI18n, {
-          defaultLocale:
-            i18nOptions.defaultLocale || i18nOptions.locale || 'en',
+          defaultLocale: resolvedDefaultLocale,
           messages,
-          vueI18n:
-            typeof i18nOptions.vueI18n === 'object' ? i18nOptions.vueI18n : {},
+          vueI18n: isRecord(vueI18n) ? vueI18n : {},
         })
 
         logger.info(
-          `${LOGGER_PREFIX} i18n support enabled with default locale: ${i18nOptions.defaultLocale || i18nOptions.locale || 'en'}`,
+          `${LOGGER_PREFIX} i18n support enabled with default locale: ${resolvedDefaultLocale}`,
         )
       }
     })

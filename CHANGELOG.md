@@ -1,5 +1,30 @@
 # Changelog
 
+## v3.0.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.11.2...v3.0.0)
+
+### 🩹 Fixes
+
+- Keep email runtime config private ([ca197d4](https://github.com/mokkapps/nuxt-email-renderer/commit/ca197d4))
+
+### 📖 Documentation
+
+- Document private config and require docs review ([76b57b6](https://github.com/mokkapps/nuxt-email-renderer/commit/76b57b6))
+- Explain migration from public email config ([e56ccfd](https://github.com/mokkapps/nuxt-email-renderer/commit/e56ccfd))
+
+### 🏡 Chore
+
+- Add agent-agnostic AI agent setup ([d336c40](https://github.com/mokkapps/nuxt-email-renderer/commit/d336c40))
+
+### ✅ Tests
+
+- Cover layered JSON locales and duplicate locale entries ([171dc2a](https://github.com/mokkapps/nuxt-email-renderer/commit/171dc2a))
+
+### ❤️ Contributors
+
+- Michael Hoffmann <michael.hoffmann@mokkapps.de>
+
 ## v2.11.2
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.11.1...v2.11.2)

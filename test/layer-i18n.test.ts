@@ -12,6 +12,22 @@ describe('i18n with layers', async () => {
     expect(html).toContain('<div>Layer i18n Test</div>')
   })
 
+  it('does not duplicate file-backed locales in public i18n config', async () => {
+    const locales = await $fetch<Array<{ code: string }>>('/api/i18n-locales')
+    const codes = locales.map(locale => locale.code)
+
+    expect(codes).toEqual(['en', 'de', 'es'])
+  })
+
+  it('resolves a nested translation from the second JSON locale file', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'Nested' },
+    })
+
+    expect(response).toContain('Welcome from a second JSON locale file')
+  })
+
   it('renders email with default locale (en) using locale files from a layer', async () => {
     const response = await $fetch('/api/send-email', {
       method: 'POST',

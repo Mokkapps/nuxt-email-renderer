@@ -5,7 +5,7 @@ export default defineNitroPlugin(async () => {
   try {
     const config = useRuntimeConfig()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const i18nConfig = config.public?.i18n as any
+    const i18nConfig = (config.nuxtEmailRenderer as any)?.i18n
 
     if (!i18nConfig || !i18nConfig.vueI18n) {
       return

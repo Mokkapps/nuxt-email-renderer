@@ -13,6 +13,10 @@ Run `pnpm dev:prepare` after installing and after switching branches. It stubs t
 - To see what an email actually renders, use the `verify-email-render` skill in `.agents/skills/`.
 - CI runs on Windows too: build paths with `node:path`, never by joining strings with `/`.
 
+## Documentation
+
+Review `docs/content/` and README examples for every change. Update affected pages in the same branch when changing user-visible behavior, module options, APIs, email components, or examples. If no docs edit is needed, explain why in the PR summary. Run `pnpm docs:build` after editing docs.
+
 ## Email components
 
 A component touches four places: `src/runtime/components/<name>/` (component, test, snapshots), the `emailComponents` map in `src/runtime/components/index.ts`, the type entries in `src/runtime/components/components.d.ts` (hand-maintained despite its "Auto-generated" header), and `docs/content/2.components/<name>.md`.

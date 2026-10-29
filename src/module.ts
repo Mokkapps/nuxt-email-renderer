@@ -126,11 +126,6 @@ export default defineNuxtModule<ModuleOptions>({
       options.codeHighlighting,
     )
 
-    nuxt.options.runtimeConfig.public.nuxtEmailRenderer = defu(
-      nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions,
-      options,
-    )
-
     // Detect @nuxtjs/i18n early so it can be shared across hooks.
     // nuxt.options.modules is already fully merged from all layers at this point.
     const hasI18n = nuxt.options.modules.some((m) => {
@@ -150,10 +145,6 @@ export default defineNuxtModule<ModuleOptions>({
       if (hasI18n && isRecord(i18nOptions)) {
         // Store i18n configuration in runtime config for server-side email rendering
         const { defaultLocale, locale, vueI18n, restructureDir, langDir, locales }: I18nOptions = i18nOptions
-        const publicI18n = isRecord(nuxt.options.runtimeConfig.public.i18n)
-          ? nuxt.options.runtimeConfig.public.i18n
-          : {}
-
         // Try to load messages from vueI18n config
         let messages: LocaleMessages = {}
         const vueI18nPath = stringOption(vueI18n)
@@ -251,17 +242,14 @@ export default defineNuxtModule<ModuleOptions>({
           }
         }
 
-        // Store essential i18n configuration.
-        // NOTE: We intentionally do NOT set `locales` here. @nuxtjs/i18n already
-        // writes its own processed locales into runtimeConfig.public.i18n.locales.
-        // defu concatenates arrays, so adding locales a second time would produce
-        // duplicates visible to any code that reads useI18n().locales.
+        // Keep the messages used by server-side email rendering out of the
+        // public i18n config, which is serialized into every page payload.
         const resolvedDefaultLocale = stringOption(defaultLocale) ?? stringOption(locale) ?? 'en'
-        nuxt.options.runtimeConfig.public.i18n = defu(publicI18n, {
+        const emailConfig = nuxt.options.runtimeConfig.nuxtEmailRenderer as Record<string, unknown>
+        emailConfig.i18n = {
           defaultLocale: resolvedDefaultLocale,
           messages,
-          vueI18n: isRecord(vueI18n) ? vueI18n : {},
-        })
+        }
 
         logger.info(
           `${LOGGER_PREFIX} i18n support enabled with default locale: ${resolvedDefaultLocale}`,
@@ -385,10 +373,6 @@ export default defineNuxtModule<ModuleOptions>({
     // The primary templates directory is the highest-priority one (first layer)
     const templatesDir = templatesDirs[0]
 
-    ;(
-      nuxt.options.runtimeConfig.public.nuxtEmailRenderer as ModuleOptions
-    ).emailsDir = templatesDir
-
     nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
     // Inline runtime in Nitro bundle
     // Let Nuxt/Nitro handle Vue dependencies to avoid conflicts with other modules
@@ -427,10 +411,10 @@ export default defineNuxtModule<ModuleOptions>({
       return cssContents.join('\n')
     })()
 
-    // Expose the compiled CSS on the private (server-side) runtimeConfig so
-    // render.ts can retrieve it with useRuntimeConfig() at request time.
+    // Keep resolved module options and compiled CSS on the server. Public
+    // runtime config is serialized into every page payload.
     ;(nuxt.options.runtimeConfig as Record<string, unknown>).nuxtEmailRenderer
-      = { globalCss: globalCssContent }
+      = { ...options, emailsDir: templatesDir, globalCss: globalCssContent }
 
     // Generate virtual module containing all email templates
     nuxt.hooks.hook('nitro:config', async (nitroConfig) => {

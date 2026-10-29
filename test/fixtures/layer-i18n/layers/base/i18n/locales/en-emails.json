@@ -1,0 +1,7 @@
+{
+  "emails": {
+    "welcome": {
+      "title": "Welcome from a second JSON locale file"
+    }
+  }
+}

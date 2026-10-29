@@ -14,6 +14,10 @@ import { SUBJECT_INJECTION_KEY } from '../../components/subject/ESubject.vue'
 interface NuxtEmailPrivateRuntimeConfig {
   nuxtEmailRenderer?: {
     globalCss?: string
+    i18n?: {
+      defaultLocale: string
+      messages: Record<string, unknown>
+    }
   }
 }
 
@@ -48,15 +52,14 @@ async function setupI18n(
   locale?: string,
 ): Promise<boolean> {
   const { useRuntimeConfig } = await import('nitropack/runtime')
-  const config = useRuntimeConfig()
+  const config = useRuntimeConfig() as unknown as NuxtEmailPrivateRuntimeConfig
+  const i18nConfig = config.nuxtEmailRenderer?.i18n
 
-  if (!config.public?.i18n) {
+  if (!i18nConfig) {
     return false
   }
 
-  const i18nConfig = config.public.i18n as Record<string, unknown>
-  const messages = (i18nConfig.messages || {}) as Record<string, unknown>
-  const defaultLocale = (i18nConfig.defaultLocale || i18nConfig.locale || 'en') as string
+  const { messages, defaultLocale } = i18nConfig
 
   let createI18n: (typeof import('vue-i18n'))['createI18n']
   try {

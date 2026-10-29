@@ -81,4 +81,26 @@ describe('i18n support', async () => {
     // The expected locales from the fixture nuxt.config.ts
     expect(uniqueCodes.sort()).toEqual(['de', 'en', 'es'])
   })
+
+  it('keeps email options and messages out of the public runtime config', async () => {
+    const config = await $fetch<{
+      publicEmailConfig?: unknown
+      publicEmailMessages?: unknown
+      privateEmailsDir?: string
+      privateDevtools?: boolean
+      privateDefaultLocale?: string
+      privateEnglishGreeting?: string
+    }>('/api/email-runtime-config')
+
+    expect(config.publicEmailConfig).toBeUndefined()
+    expect(config.publicEmailMessages).toBeUndefined()
+    expect(config.privateEmailsDir).toBe(resolve(__dirname, 'fixtures/i18n/emails'))
+    expect(config.privateDevtools).toBe(true)
+    expect(config.privateDefaultLocale).toBe('en')
+    expect(config.privateEnglishGreeting).toBe('Hello, {name}!')
+
+    const page = await $fetch<string>('/')
+    expect(page).not.toContain(resolve(__dirname, 'fixtures/i18n/emails'))
+    expect(page).not.toContain('nuxtEmailRenderer')
+  })
 })

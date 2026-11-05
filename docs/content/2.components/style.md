@@ -53,6 +53,44 @@ Add the component to your email template, typically within the `<EHead>` section
 </template>
 ```
 
+## Dark mode
+
+Nuxt Email Renderer does not automatically generate dark mode styles or detect the recipient's color preference. `EStyle` preserves the CSS you provide, including `@media (prefers-color-scheme: dark)` rules. The email client decides whether to apply those rules.
+
+Define light mode fallback colors inline and add your dark mode overrides in `EStyle`. You can also declare the supported color schemes with metadata in `EHead`; the module does not add this metadata automatically.
+
+```vue [emails/DarkModeEmail.vue]
+<template>
+  <EHtml>
+    <EHead>
+      <meta name="color-scheme" content="light dark">
+      <meta name="supported-color-schemes" content="light dark">
+      <EStyle>
+        @media (prefers-color-scheme: dark) {
+          .email-content {
+            background-color: #1a1a1a !important;
+          }
+          .email-text {
+            color: #ffffff !important;
+          }
+        }
+      </EStyle>
+    </EHead>
+    <EBody>
+      <EContainer class="email-content" style="background-color: #ffffff;">
+        <EText class="email-text" style="color: #1a1a1a;">
+          Your order has shipped.
+        </EText>
+      </EContainer>
+    </EBody>
+  </EHtml>
+</template>
+```
+
+::callout{type="warning"}
+Dark mode behavior varies between email clients. Some ignore the media query or automatically adjust colors. These styles and metadata do not guarantee the same appearance everywhere; test the rendered email in the clients your recipients use. See the [email client support for `prefers-color-scheme`](https://www.caniemail.com/features/css-at-media-prefers-color-scheme/).
+::
+
 ## Sharing CSS Variables from Your Website
 
 You can share CSS custom properties (variables), font declarations, or resets between your main website and email templates using two approaches:

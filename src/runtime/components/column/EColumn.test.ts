@@ -9,7 +9,7 @@ describe('<EColumn> component', () => {
     const component = h(EColumn, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -23,7 +23,7 @@ describe('<EColumn> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('style="background-color:red;"')
     expect(html).toContain('data-testid="column-test"')
@@ -37,7 +37,7 @@ describe('<EColumn> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

@@ -8,18 +8,10 @@ export interface EmailTemplate {
 }
 
 /**
- * Extended email template information with additional metadata
+ * Template metadata, including the absolute path of its file.
  */
 export interface EmailTemplateInfo extends EmailTemplate {
-  importPath: string
   filePath: string
-}
-
-/**
- * Mapping of template names to template information
- */
-export interface EmailTemplateMapping {
-  [templateName: string]: EmailTemplateInfo
 }
 
 /**

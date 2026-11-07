@@ -38,21 +38,17 @@ The `ESubject` component doesn't accept any props. The subject text is defined t
 
 ## Usage with renderEmailComponent
 
-When you render an email template that includes `<ESubject>`, the return value changes from a string to an object containing both the HTML and the subject:
+When you render an email template that includes `<ESubject>`, the result contains its text as `subject`. Templates without it return no `subject`:
 
 ```ts
-// Without ESubject - returns HTML string
-const html = await renderEmailComponent('Newsletter')
-// Returns: "<!DOCTYPE html>..."
-
-// With ESubject - returns object with html and subject
-const { html, subject } = await renderEmailComponent('WelcomeEmail', { 
-  companyName: 'Acme Corp' 
+const { html, subject } = await renderEmailComponent('WelcomeEmail', {
+  companyName: 'Acme Corp'
 })
-// Returns: { 
-//   html: "<!DOCTYPE html>...", 
-//   subject: "Welcome to Acme Corp!" 
-// }
+// html: "<!DOCTYPE html>..."
+// subject: "Welcome to Acme Corp!"
+
+const { subject: none } = await renderEmailComponent('Newsletter')
+// none: undefined
 ```
 
 ## Dynamic Subject Lines
@@ -152,27 +148,6 @@ The component:
 
 <!-- Excessive punctuation -->
 <ESubject>Check this out!!!</ESubject>
-```
-
-## Backward Compatibility
-
-The `ESubject` component is fully backward compatible:
-
-- **Templates without ESubject**: Return HTML string as before
-- **Templates with ESubject**: Return `{ html, subject }` object
-
-This means existing code continues to work, and you can adopt the feature incrementally.
-
-```ts
-// Old templates still work
-const html = await renderEmailComponent('OldTemplate')
-typeof html === 'string' // true
-
-// New templates with subject
-const result = await renderEmailComponent('NewTemplate')
-typeof result === 'object' // true
-result.subject // "Subject line"
-result.html // "<!DOCTYPE html>..."
 ```
 
 ## Email Client Support

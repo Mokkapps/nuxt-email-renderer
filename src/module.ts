@@ -1,34 +1,30 @@
-import { join, resolve as resolvePath, basename, dirname } from 'node:path'
-import {
-  logger,
-  defineNuxtModule,
-  createResolver,
-  addServerHandler,
-  addTypeTemplate,
-  addServerImports,
-} from '@nuxt/kit'
 import { existsSync, readFileSync } from 'node:fs'
-import { defu } from 'defu'
-import { parse as parseYaml } from 'yaml'
+import { dirname, join, resolve } from 'node:path'
+import {
+  addServerHandler,
+  addServerImports,
+  addServerTemplate,
+  addTypeTemplate,
+  createResolver,
+  defineNuxtModule,
+  getLayerDirectories,
+  hasNuxtModule,
+  logger,
+} from '@nuxt/kit'
 import vue from '@vitejs/plugin-vue'
-import { nitroInlineAssetPlugin, viteInlineAssetPlugin } from './inline-asset-plugin'
 import { setupDevToolsUI } from './devtools'
-import {
-  generateTemplateMapping,
-  generateVirtualModule,
-} from './runtime/server/utils/virtual-templates'
-import {
-  getEnabledEmailComponentPaths,
-} from './runtime/server/utils/virtual-components'
-import {
-  applyCodeHighlightingBuildConfig,
-} from './code-highlighting-build-config'
+import { loadI18nConfig } from './i18n'
+import { nitroInlineAssetPlugin } from './inline-asset-plugin'
+import { emailComponentFiles } from './runtime/components'
+import { generateComponentsModule, generateTemplatesModule, scanEmailTemplates } from './templates'
+
+export type { DevtoolsPreviewPropsContext, EmailTemplate } from './runtime/types'
+export type { RenderOptions, RenderResult } from './runtime/server/utils/render'
 
 export interface ModuleOptions {
   /**
-   * Folder where email templates are stored. Can be either an absolute path or relative to the project root.
-   * When set, this takes priority over the auto-detected `app/emails` and `emails` directories.
-   * When not set, the module auto-detects the emails directory by checking `app/emails` (Nuxt 4) then `emails`.
+   * Folder where email templates are stored, absolute or relative to each layer's root.
+   * Defaults to `emails` in the layer's `srcDir` (`app/emails`), then `emails` in its root.
    */
   emailsDir?: string
   /**
@@ -61,553 +57,133 @@ export interface ModuleOptions {
 }
 
 const LOGGER_PREFIX = 'Nuxt Email Renderer:'
-
-/** Parse a locale message file. Supports JSON and YAML (.yaml / .yml). */
-function parseLocaleFile(filePath: string): Record<string, unknown> {
-  const raw = readFileSync(filePath, 'utf-8')
-  if (/\.ya?ml$/i.test(filePath)) {
-    return parseYaml(raw) as Record<string, unknown>
-  }
-  return JSON.parse(raw)
-}
-
-type LocaleMessages = Record<string, Record<string, unknown>>
-
-/**
- * The @nuxtjs/i18n options this module reads. It does not depend on that
- * module's types, so every value is checked before use.
- */
-interface I18nOptions {
-  defaultLocale?: unknown
-  locale?: unknown
-  vueI18n?: unknown
-  restructureDir?: unknown
-  langDir?: unknown
-  locales?: unknown
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
-
-function stringOption(value: unknown): string | undefined {
-  return typeof value === 'string' && value ? value : undefined
-}
-
-/** Locale file entries are paths or, since @nuxtjs/i18n v10, `{ path, cache }` objects. */
-function localeFilePaths(locale: Record<string, unknown>): string[] {
-  const entries = locale.file ? [locale.file] : Array.isArray(locale.files) ? locale.files : []
-  return entries
-    .map(entry => isRecord(entry) ? entry.path : entry)
-    .filter((path): path is string => typeof path === 'string')
-}
+/** Dev-only endpoints for the DevTools client. */
+export const DEVTOOLS_API_ROUTE = '/__nuxt-email-renderer/api'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-email-renderer',
     configKey: 'nuxtEmailRenderer',
+    compatibility: { nuxt: '>=4.1.0' },
   },
-  // Default configuration options of the Nuxt module
-  defaults() {
-    return {
-      devtools: true,
-      codeHighlighting: true,
-    }
+  defaults: {
+    devtools: true,
+    codeHighlighting: true,
   },
-  setup(options, nuxt) {
+  async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const { resolve } = createResolver(import.meta.url)
 
-    // Configure Nitro
-    nuxt.options.nitro ||= {}
-
-    applyCodeHighlightingBuildConfig(
-      nuxt.options.nitro,
-      options.codeHighlighting,
-    )
-
-    // Detect @nuxtjs/i18n early so it can be shared across hooks.
-    // nuxt.options.modules is already fully merged from all layers at this point.
-    const hasI18n = nuxt.options.modules.some((m) => {
-      if (typeof m === 'string') {
-        return m.includes('@nuxtjs/i18n')
-      }
-      if (Array.isArray(m)) {
-        const first = m[0]
-        return typeof first === 'string' && first.includes('@nuxtjs/i18n')
-      }
-      return false
+    // One templates directory per layer, highest priority first.
+    const layers = getLayerDirectories(nuxt)
+    const templatesDirs = layers.flatMap((layer) => {
+      const candidates = [join(layer.app, 'emails'), join(layer.root, 'emails')]
+      if (options.emailsDir) candidates.unshift(resolve(layer.root, options.emailsDir))
+      return candidates.find(dir => existsSync(dir)) ?? []
     })
-
-    // Check if @nuxtjs/i18n module is installed and configure i18n support
-    nuxt.hook('nitro:config', async () => {
-      const i18nOptions = (nuxt.options as { i18n?: unknown }).i18n
-      if (hasI18n && isRecord(i18nOptions)) {
-        // Store i18n configuration in runtime config for server-side email rendering
-        const { defaultLocale, locale, vueI18n, restructureDir, langDir, locales }: I18nOptions = i18nOptions
-        // Try to load messages from vueI18n config
-        let messages: LocaleMessages = {}
-        const vueI18nPath = stringOption(vueI18n)
-        if (vueI18nPath) {
-          // The vueI18n path may already be absolute (resolved by @nuxtjs/i18n)
-          // or relative to a layer directory. Try each layer's rootDir as a base.
-          // Deduplicate: _layers[0].cwd is the root, which is already first.
-          const seen = new Set<string>()
-          const candidateDirs = [
-            nuxt.options.rootDir,
-            ...nuxt.options._layers.map(l => l.cwd),
-          ].filter((dir) => {
-            if (seen.has(dir)) return false
-            seen.add(dir)
-            return true
-          })
-
-          for (const baseDir of candidateDirs) {
-            const configPath = resolvePath(baseDir, vueI18nPath)
-            if (!existsSync(configPath)) continue
-            try {
-              const { pathToFileURL } = await import('node:url')
-
-              // Import the i18n config file
-              const configModule = await import(pathToFileURL(configPath).href)
-              const configResult
-                = typeof configModule.default === 'function'
-                  ? configModule.default()
-                  : configModule.default
-
-              if (configResult && configResult.messages) {
-                messages = configResult.messages
-                logger.success(
-                  `${LOGGER_PREFIX} Loaded i18n messages for ${Object.keys(messages).length} locale(s)`,
-                )
-              }
-              break
-            }
-            catch (error) {
-              logger.warn(
-                `${LOGGER_PREFIX} Could not load i18n messages from config file: ${error}`,
-              )
-            }
-          }
-        }
-        else if (isRecord(vueI18n) && isRecord(vueI18n.messages)) {
-          messages = vueI18n.messages as LocaleMessages
-        }
-
-        // When vueI18n is not configured, try loading individual locale files.
-        // @nuxtjs/i18n supports locale files via locales[].file (or .files).
-        // Default search path: <layer_rootDir>/<restructureDir>/<langDir>/<file>
-        // where restructureDir defaults to "i18n" and langDir defaults to "locales".
-        if (Object.keys(messages).length === 0 && Array.isArray(locales) && locales.length) {
-          const localesRoot = stringOption(restructureDir) ?? 'i18n'
-          const localesDir = stringOption(langDir) ?? 'locales'
-
-          for (const layer of nuxt.options._layers) {
-            for (const localeOption of locales) {
-              if (!isRecord(localeOption)) continue
-              const code = stringOption(localeOption.code)
-              if (!code) continue
-
-              for (const file of localeFilePaths(localeOption)) {
-                // Try the restructured path first (Nuxt 4 + @nuxtjs/i18n v10 default),
-                // then a flat langDir path as fallback.
-                const candidates = [
-                  join(layer.cwd, localesRoot, localesDir, file),
-                  join(layer.cwd, localesDir, file),
-                ]
-                for (const filePath of candidates) {
-                  if (!existsSync(filePath)) continue
-                  try {
-                    const content = parseLocaleFile(filePath)
-                    // defu keeps existing keys (higher-priority layers) and fills
-                    // in missing keys from the current file (lower-priority layer).
-                    // _layers[0] = root (highest priority), _layers[N] = base layers.
-                    messages[code] = defu(messages[code] || {}, content)
-                    break
-                  }
-                  catch (error) {
-                    logger.warn(
-                      `${LOGGER_PREFIX} Failed to parse i18n locale file "${filePath}": ${(error as Error).message}`,
-                    )
-                  }
-                }
-              }
-            }
-          }
-
-          if (Object.keys(messages).length > 0) {
-            logger.success(
-              `${LOGGER_PREFIX} Loaded i18n messages for ${Object.keys(messages).length} locale(s) from locale files`,
-            )
-          }
-        }
-
-        // Keep the messages used by server-side email rendering out of the
-        // public i18n config, which is serialized into every page payload.
-        const resolvedDefaultLocale = stringOption(defaultLocale) ?? stringOption(locale) ?? 'en'
-        const emailConfig = nuxt.options.runtimeConfig.nuxtEmailRenderer as Record<string, unknown>
-        emailConfig.i18n = {
-          defaultLocale: resolvedDefaultLocale,
-          messages,
-        }
-
-        logger.info(
-          `${LOGGER_PREFIX} i18n support enabled with default locale: ${resolvedDefaultLocale}`,
-        )
-      }
-    })
-
-    // Collect email template directories from all layers
-    // Priority: configured emailsDir > app/emails (Nuxt 4 structure) > emails (root folder)
-    // Earlier layers have higher priority over later layers
-    const templatesDirs: string[] = []
-
-    for (const layer of nuxt.options._layers) {
-      // If emailsDir is explicitly configured, resolve it (supports both relative and absolute paths)
-      if (options.emailsDir) {
-        const customEmailsPath = resolvePath(layer.cwd, options.emailsDir)
-        if (existsSync(customEmailsPath)) {
-          templatesDirs.push(customEmailsPath)
-          continue
-        }
-        // Warn only for the root layer so users know their configured path wasn't found
-        if (layer.cwd === nuxt.options.rootDir) {
-          logger.warn(`${LOGGER_PREFIX} Configured emailsDir '${options.emailsDir}' not found at '${customEmailsPath}', falling back to auto-detection.`)
-        }
-      }
-
-      // Auto-detect: check app/emails (Nuxt 4 structure)
-      const appEmailsPath = join(layer.cwd, 'app', 'emails')
-      if (existsSync(appEmailsPath)) {
-        templatesDirs.push(appEmailsPath)
-        continue
-      }
-
-      // Fall back to root emails folder
-      const rootEmailsPath = join(layer.cwd, 'emails')
-      if (existsSync(rootEmailsPath)) {
-        templatesDirs.push(rootEmailsPath)
-      }
+    if (options.emailsDir && !existsSync(resolve(layers[0]!.root, options.emailsDir))) {
+      logger.warn(`${LOGGER_PREFIX} Configured emailsDir '${options.emailsDir}' not found, falling back to auto-detection.`)
     }
-
     if (templatesDirs.length === 0) {
-      logger.warn(`${LOGGER_PREFIX} No email templates directory found. Configure emailsDir or create an 'emails' or 'app/emails' directory.`)
+      logger.warn(`${LOGGER_PREFIX} No email templates directory found. Create 'app/emails' or configure emailsDir.`)
     }
 
-    // Nitro's Vite environment already runs Nuxt's Vue compiler. Give email
-    // files one dedicated compiler so their whitespace settings stay isolated
-    // from the application's components.
-    const usesNitroVite = 'nitroViteEnvironment' in nuxt.options.experimental
-      && nuxt.options.experimental.nitroViteEnvironment
-    const createEmailVuePlugin = (include: string | RegExp = '**/*.vue') => vue({
-      include,
-      isProduction: !nuxt.options.dev,
-      template: {
-        compilerOptions: { whitespace: 'preserve' },
-      },
-    })
-
-    if (usesNitroVite) {
-      const emailDirs = [...templatesDirs, resolve('./runtime/components')]
-      // Match either separator: Rolldown ids outside Vite keep Windows backslashes.
-      const dirPatterns = emailDirs.map(dir => dir.split(/[\\/]/)
-        .map(segment => segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-        .join('[\\\\/]'))
-      const emailFiles = new RegExp(`^(?:${dirPatterns.join('|')})[\\\\/].*\\.vue(?:\\?|$)`)
-      // The exclude applies to every environment, so the email compiler must too.
-      nuxt.options.vite.vue ||= {}
-      const exclude = nuxt.options.vite.vue.exclude
-      nuxt.options.vite.vue.exclude = [
-        ...(Array.isArray(exclude) ? exclude : exclude ? [exclude] : []),
-        emailFiles,
-      ]
-      // plugin-vue handles every `?vue` sub-request regardless of `include`.
-      // Leave other components' sub-requests to Nuxt's compiler, otherwise
-      // their scoped styles are scoped twice.
-      const emailVuePlugin = createEmailVuePlugin(emailFiles)
-      type Handler = (this: unknown, ...args: unknown[]) => unknown
-      const { load, transform } = emailVuePlugin as unknown as Record<'load' | 'transform', { handler: Handler }>
-      const isOtherSubRequest = (id: unknown) => typeof id === 'string' && /[?&]vue\b/.test(id) && !emailFiles.test(id)
-      nuxt.options.vite.plugins ||= []
-      nuxt.options.vite.plugins.push(
-        {
-          ...viteInlineAssetPlugin(),
-          applyToEnvironment: environment => environment.name === 'nitro',
-        },
-        {
-          ...emailVuePlugin,
-          name: 'nuxt-email:vue',
-          // User plugins run after Nuxt's, whose SSR style plugin parses `.vue`
-          // files as compiled JavaScript. Compile email files before it.
-          enforce: 'pre',
-          load: {
-            ...load,
-            handler(...args: unknown[]) {
-              return isOtherSubRequest(args[0]) ? null : load.handler.apply(this, args)
-            },
-          },
-          transform: {
-            handler(...args: unknown[]) {
-              return isOtherSubRequest(args[1]) ? null : transform.handler.apply(this, args)
-            },
-          },
-        } as typeof emailVuePlugin,
-      )
-
-      // Prerendering uses Rolldown outside Vite and needs its own compiler.
-      nuxt.hook('nitro:init', (nitro) => {
-        nitro.hooks.hook('prerender:config', (config) => {
-          // `config` is a shallow copy of Nitro's options; don't mutate the shared rollupConfig.
-          config.rollupConfig = {
-            ...config.rollupConfig,
-            plugins: [
-              nitroInlineAssetPlugin() as never,
-              createEmailVuePlugin(emailFiles) as never,
-              ...(Array.isArray(config.rollupConfig?.plugins) ? config.rollupConfig.plugins : []),
-            ],
-          }
-        })
-      })
-    }
-
-    // The primary templates directory is the highest-priority one (first layer)
-    const templatesDir = templatesDirs[0]
-
-    nuxt.options.nitro.alias = nuxt.options.nitro.alias || {}
-    // Inline runtime in Nitro bundle
-    // Let Nuxt/Nitro handle Vue dependencies to avoid conflicts with other modules
-    nuxt.options.nitro.externals = defu(
-      typeof nuxt.options.nitro.externals === 'object'
-        ? nuxt.options.nitro.externals
-        : {},
-      {
-        inline: [resolve('./runtime')],
-      },
-    )
-
-    addServerImports([
-      {
-        name: 'renderEmailComponent',
-        from: resolver.resolve('runtime/server/utils/render'),
-      },
-    ])
-
-    // Compile global CSS file contents at setup time and store in private
-    // (server-only) runtimeConfig so render.ts can access them at runtime
-    // via useRuntimeConfig() — this avoids a '#' virtual module import
-    // that Vite's import-analysis rejects during unit tests.
-    const globalCssContent = (() => {
-      if (!options.globalCss?.length) return ''
-      const cssContents: string[] = []
-      for (const cssPath of options.globalCss) {
-        const resolvedPath = resolvePath(nuxt.options.rootDir, cssPath)
-        if (existsSync(resolvedPath)) {
-          cssContents.push(readFileSync(resolvedPath, 'utf-8'))
-        }
-        else {
-          logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${resolvedPath}`)
-        }
-      }
-      return cssContents.join('\n')
-    })()
-
-    // Keep resolved module options and compiled CSS on the server. Public
-    // runtime config is serialized into every page payload.
-    ;(nuxt.options.runtimeConfig as Record<string, unknown>).nuxtEmailRenderer
-      = { ...options, emailsDir: templatesDir, globalCss: globalCssContent }
-
-    // Generate virtual module containing all email templates
-    nuxt.hooks.hook('nitro:config', async (nitroConfig) => {
-      applyCodeHighlightingBuildConfig(
-        nitroConfig,
-        options.codeHighlighting,
-      )
-
-      try {
-        // Scan all layer template directories and merge the mappings
-        // Process in reverse order so higher-priority layers (earlier in array) override lower-priority ones
-        const templateMapping: Awaited<ReturnType<typeof generateTemplateMapping>> = {}
-        for (const dir of [...templatesDirs].reverse()) {
-          const dirMapping = await generateTemplateMapping(dir)
-          Object.assign(templateMapping, dirMapping)
-        }
-        const virtualModuleContent = generateVirtualModule(templateMapping)
-        // Add virtual module to Nitro
-        nitroConfig.virtual = nitroConfig.virtual || {}
-        nitroConfig.virtual['#email-templates'] = virtualModuleContent
-
-        // Create alias for the virtual module
-        nitroConfig.alias = nitroConfig.alias || {}
-        nitroConfig.alias['#email-templates'] = 'virtual:#email-templates'
-
-        // Configure Vue plugin for Nitro server build
-        // We need Vue compilation for email templates in the server bundle
-        nitroConfig.rollupConfig = nitroConfig.rollupConfig || {}
-        nitroConfig.rollupConfig.plugins
-          = nitroConfig.rollupConfig.plugins || []
-
-        // When the @nuxtjs/i18n module is present (hasI18n), bundle vue-i18n
-        // into the Nitro server so it is always available at runtime
-        // regardless of the user's package manager isolation settings
-        // (e.g. pnpm strict mode). When @nuxtjs/i18n is NOT present we keep
-        // vue-i18n external so that a missing optional installation does not
-        // cause a build error.
-        if (hasI18n) {
-          nitroConfig.externals = nitroConfig.externals || {}
-          const inline: string[] = Array.isArray(nitroConfig.externals.inline)
-            ? nitroConfig.externals.inline as string[]
-            : []
-          if (!inline.includes('vue-i18n')) {
-            inline.push('vue-i18n')
-          }
-          nitroConfig.externals.inline = inline
-        }
-        else {
-          // Mark vue-i18n as external to avoid build errors when it's not installed
-          // It's dynamically imported only when needed
-          nitroConfig.rollupConfig.external
-            = nitroConfig.rollupConfig.external || []
-          if (Array.isArray(nitroConfig.rollupConfig.external)) {
-            nitroConfig.rollupConfig.external.push('vue-i18n')
-          }
-        }
-
-        if (!usesNitroVite) {
-          const plugins = [
-            nitroInlineAssetPlugin() as never,
-            createEmailVuePlugin() as never,
-          ]
-          if (Array.isArray(nitroConfig.rollupConfig.plugins)) {
-            nitroConfig.rollupConfig.plugins.unshift(...plugins)
-          }
-          else {
-            nitroConfig.rollupConfig.plugins = plugins
-          }
-        }
-
-        logger.success(
-          `${LOGGER_PREFIX} Generated virtual module with ${
-            Object.keys(templateMapping).length
-          } email template(s)`,
-        )
-      }
-      catch (error) {
-        logger.error(
-          `${LOGGER_PREFIX} Failed to generate virtual module`,
-          error,
-        )
-      }
-    })
-
-    // Enable HMR for email templates in development mode
-    if (nuxt.options.dev) {
-      // Watch all layer template directories for changes
-      nuxt.options.watch = nuxt.options.watch || []
-      for (const dir of templatesDirs) {
-        nuxt.options.watch.push(`${dir}/**/*.vue`)
-      }
-
-      nuxt.hooks.hook('builder:watch', async (event, path) => {
-        if (templatesDirs.some(dir => path.startsWith(dir)) && path.endsWith('.vue')) {
-          logger.info(`${LOGGER_PREFIX} Template ${event} - ${path}`)
-          logger.info(`${LOGGER_PREFIX} Server will restart to apply changes`)
-        }
-      })
-
-      // Configure Nitro dev storage for the primary templates directory
-      nuxt.hooks.hook('nitro:config', (nitroConfig) => {
-        nitroConfig.devStorage = nitroConfig.devStorage || {}
-        nitroConfig.devStorage['emails'] = {
-          driver: 'fs',
-          base: templatesDir,
-        }
-      })
-    }
-
-    // Add all layer template directories as Nitro server assets
-    nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
-    for (const [index, dir] of templatesDirs.entries()) {
-      const layerName = basename(dirname(dir))
-      nuxt.options.nitro.serverAssets.push({
-        baseName: index === 0 ? 'emails' : `emails_${layerName}_${index}`,
-        dir,
-      })
-    }
-
-    // Add server handlers for DevTools integration (development only)
-    // These endpoints are only registered when the consuming app is in development mode
-    // In production, developers should use the renderEmailComponent function directly
-    if (nuxt.options.dev) {
-      logger.info(`${LOGGER_PREFIX} Registering dev-only API endpoints`)
-
-      addServerHandler({
-        route: '/api/emails/render',
-        handler: resolve('./runtime/server/api/emails/render.post'),
-      })
-
-      addServerHandler({
-        route: '/api/emails/source',
-        handler: resolve('./runtime/server/api/emails/source.post'),
-      })
-
-      addServerHandler({
-        route: '/api/emails',
-        handler: resolve('./runtime/server/api/emails/index.get'),
-      })
-    }
-
-    // Add email component type declarations for auto-completion in email templates
-    // Note: We use generic Component types instead of importing actual component files
-    // to avoid bundling server-only components (and their heavy dependencies like shiki, marked)
-    // into the client bundle.
-    addTypeTemplate({
-      filename: 'types/nuxt-email-renderer-components.d.ts',
+    // Generated server modules: the user's templates and the built-in components.
+    addServerTemplate({
+      filename: '#email-templates',
       getContents: async () => {
-        const enabledEmailComponentPaths = getEnabledEmailComponentPaths(options.codeHighlighting)
-        const componentNames = Object.keys(enabledEmailComponentPaths)
+        const templates = await scanEmailTemplates(templatesDirs)
+        logger.success(`${LOGGER_PREFIX} Found ${templates.length} email template(s)`)
+        return generateTemplatesModule(templates)
+      },
+    })
+    const components = Object.fromEntries(Object.entries(emailComponentFiles)
+      .filter(([name]) => options.codeHighlighting || name !== 'ECodeBlock')
+      .map(([name, file]) => [name, resolver.resolve('./runtime/components', file)]))
+    addServerTemplate({
+      filename: '#email-components',
+      getContents: () => generateComponentsModule(components),
+    })
 
-        // Generate type declarations for each component
-        // Use DefineComponent generic type instead of importing actual files
-        const generateComponentTypes = (names: string[]) => {
-          return names
-            .map((name) => {
-              return `    ${name}: import('vue').DefineComponent<{}, {}, any>`
-            })
-            .join('\n')
+    // Server-only config. Public runtime config is serialized into every page payload.
+    const hasI18n = hasNuxtModule('@nuxtjs/i18n')
+    const emailConfig: Record<string, unknown> = {
+      ...options,
+      emailsDir: templatesDirs[0],
+      globalCss: readGlobalCss(nuxt.options.rootDir, options.globalCss),
+    }
+    nuxt.options.runtimeConfig.nuxtEmailRenderer = emailConfig
+    if (hasI18n) {
+      // @nuxtjs/i18n finishes its options after this module's setup.
+      nuxt.hook('modules:done', async () => {
+        emailConfig.i18n = await loadI18nConfig(nuxt)
+      })
+    }
+
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      // Email templates need their own Vue compiler in the server bundle, with
+      // whitespace preserved as written.
+      nitroConfig.rollupConfig ||= {}
+      const plugins = nitroConfig.rollupConfig.plugins
+      nitroConfig.rollupConfig.plugins = [
+        nitroInlineAssetPlugin(),
+        vue({
+          isProduction: !nuxt.options.dev,
+          template: { compilerOptions: { whitespace: 'preserve' } },
+        }),
+        ...(Array.isArray(plugins) ? plugins : plugins ? [plugins] : []),
+      ] as never
+
+      if (hasI18n) {
+        // Bundle vue-i18n so strict package managers (pnpm) need no direct dependency.
+        nitroConfig.externals ||= {}
+        nitroConfig.externals.inline = [...nitroConfig.externals.inline ?? [], 'vue-i18n']
+      }
+      else {
+        // vue-i18n is an optional peer dependency and only imported with i18n.
+        const external = nitroConfig.rollupConfig.external
+        nitroConfig.rollupConfig.external = [
+          ...(Array.isArray(external) ? external : external ? [external] : []),
+          'vue-i18n',
+        ] as never
+      }
+    })
+
+    addServerImports([{
+      name: 'renderEmailComponent',
+      from: resolver.resolve('./runtime/server/utils/email'),
+    }])
+
+    if (nuxt.options.dev) {
+      // Restart when templates are added or removed so `#email-templates` is
+      // regenerated. Listing the directories also watches those outside srcDir.
+      nuxt.options.watch.push(...templatesDirs)
+      nuxt.hook('builder:watch', (event, path) => {
+        const file = resolve(nuxt.options.srcDir, path)
+        if ((event === 'add' || event === 'unlink') && file.endsWith('.vue') && templatesDirs.includes(dirname(file))) {
+          return nuxt.callHook('restart')
         }
+      })
 
-        const componentTypes = generateComponentTypes(componentNames)
+      for (const [route, file] of [['templates', 'index.get'], ['render', 'render.post'], ['source', 'source.post']]) {
+        addServerHandler({
+          route: `${DEVTOOLS_API_ROUTE}/${route}`,
+          handler: resolver.resolve(`./runtime/server/api/emails/${file}`),
+        })
+      }
+      if (options.devtools) setupDevToolsUI(nuxt, resolver)
+    }
 
-        return `
-// Auto-generated email component types for nuxt-email-renderer
-// This file is automatically generated based on the components in emailComponents.
-// Do not edit this file manually - it will be regenerated on every build.
-// To add new components, add them to src/runtime/components/index.ts
-//
-// Note: These components use generic Vue component types to prevent bundling
-// server-only dependencies (shiki, marked) into the client bundle.
-// Email components are only used server-side for email rendering.
-declare module '@vue/runtime-core' {
-  export interface GlobalComponents {
-${componentTypes}
-  }
-}
+    addTypeTemplate({
+      filename: 'types/nuxt-email-renderer.d.ts',
+      getContents: () => `
+import type { EmailComponentMap } from 'nuxt-email-renderer/components'
+
+type EmailComponents = ${options.codeHighlighting ? 'EmailComponentMap' : `Omit<EmailComponentMap, 'ECodeBlock'>`}
 
 declare module 'vue' {
-  export interface GlobalComponents {
-${componentTypes}
-  }
+  interface GlobalComponents extends EmailComponents {}
 }
 
-export {}
-`
-      },
-    })
-
-    addTypeTemplate({
-      filename: 'types/nuxt-email-renderer-hooks.d.ts',
-      getContents: () => {
-        return `
 declare module 'nitropack/types' {
   interface NitroRuntimeHooks {
     'nuxt-email-renderer:devtools:resolveProps': (
@@ -617,10 +193,17 @@ declare module 'nitropack/types' {
 }
 
 export {}
-`
-      },
-    })
-
-    if (options.devtools) setupDevToolsUI(nuxt, resolver)
+`,
+    }, { nuxt: true, nitro: true })
   },
 })
+
+/** Concatenate the configured global CSS files, relative to the project root. */
+function readGlobalCss(rootDir: string, paths: string[] = []) {
+  return paths.flatMap((path) => {
+    const file = resolve(rootDir, path)
+    if (existsSync(file)) return readFileSync(file, 'utf-8')
+    logger.warn(`${LOGGER_PREFIX} globalCss file not found: ${file}`)
+    return []
+  }).join('\n')
+}

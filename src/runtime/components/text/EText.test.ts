@@ -9,7 +9,7 @@ describe('<EText> component', () => {
     const component = h(EText, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 })

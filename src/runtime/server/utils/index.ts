@@ -1,1 +1,0 @@
-export { renderEmailComponent } from './render'

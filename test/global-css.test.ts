@@ -13,12 +13,10 @@ describe('globalCss', async () => {
   })
 
   it('injects global CSS variables into email head', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'GlobalCss' },
     })
-
-    expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
     expect(response).toContain('--color-primary: #3b82f6')
     expect(response).toContain('--color-text: #1f2937')
@@ -26,7 +24,7 @@ describe('globalCss', async () => {
   })
 
   it('places global CSS inside <head>', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'GlobalCss' },
     }) as string

@@ -1,0 +1,4 @@
+{
+  "text": "Hello pipeline\n\nFirst https://example.com/first Second https://example.com/second",
+  "subject": "Welcome to Acme & Co"
+}

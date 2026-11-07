@@ -9,7 +9,7 @@ describe('<EHead> component', () => {
     const component = h(EHead, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -21,7 +21,7 @@ describe('<EHead> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 
@@ -33,7 +33,7 @@ describe('<EHead> component', () => {
           }` })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

@@ -10,13 +10,21 @@ import { fileURLToPath } from 'node:url'
 import { setTimeout as delay } from 'node:timers/promises'
 
 const repoDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-const nuxtVersion = process.env.EMAIL_TEST_NUXT || '4.4.6'
+const nuxtVersion = process.env.EMAIL_TEST_NUXT || '4.6.4'
+// Dev-only endpoints the DevTools client calls.
+const devApi = '/__nuxt-email-renderer/api/templates'
+const goldenDir = join(repoDir, 'compatibility/golden')
+const updateGolden = process.env.UPDATE_GOLDEN === 'true'
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 let fixtureDir
 
 function start(command, args, options = {}) {
-  const child = spawn(command, args, {
+  // Node only runs Windows batch files such as npm.cmd through a shell
+  // (CVE-2024-27980), which needs arguments with spaces quoted.
+  const shell = command.endsWith('.cmd')
+  const child = spawn(command, shell ? args.map(arg => /\s/.test(arg) ? `"${arg}"` : arg) : args, {
     cwd: fixtureDir,
+    shell,
     detached: process.platform !== 'win32',
     stdio: ['ignore', 'pipe', 'pipe'],
     ...options,
@@ -114,6 +122,9 @@ before(async () => {
       'nuxt': nuxtVersion,
       'nuxt-email-renderer': `file:./${filename}`,
       'vue': '^3.5.34',
+      'typescript': '^5.9.3',
+      'vue-tsc': '^3.3.1',
+      '@types/node': '^24.0.0',
     },
   }, null, 2))
   await run(npm, ['install', '--no-audit', '--no-fund'])
@@ -123,7 +134,27 @@ after(async () => {
   if (fixtureDir) await rm(fixtureDir, { recursive: true, force: true })
 })
 
-for (const mode of ['development', 'production', 'prerender']) {
+/** Compare against a checked-in file so every unintended output change fails. */
+async function assertGolden(name, actual) {
+  const file = join(goldenDir, name)
+  if (updateGolden) {
+    await writeFile(file, actual)
+    return
+  }
+  const expected = await readFile(file, 'utf8')
+  assert.equal(actual, expected, `${name} differs from the golden file. Run with UPDATE_GOLDEN=true if the change is intended.`)
+}
+
+test(`${nuxtVersion}: types`, { timeout: 300_000 }, async () => {
+  await run(process.execPath, [join(fixtureDir, 'node_modules/nuxt/bin/nuxt.mjs'), 'prepare'])
+  await run(process.execPath, [join(fixtureDir, 'node_modules/vue-tsc/bin/vue-tsc.js'), '-b', '--noEmit'])
+})
+
+// Prerendering an empty app fails on Nuxt 4.1/4.2 with today's transitive
+// dependencies (`[unstorage] Invalid key`), so CI skips it for the lowest version.
+const modes = process.env.EMAIL_TEST_MODES?.split(',') ?? ['development', 'production', 'prerender']
+
+for (const mode of modes) {
   test(`${nuxtVersion}: ${mode}`, { timeout: 300_000 }, async (t) => {
     const port = await freePort()
     const url = `http://127.0.0.1:${port}`
@@ -191,6 +222,36 @@ for (const mode of ['development', 'production', 'prerender']) {
       await t.test('embeds inline CSS in the email style element', () => {
         assert.match(email.html, /<style data-id="__nuxt-email-style">[^<]*--email-pipeline-color:\s*#123456;/)
       })
+      await t.test('renders the same HTML as the golden file', async () => {
+        // The dev server keeps one extra space after the doctype.
+        await assertGolden(mode === 'development' ? 'Welcome.dev.html' : 'Welcome.html', email.html)
+      })
+      await t.test('renders plain text', async () => {
+        const plain = await fetch(`${url}/api/plain`, { headers: { accept: 'application/json' } })
+        assert.equal(plain.status, 200, server.output())
+        await assertGolden('Welcome.txt', JSON.stringify(await plain.json(), null, 2) + '\n')
+      })
+      if (mode === 'development') {
+        await t.test('lists templates through the dev API', async () => {
+          const response = await fetch(`${url}${devApi}`, { headers: { accept: 'application/json' } })
+          assert.equal(response.status, 200, server.output())
+          assert.deepEqual(await response.json(), [{ name: 'Welcome', filename: 'Welcome.vue', displayName: 'Welcome' }])
+        })
+        await t.test('serves the DevTools client', async () => {
+          const response = await fetch(`${url}/__nuxt-email-renderer/`, { signal: AbortSignal.timeout(30_000) })
+          const body = await response.text()
+          assert.equal(response.status, 200, `${body}\n${server.output()}`)
+          assert.match(body, /<div id="__nuxt"/)
+        })
+      }
+      else {
+        await t.test('does not register the dev API', async () => {
+          const response = await fetch(`${url}${devApi}`, { headers: { accept: 'application/json' } })
+          await response.body?.cancel()
+          // Without pages, unknown routes render app.vue, so check for the JSON API response.
+          assert.doesNotMatch(response.headers.get('content-type') ?? '', /json/)
+        })
+      }
     }
     finally {
       await stop(server)

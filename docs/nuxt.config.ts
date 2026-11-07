@@ -6,6 +6,8 @@ export default defineNuxtConfig({
 
   site: {
     name: 'Nuxt Email Renderer',
+    // @nuxtjs/sitemap (via Docus) needs the URL to prerender /sitemap.xml.
+    url: 'https://nuxtemail.com',
   },
 
   compatibilityDate: '2025-08-07',

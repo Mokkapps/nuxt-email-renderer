@@ -67,24 +67,20 @@ describe('nitroInlineAssetPlugin', async () => {
   })
 
   it('inlines supported local assets imported with ?inline in rendered email', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'InlineAsset' },
     })
-
-    expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
     expect(response).toContain('data:image/svg+xml;base64,')
     expect(response).toContain('alt="Inline Logo"')
   })
 
   it('inlines CSS files imported with ?inline in rendered email', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'InlineCss' },
     })
-
-    expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
     expect(response).toContain('--brand-color')
     expect(response).toContain('data-id="__nuxt-email-style"')

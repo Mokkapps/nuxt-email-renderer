@@ -9,7 +9,7 @@ describe('<EContainer> component', () => {
     const component = h(EContainer, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -23,7 +23,7 @@ describe('<EContainer> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('style="max-width:37.5em;background-color:red;"')
     expect(html).toContain('data-testid="container-test"')
@@ -37,7 +37,7 @@ describe('<EContainer> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

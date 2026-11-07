@@ -45,9 +45,9 @@
     "test:watch": "vitest watch"
   },
   "dependencies": {
-    "@nuxt/devtools-kit": "^3.2.4",
-    "@nuxt/kit": "^4.4.6",
-    "@vitejs/plugin-vue": "^6.0.7",
+    "@nuxt/devtools-kit": "^3.4.4",
+    "@nuxt/kit": "^4.6.4",
+    "@vitejs/plugin-vue": "^6.0.10",
     "defu": "^6.1.7",
     "html-to-text": "^9.0.5",
     "jiti": "^2.7.0",
@@ -55,36 +55,36 @@
     "marked": "7.0.5",
     "shiki": "^3.23.0",
     "sirv": "^3.0.2",
-    "yaml": "^2.9.0",
-    "zod": "^4.4.3"
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^3.2.4",
-    "@nuxt/devtools-ui-kit": "^3.2.4",
-    "@nuxt/eslint-config": "^1.15.2",
-    "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.4.6",
-    "@nuxt/test-utils": "^4.0.3",
-    "@nuxtjs/i18n": "^10.4.0",
+    "@nuxt/devtools": "^3.4.4",
+    "@nuxt/devtools-ui-kit": "^3.4.4",
+    "@nuxt/eslint-config": "^1.17.0",
+    "@nuxt/module-builder": "^1.0.3",
+    "@nuxt/schema": "^4.6.4",
+    "@nuxt/test-utils": "^4.3.4",
+    "@nuxtjs/i18n": "^10.6.0",
     "@types/html-to-text": "^9.0.4",
     "@types/js-beautify": "^1.14.3",
-    "@types/node": "^25.9.1",
-    "@vitest/coverage-v8": "^4.1.7",
+    "@types/node": "^25.9.9",
+    "@vitest/coverage-v8": "^4.1.12",
     "changelogen": "^0.6.2",
-    "eslint": "^9.39.4",
-    "happy-dom": "^20.5.0",
-    "jsdom": "^28.0.0",
-    "nuxt": "4.4.6",
+    "eslint": "^9.39.5",
+    "happy-dom": "^20.14.6",
+    "jsdom": "^28.1.0",
+    "nuxt": "^4.6.4",
     "nuxt-email-renderer-devtools": "workspace:*",
-    "playwright-core": "^1.58.1",
+    "playwright-core": "^1.65.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.7",
-    "vue-i18n": "^11.4.4",
-    "vue-tsc": "^3.3.1"
+    "vitest": "^4.1.12",
+    "vue-i18n": "^11.4.18",
+    "vue-tsc": "^3.3.14"
   },
   "peerDependencies": {
-    "nuxt": ">=4.1.0",
     "@nuxtjs/i18n": ">=10.0.0",
+    "nuxt": ">=4.1.0",
     "vue-i18n": ">=11.0.0"
   },
   "peerDependenciesMeta": {
@@ -94,11 +94,6 @@
     "vue-i18n": {
       "optional": true
     }
-  },
-  "resolutions": {
-    "nuxt": "^4.4.6",
-    "typescript": "^5.9.3",
-    "vite": "~7.0.6"
   },
   "packageManager": "pnpm@10.33.4"
 }

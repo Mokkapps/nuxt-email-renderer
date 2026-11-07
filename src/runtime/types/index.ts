@@ -11,7 +11,6 @@ export interface EmailTemplate {
  * Extended email template information with additional metadata
  */
 export interface EmailTemplateInfo extends EmailTemplate {
-  importPath: string
   filePath: string
 }
 

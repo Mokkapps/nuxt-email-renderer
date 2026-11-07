@@ -49,9 +49,11 @@
     "@nuxt/kit": "^4.4.6",
     "@vitejs/plugin-vue": "^6.0.7",
     "html-to-text": "^9.0.5",
+    "jiti": "^2.7.0",
     "js-beautify": "^1.15.4",
     "marked": "7.0.5",
     "shiki": "^3.23.0",
+    "sirv": "^3.0.2",
     "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },

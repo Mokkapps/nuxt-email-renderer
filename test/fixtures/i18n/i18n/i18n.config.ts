@@ -1,4 +1,6 @@
-export default {
+// @nuxtjs/i18n v10 resolves `vueI18n` inside `restructureDir` (`i18n/`) and
+// provides `defineI18nConfig` as a global macro.
+export default defineI18nConfig(() => ({
   legacy: false,
   locale: 'en',
   messages: {
@@ -21,4 +23,4 @@ export default {
       button: 'Haz clic aquí',
     },
   },
-}
+}))

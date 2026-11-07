@@ -1,4 +1,4 @@
-import { join, resolve as resolvePath, basename, dirname } from 'node:path'
+import { join, resolve as resolvePath } from 'node:path'
 import {
   logger,
   defineNuxtModule,
@@ -10,6 +10,7 @@ import {
 import { existsSync, readFileSync } from 'node:fs'
 import { defu } from 'defu'
 import { parse as parseYaml } from 'yaml'
+import { createJiti } from 'jiti'
 import vue from '@vitejs/plugin-vue'
 import { nitroInlineAssetPlugin, viteInlineAssetPlugin } from './inline-asset-plugin'
 import { setupDevToolsUI } from './devtools'
@@ -60,6 +61,8 @@ export interface ModuleOptions {
   globalCss?: string[]
 }
 
+export type { DevtoolsPreviewPropsContext, EmailTemplate } from './runtime/types'
+
 const LOGGER_PREFIX = 'Nuxt Email Renderer:'
 
 /** Parse a locale message file. Supports JSON and YAML (.yaml / .yml). */
@@ -72,6 +75,25 @@ function parseLocaleFile(filePath: string): Record<string, unknown> {
 }
 
 type LocaleMessages = Record<string, Record<string, unknown>>
+
+/**
+ * Load a vue-i18n config file such as `i18n/i18n.config.ts`. jiti handles
+ * TypeScript on every supported Node version; `defineI18nConfig` is a global
+ * macro provided by @nuxtjs/i18n, so stub it while the file is evaluated.
+ */
+async function loadVueI18nConfig(configPath: string): Promise<{ messages?: LocaleMessages } | undefined> {
+  const globals = globalThis as { defineI18nConfig?: unknown }
+  const previous = globals.defineI18nConfig
+  globals.defineI18nConfig ??= (config: unknown) => config
+  try {
+    const jiti = createJiti(import.meta.url, { moduleCache: false })
+    const config = await jiti.import<unknown>(configPath, { default: true })
+    return typeof config === 'function' ? await config() : config as { messages?: LocaleMessages }
+  }
+  finally {
+    globals.defineI18nConfig = previous
+  }
+}
 
 /**
  * The @nuxtjs/i18n options this module reads. It does not depend on that
@@ -116,10 +138,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
-    const { resolve } = createResolver(import.meta.url)
-
-    // Configure Nitro
-    nuxt.options.nitro ||= {}
+    const { resolve } = resolver
 
     applyCodeHighlightingBuildConfig(
       nuxt.options.nitro,
@@ -149,31 +168,18 @@ export default defineNuxtModule<ModuleOptions>({
         let messages: LocaleMessages = {}
         const vueI18nPath = stringOption(vueI18n)
         if (vueI18nPath) {
-          // The vueI18n path may already be absolute (resolved by @nuxtjs/i18n)
-          // or relative to a layer directory. Try each layer's rootDir as a base.
-          // Deduplicate: _layers[0].cwd is the root, which is already first.
-          const seen = new Set<string>()
-          const candidateDirs = [
-            nuxt.options.rootDir,
-            ...nuxt.options._layers.map(l => l.cwd),
-          ].filter((dir) => {
-            if (seen.has(dir)) return false
-            seen.add(dir)
-            return true
-          })
+          // @nuxtjs/i18n v10 resolves the path inside each layer's restructureDir
+          // (`i18n/` by default). Older setups put it next to nuxt.config.
+          const localesRoot = stringOption(restructureDir) ?? 'i18n'
+          const candidatePaths = new Set(nuxt.options._layers.flatMap(layer => [
+            resolvePath(layer.cwd, localesRoot, vueI18nPath),
+            resolvePath(layer.cwd, vueI18nPath),
+          ]))
 
-          for (const baseDir of candidateDirs) {
-            const configPath = resolvePath(baseDir, vueI18nPath)
+          for (const configPath of candidatePaths) {
             if (!existsSync(configPath)) continue
             try {
-              const { pathToFileURL } = await import('node:url')
-
-              // Import the i18n config file
-              const configModule = await import(pathToFileURL(configPath).href)
-              const configResult
-                = typeof configModule.default === 'function'
-                  ? configModule.default()
-                  : configModule.default
+              const configResult = await loadVueI18nConfig(configPath)
 
               if (configResult && configResult.messages) {
                 messages = configResult.messages
@@ -506,32 +512,6 @@ export default defineNuxtModule<ModuleOptions>({
       for (const dir of templatesDirs) {
         nuxt.options.watch.push(`${dir}/**/*.vue`)
       }
-
-      nuxt.hooks.hook('builder:watch', async (event, path) => {
-        if (templatesDirs.some(dir => path.startsWith(dir)) && path.endsWith('.vue')) {
-          logger.info(`${LOGGER_PREFIX} Template ${event} - ${path}`)
-          logger.info(`${LOGGER_PREFIX} Server will restart to apply changes`)
-        }
-      })
-
-      // Configure Nitro dev storage for the primary templates directory
-      nuxt.hooks.hook('nitro:config', (nitroConfig) => {
-        nitroConfig.devStorage = nitroConfig.devStorage || {}
-        nitroConfig.devStorage['emails'] = {
-          driver: 'fs',
-          base: templatesDir,
-        }
-      })
-    }
-
-    // Add all layer template directories as Nitro server assets
-    nuxt.options.nitro.serverAssets = nuxt.options.nitro.serverAssets || []
-    for (const [index, dir] of templatesDirs.entries()) {
-      const layerName = basename(dirname(dir))
-      nuxt.options.nitro.serverAssets.push({
-        baseName: index === 0 ? 'emails' : `emails_${layerName}_${index}`,
-        dir,
-      })
     }
 
     // Add server handlers for DevTools integration (development only)
@@ -619,7 +599,7 @@ declare module 'nitropack/types' {
 export {}
 `
       },
-    })
+    }, { nuxt: true, nitro: true })
 
     if (options.devtools) setupDevToolsUI(nuxt, resolver)
   },

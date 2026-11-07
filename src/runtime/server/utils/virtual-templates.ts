@@ -36,14 +36,10 @@ export async function generateTemplateMapping(
         .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')
         .trim()
 
-      // Create a virtual import path that Nitro can resolve
-      const importPath = `#email-templates/${name}`
-
       mapping[name] = {
         name,
         filename: file,
         displayName,
-        importPath,
         filePath,
       }
     }
@@ -78,7 +74,6 @@ export function generateVirtualModule(mapping: EmailTemplateMapping): string {
     name: ${escapeString(template.name)},
     filename: ${escapeString(template.filename)},
     displayName: ${escapeString(template.displayName)},
-    importPath: ${escapeString(template.importPath)},
     filePath: ${escapeString(template.filePath)}
   }`)
   })
@@ -96,10 +91,6 @@ ${templatesContent}
 
 export const emailTemplateMapping = {
 ${mappingContent}
-}
-
-export function getEmailTemplate(name) {
-  return emailTemplates[name]
 }
 `
 }

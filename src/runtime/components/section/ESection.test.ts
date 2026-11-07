@@ -9,7 +9,7 @@ describe('<ESection> component', () => {
     const component = h(ESection, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 })

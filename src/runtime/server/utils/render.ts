@@ -18,6 +18,15 @@ export type RenderOptions = Options & {
   locale?: string
 }
 
+export interface RenderResult {
+  /** The email HTML, including the doctype. */
+  html: string
+  /** Plain-text version of the email. Only set with `plainText: true`. */
+  text?: string
+  /** Text of the `<ESubject>` component, if the template has one. */
+  subject?: string
+}
+
 /** Project-wide settings `renderEmailComponent` reads from the server config. */
 export interface RenderContext {
   /** Components registered globally, such as the built-in `E*` components. */
@@ -59,7 +68,7 @@ export async function render<T extends Component>(
   props?: ExtractComponentProps<T>,
   options?: RenderOptions,
   context: RenderContext = {},
-) {
+): Promise<RenderResult> {
   let capturedSubject: string | undefined
   const app = createSSRApp(component, props || {})
   app.provide(SUBJECT_INJECTION_KEY, (subject: string) => {
@@ -73,24 +82,21 @@ export async function render<T extends Component>(
   }
 
   const markup = await renderToString(app)
-  const subject = capturedSubject ? decodeHtmlEntities(capturedSubject) : undefined
 
-  if (options?.plainText) {
-    const plainText = convert(markup, {
-      selectors: plainTextSelectors,
-      ...options.htmlToTextOptions,
-    })
-    return subject ? { html: plainText, subject } : plainText
-  }
-
-  let doc = `${DOCTYPE}${cleanup(markup)}`
+  let html = `${DOCTYPE}${cleanup(markup)}`
   // The CSS comes from files the developer listed in nuxt.config, so it is trusted.
   if (context.globalCss) {
-    doc = doc.replace(/(<\/head>)/i, `<style data-id="__nuxt-email-global-style">${context.globalCss}</style>$1`)
+    html = html.replace(/(<\/head>)/i, `<style data-id="__nuxt-email-global-style">${context.globalCss}</style>$1`)
   }
-  const html = options?.pretty ? pretty(doc) : doc
 
-  return subject ? { html, subject } : html
+  const result: RenderResult = { html: options?.pretty ? pretty(html) : html }
+  if (options?.plainText) {
+    result.text = convert(markup, { selectors: plainTextSelectors, ...options.htmlToTextOptions })
+  }
+  if (capturedSubject) {
+    result.subject = decodeHtmlEntities(capturedSubject)
+  }
+  return result
 }
 
 const HTML_ENTITIES: Record<string, string> = {

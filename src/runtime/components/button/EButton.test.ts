@@ -13,7 +13,7 @@ describe('EButton Component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -27,7 +27,7 @@ describe('EButton Component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('background-color:red')
     expect(html).toContain('data-testid="button-test"')
@@ -43,7 +43,7 @@ describe('EButton Component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 
@@ -53,7 +53,7 @@ describe('EButton Component', () => {
         return h(EButton, { href: 'https://example.com' })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toMatchSnapshot()
   })
@@ -69,7 +69,7 @@ describe('EButton Component', () => {
         } })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toMatchSnapshot()
   })

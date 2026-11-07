@@ -56,13 +56,13 @@ console.log(\`Hello, $\{name}!\`);
 \`\`\``,
     })
 
-    const actualOutput = await render(component)
+    const { html: actualOutput } = await render(component)
 
     expect(actualOutput).toMatchSnapshot()
   })
 
   it('renders the headers in the correct format for browsers', async () => {
-    const actualOutput = await render(h(EMarkdown, {
+    const { html: actualOutput } = await render(h(EMarkdown, {
       source: `
 # Heading 1!
 ## Heading 2!
@@ -77,7 +77,7 @@ console.log(\`Hello, $\{name}!\`);
   })
 
   it('renders text in the correct format for browsers', async () => {
-    const actualOutput = await render(h(EMarkdown, {
+    const { html: actualOutput } = await render(h(EMarkdown, {
       markdownCustomStyles: {
         bold: {
           font: '700 23px / 32px "Roobert PRO", system-ui, sans-serif',
@@ -92,14 +92,14 @@ console.log(\`Hello, $\{name}!\`);
   })
 
   it('renders links in the correct format for browsers', async () => {
-    const actualOutput = await render(h(EMarkdown, [
+    const { html: actualOutput } = await render(h(EMarkdown, [
       'Link to [React-email](https://react.email)',
     ]))
     expect(actualOutput).toMatchSnapshot()
   })
 
   it('renders lists in the correct format for browsers', async () => {
-    const actualOutput = await render(h(EMarkdown, [
+    const { html: actualOutput } = await render(h(EMarkdown, [
       `
 # Below is a list
 

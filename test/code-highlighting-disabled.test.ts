@@ -17,7 +17,7 @@ describe('codeHighlighting: false', async () => {
   })
 
   it('does not register ECodeBlock', async () => {
-    const html = await $fetch<string>('/api/send-email')
+    const { html } = await $fetch<{ html: string }>('/api/send-email')
     expect(html).toContain('Before code')
     // Unregistered components render as plain elements instead of highlighted code.
     expect(html).not.toContain('<pre')

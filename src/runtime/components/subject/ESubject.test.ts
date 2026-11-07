@@ -17,10 +17,8 @@ describe('<ESubject> component', () => {
     ])
     const result = await render(component)
 
-    expect(result).toHaveProperty('subject')
-    expect(result).toHaveProperty('html')
-    expect((result as any).subject).toBe(testSubject)
-    expect((result as any).html).toContain('Email content')
+    expect(result.subject).toBe(testSubject)
+    expect(result.html).toContain('Email content')
     expect(result).toMatchSnapshot()
   })
 
@@ -34,7 +32,7 @@ describe('<ESubject> component', () => {
     ])
     const result = await render(component)
 
-    expect((result as any).html).not.toContain('Secret Subject')
+    expect(result.html).not.toContain('Secret Subject')
   })
 
   it('decodes HTML entities in subject', async () => {
@@ -46,7 +44,7 @@ describe('<ESubject> component', () => {
     ])
     const result = await render(component)
 
-    expect((result as any).subject).toBe('Welcome to Procter & Gamble!')
+    expect(result.subject).toBe('Welcome to Procter & Gamble!')
   })
 
   it('works with dynamic content', async () => {
@@ -59,7 +57,7 @@ describe('<ESubject> component', () => {
     ])
     const result = await render(component)
 
-    expect((result as any).subject).toBe('Welcome to MySite!')
+    expect(result.subject).toBe('Welcome to MySite!')
   })
 
   it('returns only html when no subject is provided', async () => {
@@ -70,8 +68,7 @@ describe('<ESubject> component', () => {
     ])
     const result = await render(component)
 
-    // Result should be a string, not an object with subject
-    expect(typeof result).toBe('string')
-    expect(result).toContain('Email content')
+    expect(result).not.toHaveProperty('subject')
+    expect(result.html).toContain('Email content')
   })
 })

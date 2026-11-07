@@ -18,16 +18,13 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
       sourceCode: null,
     }
   }
-  const response = await $fetch(`${url.origin}/__nuxt-email-renderer/api/render`, {
+  const { html, subject } = await $fetch(`${url.origin}/__nuxt-email-renderer/api/render`, {
     method: 'POST',
     body: {
       name: props.template.filename,
       pretty: true,
     },
   })
-
-  const html = typeof response === 'string' ? response : response.html
-  const subject = typeof response === 'string' ? null : response.subject
 
   const sourceResponse = await $fetch(`${url.origin}/__nuxt-email-renderer/api/source`, {
     method: 'POST',
@@ -37,7 +34,7 @@ const { data, error, pending: isLoading, refresh } = useAsyncData(async () => {
   })
   const sourceCode = sourceResponse.sourceCode
 
-  return { html, subject, sourceCode }
+  return { html, subject: subject ?? null, sourceCode }
 }, { watch: [() => props.template] })
 
 const sourceCode = computed(() => data.value?.sourceCode ?? null)

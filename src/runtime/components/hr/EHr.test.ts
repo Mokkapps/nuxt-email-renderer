@@ -12,7 +12,7 @@ describe('<EHr> component', () => {
         borderColor: 'black',
       },
     })
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain('width:50%')
     expect(html).toContain('border-color:black')
     expect(html).toContain('data-testid="hr-test"')
@@ -24,7 +24,7 @@ describe('<EHr> component', () => {
         return h(EHr)
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

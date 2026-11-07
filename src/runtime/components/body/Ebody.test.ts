@@ -13,7 +13,7 @@ describe('EBody Component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -27,7 +27,7 @@ describe('EBody Component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain('data-testid="body-test"')
     expect(html).toContain('style="background-color:red;"')
   })
@@ -40,7 +40,7 @@ describe('EBody Component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

@@ -9,7 +9,7 @@ describe('<EHtml> component', () => {
     const component = h(EHtml, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -19,7 +19,7 @@ describe('<EHtml> component', () => {
         return h(EHtml, { 'lang': 'fr', 'dir': 'rtl', 'data-testid': 'html-test' })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('lang="fr"')
     expect(html).toContain('dir="rtl"')
@@ -34,7 +34,7 @@ describe('<EHtml> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

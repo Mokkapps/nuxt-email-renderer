@@ -19,6 +19,7 @@ import { emailComponentFiles } from './runtime/components'
 import { generateComponentsModule, generateTemplatesModule, scanEmailTemplates } from './templates'
 
 export type { DevtoolsPreviewPropsContext, EmailTemplate } from './runtime/types'
+export type { RenderOptions, RenderResult } from './runtime/server/utils/render'
 
 export interface ModuleOptions {
   /**

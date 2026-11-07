@@ -15,7 +15,7 @@ describe('<EImg> component', () => {
       style,
       'src': 'cat.jpg',
     })
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('background-color:red')
     expect(html).toContain('border:solid 1px black')

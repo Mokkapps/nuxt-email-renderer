@@ -13,7 +13,7 @@ describe('<EHeading> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -27,7 +27,7 @@ describe('<EHeading> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('background-color:red')
     expect(html).toContain('data-testid="heading-test"')
@@ -41,7 +41,7 @@ describe('<EHeading> component', () => {
         })
       },
     }
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toMatchSnapshot()
   })

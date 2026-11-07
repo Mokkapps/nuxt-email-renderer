@@ -10,7 +10,7 @@ describe('<EFont> component', () => {
       fontFamily: 'Arial',
     })
 
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('font-style: normal;')
     expect(html).toContain('font-weight: 400;')
@@ -28,7 +28,7 @@ describe('<EFont> component', () => {
       fontFamily: 'Arial',
       webFont,
     })
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toMatchSnapshot()
   })
@@ -38,7 +38,7 @@ describe('<EFont> component', () => {
       fallbackFontFamily: ['Helvetica', 'Verdana'],
       fontFamily: 'Arial',
     })
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toContain('font-family: \'Arial\', Helvetica, Verdana;')
   })
@@ -49,7 +49,7 @@ describe('<EFont> component', () => {
       fontFamily: 'Roboto',
     })
 
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 })

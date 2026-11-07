@@ -9,7 +9,7 @@ describe('<EPreview> component', () => {
     const component = h(EPreview, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 
@@ -17,7 +17,7 @@ describe('<EPreview> component', () => {
     const component = h(EPreview, [
       'Email preview',
     ])
-    const html = await render(component)
+    const { html } = await render(component)
 
     expect(html).toMatchSnapshot()
   })
@@ -28,7 +28,7 @@ describe('<EPreview> component', () => {
     const component = h(EPreview, [
       longText,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toMatchSnapshot()
   })
 

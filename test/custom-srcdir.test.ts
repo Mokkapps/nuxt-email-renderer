@@ -8,7 +8,7 @@ describe('custom srcDir', async () => {
   })
 
   it('finds templates in <srcDir>/emails', async () => {
-    const html = await $fetch<string>('/api/send-email', {
+    const { html } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'SrcDirEmail' },
     })

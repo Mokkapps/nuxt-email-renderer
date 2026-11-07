@@ -1,1 +1,4 @@
+# The compatibility test compares rendered output byte for byte, and the
+# fixture's ?inline assets end up in that output. Keep LF on Windows too.
+compatibility/fixture/** text eol=lf
 compatibility/golden/* text eol=lf

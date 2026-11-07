@@ -12,13 +12,23 @@ on:
 
 jobs:
   email-build-pipeline:
-    name: Email build pipeline (${{ matrix.nuxt }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    name: Email build pipeline (${{ matrix.nuxt }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
-        nuxt: ['4.4.6', 'npm:nuxt-nightly@5.0.0-2610111729-78f43dd']
+        os: [ubuntu-latest]
+        nuxt: ['4.6.4', 'npm:nuxt-nightly@5.0.0-2610111729-78f43dd']
+        modes: ['development,production,prerender']
+        include:
+          # Lowest supported version. Its prerendering fails without this module too.
+          - os: ubuntu-latest
+            nuxt: '4.1.0'
+            modes: 'development,production'
+          - os: windows-latest
+            nuxt: '4.6.4'
+            modes: 'development,production,prerender'
     steps:
       - uses: actions/checkout@v5
       # setup-node caches the packageManager from package.json, so pnpm must exist first.
@@ -32,6 +42,7 @@ jobs:
       - run: pnpm test:compatibility
         env:
           EMAIL_TEST_NUXT: ${{ matrix.nuxt }}
+          EMAIL_TEST_MODES: ${{ matrix.modes }}
 
   ci:
     strategy:

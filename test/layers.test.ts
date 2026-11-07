@@ -32,4 +32,12 @@ describe('E2E Layer', async () => {
     expect(response).toContain('<!DOCTYPE html')
     expect(response).toContain('App Layer Email')
   })
+
+  it('prefers the app layer when both layers define a template with the same name', async () => {
+    const response = await $fetch('/api/send-email', {
+      method: 'POST',
+      body: { name: 'AppEmail' },
+    })
+    expect(response).not.toContain('Base Layer Email')
+  })
 })

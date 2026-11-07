@@ -23,4 +23,28 @@ describe('devtools preview hooks', async () => {
     expect(response.subject).toBe('Welcome to AWS!')
     expect(response.html).toContain(`Verify your account: ${randomCode}`)
   })
+
+  it('lists the email templates', async () => {
+    const templates = await $fetch('/api/emails')
+    expect(templates).toEqual([
+      { name: 'NoSubject', filename: 'NoSubject.vue', displayName: 'No Subject' },
+      { name: 'Test', filename: 'Test.vue', displayName: 'Test' },
+    ])
+  })
+
+  it('returns the source of a template', async () => {
+    const response = await $fetch<{ filename: string, sourceCode: string }>('/api/emails/source', {
+      method: 'POST',
+      body: { name: 'Test' },
+    })
+    expect(response.filename).toBe('Test.vue')
+    expect(response.sourceCode).toContain('<ESubject>Welcome to {{ siteName }}!</ESubject>')
+  })
+
+  it('returns 404 for the source of an unknown template', async () => {
+    await expect($fetch('/api/emails/source', {
+      method: 'POST',
+      body: { name: 'DoesNotExist' },
+    })).rejects.toMatchObject({ statusCode: 404 })
+  })
 })

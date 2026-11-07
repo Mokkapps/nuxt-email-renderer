@@ -19,8 +19,12 @@ const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 let fixtureDir
 
 function start(command, args, options = {}) {
-  const child = spawn(command, args, {
+  // Node only runs Windows batch files such as npm.cmd through a shell
+  // (CVE-2024-27980), which needs arguments with spaces quoted.
+  const shell = command.endsWith('.cmd')
+  const child = spawn(command, shell ? args.map(arg => /\s/.test(arg) ? `"${arg}"` : arg) : args, {
     cwd: fixtureDir,
+    shell,
     detached: process.platform !== 'win32',
     stdio: ['ignore', 'pipe', 'pipe'],
     ...options,

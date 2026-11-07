@@ -1,16 +1,15 @@
-import type { Renderer } from 'marked'
-import { marked } from 'marked'
+import { Marked } from 'marked'
 import type { StylesType } from './types'
 import { initRenderer } from './utils'
 
 export class MarkdownParser {
-  private readonly renderer: Renderer
+  private readonly marked: Marked
 
   constructor({ customStyles }: { customStyles?: StylesType }) {
-    this.renderer = initRenderer({ customStyles })
+    this.marked = new Marked({ renderer: initRenderer({ customStyles }) })
   }
 
   parse(markdown: string) {
-    return marked.parse(markdown, { renderer: this.renderer })
+    return this.marked.parse(markdown, { async: false })
   }
 }

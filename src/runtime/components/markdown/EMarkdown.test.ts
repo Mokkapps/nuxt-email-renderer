@@ -111,4 +111,16 @@ console.log(\`Hello, $\{name}!\`);
 
     expect(actualOutput).toMatchSnapshot()
   })
+
+  it('escapes HTML in code blocks and inline code', async () => {
+    const component = h(EMarkdown, {
+      source: '`<b>inline</b>`\n\n```html\n<div class="x">a & b</div>\n```',
+    })
+
+    const { html } = await render(component)
+
+    expect(html).toContain('&lt;b&gt;inline&lt;/b&gt;')
+    expect(html).toContain('&lt;div class=&quot;x&quot;&gt;a &amp; b&lt;/div&gt;')
+    expect(html).not.toContain('<div class="x">')
+  })
 })

@@ -10,7 +10,7 @@ describe('devtools preview hooks', async () => {
 
   it('allows resolving dynamic template props via Nitro hook', async () => {
     const randomCode = Math.floor(100000 + Math.random() * 900000).toString()
-    const response = await $fetch('/api/emails/render', {
+    const response = await $fetch('/__nuxt-email-renderer/api/render', {
       method: 'POST',
       body: {
         name: 'Test',
@@ -25,7 +25,7 @@ describe('devtools preview hooks', async () => {
   })
 
   it('lists the email templates', async () => {
-    const templates = await $fetch('/api/emails')
+    const templates = await $fetch('/__nuxt-email-renderer/api/templates')
     expect(templates).toEqual([
       { name: 'NoSubject', filename: 'NoSubject.vue', displayName: 'No Subject' },
       { name: 'Test', filename: 'Test.vue', displayName: 'Test' },
@@ -33,7 +33,7 @@ describe('devtools preview hooks', async () => {
   })
 
   it('returns the source of a template', async () => {
-    const response = await $fetch<{ filename: string, sourceCode: string }>('/api/emails/source', {
+    const response = await $fetch<{ filename: string, sourceCode: string }>('/__nuxt-email-renderer/api/source', {
       method: 'POST',
       body: { name: 'Test' },
     })
@@ -42,7 +42,7 @@ describe('devtools preview hooks', async () => {
   })
 
   it('returns 404 for the source of an unknown template', async () => {
-    await expect($fetch('/api/emails/source', {
+    await expect($fetch('/__nuxt-email-renderer/api/source', {
       method: 'POST',
       body: { name: 'DoesNotExist' },
     })).rejects.toMatchObject({ statusCode: 404 })

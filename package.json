@@ -48,6 +48,7 @@
     "@nuxt/devtools-kit": "^3.2.4",
     "@nuxt/kit": "^4.4.6",
     "@vitejs/plugin-vue": "^6.0.7",
+    "defu": "^6.1.7",
     "html-to-text": "^9.0.5",
     "jiti": "^2.7.0",
     "js-beautify": "^1.15.4",

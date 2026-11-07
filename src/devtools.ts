@@ -15,7 +15,8 @@ export function setupDevToolsUI(nuxt: Nuxt, resolver: Resolver) {
       const { default: sirv } = await import('sirv')
       server.middlewares.use(
         DEVTOOLS_UI_ROUTE,
-        sirv(clientPath, { dev: true, single: true }),
+        // No SPA fallback: requests to the dev API must reach Nitro.
+        sirv(clientPath, { dev: true }),
       )
     })
   }
@@ -24,7 +25,8 @@ export function setupDevToolsUI(nuxt: Nuxt, resolver: Resolver) {
     nuxt.hook('vite:extendConfig', (config) => {
       config.server ||= {}
       config.server.proxy ||= {}
-      config.server.proxy[DEVTOOLS_UI_ROUTE] = {
+      // Everything except the dev API, which this server handles.
+      config.server.proxy[`^${DEVTOOLS_UI_ROUTE}(?!/api/)`] = {
         target: `http://localhost:${DEVTOOLS_UI_LOCAL_PORT}${DEVTOOLS_UI_ROUTE}`,
         changeOrigin: true,
         followRedirects: true,

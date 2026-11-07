@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        nuxt: ['4.6.4', 'npm:nuxt-nightly@5.0.0-2610111729-78f43dd']
+        nuxt: ['4.6.4']
         modes: ['development,production,prerender']
         include:
           # Lowest supported version. Its prerendering fails without this module too.

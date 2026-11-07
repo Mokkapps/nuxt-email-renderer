@@ -1,4 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { $fetch, setup, useTestContext } from '@nuxt/test-utils/e2e'
@@ -27,5 +28,6 @@ describe('codeHighlighting: false', async () => {
     const files = await readAllFiles(join(outputDir, 'server/chunks'))
     expect(files.length).toBeGreaterThan(0)
     expect(files.some(content => content.includes('createHighlighterCore'))).toBe(false)
+    expect(existsSync(join(outputDir, 'server/node_modules/shiki'))).toBe(false)
   })
 })

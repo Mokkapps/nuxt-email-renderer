@@ -1,36 +1,32 @@
-declare const __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__: boolean | undefined
+import type { EmailComponentMap } from './components.d'
 
-const isCodeHighlightingEnabled = typeof __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__ === 'boolean'
-  ? __NUXT_EMAIL_RENDERER_CODE_HIGHLIGHTING__
-  : true
+/**
+ * Built-in email components, relative to this directory. The module registers
+ * them globally in every rendered email. Keep `components.d.ts` in sync.
+ */
+export const emailComponentFiles = {
+  EBody: 'body/EBody.vue',
+  EButton: 'button/EButton.vue',
+  ECodeBlock: 'code-block/ECodeBlock.vue',
+  ECodeInline: 'code-inline/ECodeInline.vue',
+  EColumn: 'column/EColumn.vue',
+  EContainer: 'container/EContainer.vue',
+  EFont: 'font/EFont.vue',
+  EHead: 'head/EHead.vue',
+  EHeading: 'heading/EHeading.vue',
+  EHr: 'hr/EHr.vue',
+  EHtml: 'html/EHtml.vue',
+  EImg: 'img/EImg.vue',
+  ELink: 'link/ELink.vue',
+  EMarkdown: 'markdown/EMarkdown.vue',
+  EPreview: 'preview/EPreview.vue',
+  ERow: 'row/ERow.vue',
+  ESection: 'section/ESection.vue',
+  EStyle: 'style/EStyle.vue',
+  ESubject: 'subject/ESubject.vue',
+  EText: 'text/EText.vue',
+} as const satisfies Record<keyof EmailComponentMap, string>
 
-export const emailComponents = {
-  EBody: () => import('./body/EBody.vue'),
-  EButton: () => import('./button/EButton.vue'),
-  ...(isCodeHighlightingEnabled
-    ? {
-        ECodeBlock: () => import('./code-block/ECodeBlock.vue'),
-      }
-    : {}),
-  ECodeInline: () => import('./code-inline/ECodeInline.vue'),
-  EColumn: () => import('./column/EColumn.vue'),
-  EContainer: () => import('./container/EContainer.vue'),
-  EFont: () => import('./font/EFont.vue'),
-  EHead: () => import('./head/EHead.vue'),
-  EHeading: () => import('./heading/EHeading.vue'),
-  EHr: () => import('./hr/EHr.vue'),
-  EHtml: () => import('./html/EHtml.vue'),
-  EImg: () => import('./img/EImg.vue'),
-  ELink: () => import('./link/ELink.vue'),
-  EPreview: () => import('./preview/EPreview.vue'),
-  ERow: () => import('./row/ERow.vue'),
-  ESection: () => import('./section/ESection.vue'),
-  EStyle: () => import('./style/EStyle.vue'),
-  ESubject: () => import('./subject/ESubject.vue'),
-  EText: () => import('./text/EText.vue'),
-  EMarkdown: () => import('./markdown/EMarkdown.vue'),
-}
+export type EmailComponentName = keyof typeof emailComponentFiles
 
-// Export all component types from the declaration file
-// Note: These are auto-exported from components.d.ts
 export type * from './components.d'

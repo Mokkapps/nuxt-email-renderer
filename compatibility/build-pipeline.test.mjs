@@ -12,7 +12,7 @@ import { setTimeout as delay } from 'node:timers/promises'
 const repoDir = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const nuxtVersion = process.env.EMAIL_TEST_NUXT || '4.6.4'
 // Dev-only endpoints the DevTools client calls.
-const devApi = '/api/emails'
+const devApi = '/__nuxt-email-renderer/api/templates'
 const goldenDir = join(repoDir, 'compatibility/golden')
 const updateGolden = process.env.UPDATE_GOLDEN === 'true'
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'

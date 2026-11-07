@@ -83,7 +83,7 @@ describe('E2E', async () => {
 
   it('does not register the dev API in production', async () => {
     // Without pages, unknown routes render app.vue, so check for the JSON API response.
-    const response = await fetch(url('/api/emails'))
+    const response = await fetch(url('/__nuxt-email-renderer/api/templates'))
     expect(response.headers.get('content-type')).not.toContain('application/json')
   })
 })

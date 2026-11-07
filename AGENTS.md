@@ -19,7 +19,7 @@ Review `docs/content/` and README examples for every change. Update affected pag
 
 ## Email components
 
-A component touches four places: `src/runtime/components/<name>/` (component, test, snapshots), the `emailComponents` map in `src/runtime/components/index.ts`, the type entries in `src/runtime/components/components.d.ts` (hand-maintained despite its "Auto-generated" header), and `docs/content/2.components/<name>.md`.
+A component touches four places: `src/runtime/components/<name>/` (component, test, snapshots), the `emailComponentFiles` map in `src/runtime/components/index.ts`, the type entries in `src/runtime/components/components.d.ts` (hand-maintained; `satisfies` in `index.ts` keeps both in sync), and `docs/content/2.components/<name>.md`.
 
 ## Dependencies
 

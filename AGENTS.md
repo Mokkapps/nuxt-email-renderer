@@ -27,4 +27,6 @@ Exact pins, `resolutions` in `package.json`, and `patches/` are deliberate. Ask 
 
 ## Releasing
 
-Releasing is the maintainer's job. Your work ends with lint, test and build green; agent hooks block `pnpm release` and publishing.
+Releasing is the maintainer's job. Your work ends with lint, test and build green; agent hooks block publishing.
+
+Releases run in `.github/workflows/release.yml`: the maintainer starts it manually to open a release pull request (version bump and `CHANGELOG.md` via changelogen). Merging that pull request publishes to npm with trusted publishing, then tags the version and creates the GitHub release. Write conventional commit messages (`feat:`, `fix:`, `feat!:` for breaking changes); changelogen derives the version bump and changelog from them.

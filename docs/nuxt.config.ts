@@ -10,6 +10,13 @@ export default defineNuxtConfig({
     url: 'https://nuxtemail.com',
   },
 
+  content: {
+    experimental: {
+      // Node's built-in SQLite (Node >= 22.5) instead of the native better-sqlite3 build.
+      sqliteConnector: 'native',
+    },
+  },
+
   compatibilityDate: '2025-08-07',
 
   image: {

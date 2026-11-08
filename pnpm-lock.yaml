@@ -144,9 +144,6 @@ importers:
 
   docs:
     dependencies:
-      better-sqlite3:
-        specifier: ^13.0.3
-        version: 13.0.3
       docus:
         specifier: ^5.15.0
         version: 5.15.0(551b16ffef08c3451f564d9bb16f3b5f)

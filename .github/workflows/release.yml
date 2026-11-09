@@ -1,0 +1,128 @@
+name: release
+
+# 1. Run this workflow manually ("Run workflow" on main). It bumps the version,
+#    updates CHANGELOG.md and opens a release pull request.
+# 2. Merge that pull request. The push to main publishes the new version to
+#    npm, then tags it and creates a GitHub release.
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump. "auto" derives it from the commits since the last release.'
+        type: choice
+        options: [auto, patch, minor, major]
+        default: auto
+  push:
+    branches: [main]
+    paths: [package.json]
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Prepare release pull request
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # changelogen reads the commits since the last release tag.
+          fetch-depth: 0
+      # setup-node caches the packageManager from package.json, so pnpm must exist first.
+      - run: corepack enable
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Bump version and update CHANGELOG.md
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: pnpm changelogen --bump $([ "$BUMP" = auto ] || echo "--$BUMP")
+
+      - name: Open release pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p "require('./package.json').version")
+          branch="release/v$version"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$branch"
+          git commit -am "chore(release): v$version"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "chore(release): v$version" \
+            --body "Merging this pull request publishes \`nuxt-email-renderer@$version\` to npm and creates the \`v$version\` tag and GitHub release. Review the changelog entry before merging."
+
+  publish:
+    name: Publish to npm
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    # Bind the npm trusted publisher to this environment and add required
+    # reviewers to it on GitHub if publishing should need an approval.
+    environment: npm
+    permissions:
+      contents: write # tag and GitHub release
+      id-token: write # npm trusted publishing and provenance
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check whether the version is published
+        id: version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if npm view "nuxt-email-renderer@$version" version > /dev/null 2>&1; then
+            echo "nuxt-email-renderer@$version is already on npm, nothing to publish." >> "$GITHUB_STEP_SUMMARY"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.version.outputs.publish == 'true'
+        run: corepack enable
+      - if: steps.version.outputs.publish == 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - if: steps.version.outputs.publish == 'true'
+        run: pnpm install --frozen-lockfile
+      - if: steps.version.outputs.publish == 'true'
+        run: pnpm playwright-core install chromium
+      - if: steps.version.outputs.publish == 'true'
+        run: pnpm dev:prepare
+      - if: steps.version.outputs.publish == 'true'
+        run: pnpm lint
+      - if: steps.version.outputs.publish == 'true'
+        run: pnpm test
+      - if: steps.version.outputs.publish == 'true'
+        run: pnpm build
+
+      - name: Publish to npm
+        if: steps.version.outputs.publish == 'true'
+        # Trusted publishing needs npm >= 11.5.1. It authenticates with OIDC
+        # instead of a token and adds provenance automatically.
+        run: |
+          npm install --global npm@^11.5.1
+          npm publish --access public --ignore-scripts
+
+      - name: Tag and create GitHub release
+        if: steps.version.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          # The release notes are this version's section of CHANGELOG.md.
+          awk -v heading="## v$VERSION" '$0 == heading { found = 1; next } found && /^## v/ { exit } found' CHANGELOG.md > notes.md
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file notes.md --verify-tag

@@ -13,12 +13,10 @@ describe('E2E Custom emailsDir', async () => {
   })
 
   it('renders email template from custom emailsDir', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'Welcome' },
     })
-
-    expect(typeof response).toBe('string')
     expect(response).toContain('<!DOCTYPE html')
     expect(response).toContain('Hello from custom emails dir!')
   })

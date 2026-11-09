@@ -26,7 +26,7 @@ describe('<ECodeBlock> component', () => {
       theme: 'dracula',
     })
 
-    const actualOutput = await render(component)
+    const { html: actualOutput } = await render(component)
 
     expect(actualOutput).toMatchInlineSnapshot(
       `
@@ -53,7 +53,7 @@ describe('<ECodeBlock> component', () => {
       'show-line-numbers': true,
     })
 
-    const actualOutput = await render(component)
+    const { html: actualOutput } = await render(component)
 
     expect(actualOutput).toMatchInlineSnapshot(
       `
@@ -80,7 +80,7 @@ describe('<ECodeBlock> component', () => {
       'highlighted-lines': [4, 5],
     })
 
-    const actualOutput = await render(component)
+    const { html: actualOutput } = await render(component)
 
     expect(actualOutput).toMatchInlineSnapshot(
       `
@@ -113,7 +113,7 @@ describe('<ECodeBlock> component', () => {
       theme: 'vitesse-dark',
     })
 
-    const actualOutput = await render(component)
+    const { html: actualOutput } = await render(component)
 
     expect(actualOutput).toMatchInlineSnapshot(
       `

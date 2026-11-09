@@ -20,7 +20,7 @@ describe('i18n with layers', async () => {
   })
 
   it('resolves a nested translation from the second JSON locale file', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: { name: 'Nested' },
     })
@@ -29,7 +29,7 @@ describe('i18n with layers', async () => {
   })
 
   it('renders email with default locale (en) using locale files from a layer', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',
@@ -44,7 +44,7 @@ describe('i18n with layers', async () => {
   })
 
   it('renders email with German locale (de) using YAML locale files from a layer', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',
@@ -60,7 +60,7 @@ describe('i18n with layers', async () => {
   })
 
   it('renders email with Spanish locale (es) using YML locale files from a layer', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',
@@ -76,7 +76,7 @@ describe('i18n with layers', async () => {
   })
 
   it('falls back to default locale when invalid locale is provided', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',

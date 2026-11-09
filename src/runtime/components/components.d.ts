@@ -1,4 +1,4 @@
-// Auto-generated component type declarations for nuxt-email-renderer
+// Component types for nuxt-email-renderer. Keep in sync with `emailComponentFiles` in index.ts.
 
 // Export individual component types
 export type EBody = typeof import('./body/EBody.vue').default
@@ -20,6 +20,7 @@ export type EPreview = typeof import('./preview/EPreview.vue').default
 export type ERow = typeof import('./row/ERow.vue').default
 export type ESection = typeof import('./section/ESection.vue').default
 export type EStyle = typeof import('./style/EStyle.vue').default
+export type ESubject = typeof import('./subject/ESubject.vue').default
 export type EText = typeof import('./text/EText.vue').default
 
 // Component map for global registration
@@ -42,17 +43,10 @@ export interface EmailComponentMap {
   ERow: typeof import('./row/ERow.vue').default
   ESection: typeof import('./section/ESection.vue').default
   EStyle: typeof import('./style/EStyle.vue').default
+  ESubject: typeof import('./subject/ESubject.vue').default
   EText: typeof import('./text/EText.vue').default
 }
 
-// Augment Vue's GlobalComponents interface
-declare module 'vue' {
-  export interface GlobalComponents extends EmailComponentMap {}
-}
-
-// Augment @vue/runtime-core for Vue 3
-declare module '@vue/runtime-core' {
-  export interface GlobalComponents extends EmailComponentMap {}
-}
+// The module registers these as global components (see the generated `types/nuxt-email-renderer.d.ts`).
 
 export {}

@@ -8,7 +8,7 @@ describe('i18n support', async () => {
   })
 
   it('renders email with default locale (en)', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',
@@ -23,7 +23,7 @@ describe('i18n support', async () => {
   })
 
   it('renders email with German locale (de)', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',
@@ -39,7 +39,7 @@ describe('i18n support', async () => {
   })
 
   it('renders email with Spanish locale (es)', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',
@@ -55,7 +55,7 @@ describe('i18n support', async () => {
   })
 
   it('falls back to default locale when invalid locale is provided', async () => {
-    const response = await $fetch('/api/send-email', {
+    const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',
       body: {
         name: 'Welcome',

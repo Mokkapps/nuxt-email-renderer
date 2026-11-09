@@ -6,6 +6,15 @@ export default defineNuxtConfig({
 
   site: {
     name: 'Nuxt Email Renderer',
+    // @nuxtjs/sitemap (via Docus) needs the URL to prerender /sitemap.xml.
+    url: 'https://nuxtemail.com',
+  },
+
+  content: {
+    experimental: {
+      // Node's built-in SQLite (Node >= 22.5) instead of the native better-sqlite3 build.
+      sqliteConnector: 'native',
+    },
   },
 
   compatibilityDate: '2025-08-07',

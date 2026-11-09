@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const url = useRequestURL()
-const { data: emailTemplates, pending: isLoadingEmailTemplates, error: emailTemplatesError } = await useFetch<Array<EmailTemplate>>(`${url.origin}/api/emails`, {
+const { data: emailTemplates, pending: isLoadingEmailTemplates, error: emailTemplatesError } = await useFetch<Array<EmailTemplate>>(`${url.origin}/__nuxt-email-renderer/api/templates`, {
   default: () => [],
 })
 

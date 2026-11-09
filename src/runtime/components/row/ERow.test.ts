@@ -9,7 +9,7 @@ describe('<ERow> component', () => {
     const component = h(ERow, [
       testMessage,
     ])
-    const html = await render(component)
+    const { html } = await render(component)
     expect(html).toContain(testMessage)
   })
 })

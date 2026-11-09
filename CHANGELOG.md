@@ -1,5 +1,57 @@
 # Changelog
 
+## v4.0.0
+
+[compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v3.0.0...v4.0.0)
+
+### 🚀 Enhancements
+
+- ⚠️  Require Nuxt 4.1 and simplify the build pipeline ([0660548](https://github.com/mokkapps/nuxt-email-renderer/commit/0660548))
+- ⚠️  Always return { html, text?, subject? } from renderEmailComponent ([465223c](https://github.com/mokkapps/nuxt-email-renderer/commit/465223c))
+
+### 🩹 Fixes
+
+- Type the preview props hook, load defineI18nConfig, drop dead code ([6af9dfa](https://github.com/mokkapps/nuxt-email-renderer/commit/6af9dfa))
+
+### 💅 Refactors
+
+- Drop workarounds the dependency upgrades made obsolete ([51d60b8](https://github.com/mokkapps/nuxt-email-renderer/commit/51d60b8))
+
+### 📖 Documentation
+
+- Clarify email dark mode support ([ec91d26](https://github.com/mokkapps/nuxt-email-renderer/commit/ec91d26))
+- Set the site URL required by the sitemap module ([3a8dddd](https://github.com/mokkapps/nuxt-email-renderer/commit/3a8dddd))
+- Use Node's built-in SQLite instead of better-sqlite3 ([cca4948](https://github.com/mokkapps/nuxt-email-renderer/commit/cca4948))
+
+### 📦 Build
+
+- Declare nuxt >=4.1.0 as peer dependency ([50d90f5](https://github.com/mokkapps/nuxt-email-renderer/commit/50d90f5))
+
+### 🏡 Chore
+
+- Upgrade to Nuxt 4.6.4 and drop resolutions and patch ([3a72a7f](https://github.com/mokkapps/nuxt-email-renderer/commit/3a72a7f))
+- Upgrade dev tooling to the latest major versions ([5544032](https://github.com/mokkapps/nuxt-email-renderer/commit/5544032))
+- Upgrade marked, shiki, html-to-text and js-beautify ([baa4167](https://github.com/mokkapps/nuxt-email-renderer/commit/baa4167))
+
+### ✅ Tests
+
+- Cover build output, dev API, render options and types ([aa31aaa](https://github.com/mokkapps/nuxt-email-renderer/commit/aa31aaa))
+- Run npm.cmd through a shell on Windows ([22fa47e](https://github.com/mokkapps/nuxt-email-renderer/commit/22fa47e))
+- Check out compatibility fixtures with LF on Windows ([2c24e36](https://github.com/mokkapps/nuxt-email-renderer/commit/2c24e36))
+
+### 🤖 CI
+
+- Release to npm from GitHub Actions ([56bf04d](https://github.com/mokkapps/nuxt-email-renderer/commit/56bf04d))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Require Nuxt 4.1 and simplify the build pipeline ([0660548](https://github.com/mokkapps/nuxt-email-renderer/commit/0660548))
+- ⚠️  Always return { html, text?, subject? } from renderEmailComponent ([465223c](https://github.com/mokkapps/nuxt-email-renderer/commit/465223c))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v3.0.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v2.11.2...v3.0.0)

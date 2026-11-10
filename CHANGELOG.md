@@ -1,5 +1,21 @@
 # Changelog
 
+## v4.1.0
+
+[compare changes](https://github.com/Mokkapps/nuxt-email-renderer/compare/v4.0.0...v4.1.0)
+
+### 🚀 Enhancements
+
+- Support static TypeScript locale files ([6141620](https://github.com/Mokkapps/nuxt-email-renderer/commit/6141620))
+
+### 🩹 Fixes
+
+- Use single quotes in locale loader test ([2f06af9](https://github.com/Mokkapps/nuxt-email-renderer/commit/2f06af9))
+
+### ❤️ Contributors
+
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v4.0.0
 
 [compare changes](https://github.com/mokkapps/nuxt-email-renderer/compare/v3.0.0...v4.0.0)

@@ -28,6 +28,15 @@ describe('i18n with layers', async () => {
     expect(response).toContain('Welcome from a second JSON locale file')
   })
 
+  it('merges typed TypeScript messages with YAML files from a layer', async () => {
+    const { html } = await $fetch<{ html: string }>('/api/send-email', {
+      method: 'POST',
+      body: { name: 'Nested', locale: 'de' },
+    })
+
+    expect(html).toContain('Willkommen aus einer TypeScript-Datei')
+  })
+
   it('renders email with default locale (en) using locale files from a layer', async () => {
     const { html: response } = await $fetch<{ html: string }>('/api/send-email', {
       method: 'POST',

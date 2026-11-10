@@ -44,8 +44,16 @@ function localeFilePaths(locale: Record<string, unknown>): string[] {
     .filter((path): path is string => typeof path === 'string')
 }
 
-/** Parse a locale message file. Supports JSON and YAML (.yaml / .yml). */
-function parseLocaleFile(filePath: string): Record<string, unknown> {
+/** Load static locale messages at build time. */
+async function parseLocaleFile(filePath: string): Promise<Record<string, unknown>> {
+  if (/\.ts$/i.test(filePath)) {
+    const jiti = createJiti(import.meta.url, { moduleCache: false })
+    const messages = await jiti.import<unknown>(filePath, { default: true })
+    if (!isRecord(messages) || Array.isArray(messages)) {
+      throw new Error('TypeScript locale files must default-export a static messages object')
+    }
+    return messages
+  }
   const raw = readFileSync(filePath, 'utf-8')
   if (/\.ya?ml$/i.test(filePath)) {
     return parseYaml(raw) as Record<string, unknown>
@@ -128,7 +136,7 @@ export async function loadI18nConfig(nuxt: Nuxt): Promise<EmailI18nConfig | unde
           if (!existsSync(filePath)) continue
           try {
             // defu keeps keys from higher-priority layers (_layers[0] is the root).
-            messages[code] = defu(messages[code] || {}, parseLocaleFile(filePath))
+            messages[code] = defu(messages[code] || {}, await parseLocaleFile(filePath))
           }
           catch (error) {
             logger.warn(`${LOGGER_PREFIX} Failed to parse i18n locale file "${filePath}": ${(error as Error).message}`)

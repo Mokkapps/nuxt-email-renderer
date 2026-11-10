@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   i18n: {
     locales: [
       { code: 'en', files: ['en.json', 'en-emails.json'] },
-      { code: 'de', file: 'de.yaml' },
+      { code: 'de', files: ['de.yaml', 'de-emails.ts'] },
       // Object form of a locale file entry, supported since @nuxtjs/i18n v10.
       { code: 'es', files: [{ path: 'es.yml' }] },
     ],

@@ -13,8 +13,8 @@ it('loads typed locale imports and merges files across layers', async () => {
     }
     const appDir = join(root, 'app/i18n/locales')
     await writeFile(join(appDir, 'schema.ts'), 'export interface Messages { title: string }')
-    await writeFile(join(appDir, 'de.ts'), "import type { Messages } from './schema'; export default { title: 'Hallo' } satisfies Messages")
-    await writeFile(join(root, 'base/i18n/locales/de.ts'), "export default { title: 'Base', inherited: 'Layer' }")
+    await writeFile(join(appDir, 'de.ts'), 'import type { Messages } from \'./schema\'; export default { title: \'Hallo\' } satisfies Messages')
+    await writeFile(join(root, 'base/i18n/locales/de.ts'), 'export default { title: \'Base\', inherited: \'Layer\' }')
     await writeFile(join(appDir, 'extra.json'), '{"extra":"JSON"}')
     const nuxt = { options: {
       i18n: { locales: [{ code: 'de', files: ['de.ts', 'extra.json'] }] },

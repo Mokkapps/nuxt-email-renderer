@@ -8,7 +8,8 @@ seo:
 ::
 
 ::u-page-hero
-![Test](/promo.png)
+:::email-example
+:::
 
 #title
 Email Template Rendering for your [Nuxt Apps]{.text-primary}
@@ -26,7 +27,18 @@ to: /getting-started/installation
 Get started
 :::
 
-:::copy-code-input{source="npx nuxt module add nuxt-email-renderer"}
+:::u-button
+---
+icon: i-lucide-play
+size: xl
+color: neutral
+variant: outline
+to: /playground
+---
+Explore the playground
+:::
+
+:::copy-code-input{source="npx nuxt@latest module add nuxt-email-renderer"}
 :::
 ::
 
@@ -34,85 +46,26 @@ Get started
 #title
 Create stunning emails with :br [Vue components]{.text-primary}
 
-#features
-:::u-page-card
----
-spotlight: true
-icon: i-ph-envelope-duotone
----
-#title
-Vue-Powered Templates
-
-#description
-Build email templates using Vue components with full TypeScript support and modern development experience.
-:::
-
-:::u-page-card
----
-spotlight: true
-icon: i-ph-code-duotone
----
-#title
-Pre-built Components
-
-#description
-Use a collection of email-optimized Vue components designed for maximum compatibility across email clients.
-:::
-
-:::u-page-card
----
-spotlight: true
-icon: i-ph-device-mobile-duotone
----
-#title
-Responsive Design
-
-#description
-Create responsive email layouts that look great on desktop, mobile, and tablet devices.
-:::
-
-:::u-page-card
----
-spotlight: true
-icon: i-ph-globe
----
-#title
-Internationalization (i18n)
-
-#description
-Easily create multilingual email templates with built-in i18n support when using `@nuxtjs/i18n`.
-:::
-
-:::u-page-card
----
-spotlight: true
-icon: i-ph-browser-duotone
----
-#title
-Live Preview
-
-#description
-Preview your email templates in real-time during development with built-in rendering and testing tools.
-:::
-
-:::u-page-card
----
-spotlight: true
-icon: i-ph-rocket-launch-duotone
----
-#title
-Easy Integration
-
-#description
-Integrate seamlessly with your existing Nuxt application and email service providers for streamlined email delivery.
+#default
+:::home-features
 :::
 ::
 
+::u-page-section
+#title
+From Vue template to [ready-to-send HTML]{.text-primary}
 
+#description
+Write your template, preview it in Nuxt DevTools, then render it on the server and send it with your email provider.
+
+#default
+:::home-steps
+:::
+::
 
 ::u-page-section
 #title
-Trusted by Leading Tools in :br [Production]{.text-primary}
+Used in [production]{.text-primary}
 
 #links
 :::u-button

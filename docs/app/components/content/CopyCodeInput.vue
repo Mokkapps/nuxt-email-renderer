@@ -4,45 +4,55 @@ const props = defineProps<{
 }>()
 
 const copied = ref(false)
+const error = ref(false)
+let resetTimeout: ReturnType<typeof setTimeout> | undefined
 
-function copy() {
-  navigator.clipboard.writeText(props.source)
-  copied.value = true
+async function copy() {
+  clearTimeout(resetTimeout)
+  copied.value = false
+  error.value = false
 
-  setTimeout(() => {
-    copied.value = false
-  }, 2000)
+  try {
+    await navigator.clipboard.writeText(props.source)
+    copied.value = true
+    resetTimeout = setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  }
+  catch {
+    error.value = true
+  }
 }
+
+onBeforeUnmount(() => clearTimeout(resetTimeout))
 </script>
 
 <template>
-  <UInput
-    :model-value="props.source"
-    aria-label="Copy code to get started"
-    size="xl"
-    class="w-88"
-    disabled
-    :ui="{ base: 'disabled:cursor-default' }"
-  >
-    <template #leading>
-      <UIcon name="i-ph-terminal" />
-    </template>
-    <template
-      v-if="props.source?.length"
-      #trailing
-    >
-      <UTooltip
-        text="Copy to clipboard"
-        :content="{ side: 'right' }"
+  <div class="w-full min-w-0 max-w-lg">
+    <div class="flex items-center gap-2 rounded-lg border border-default bg-default px-3 py-2">
+      <UIcon
+        name="i-lucide-terminal"
+        class="shrink-0 text-muted"
+      />
+      <input
+        :value="props.source"
+        aria-label="Installation command"
+        readonly
+        class="min-w-0 flex-1 bg-transparent font-mono text-xs text-toned outline-none focus-visible:ring-2 focus-visible:ring-primary sm:text-sm"
       >
-        <UButton
-          :color="copied ? 'success' : 'neutral'"
-          variant="link"
-          :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
-          aria-label="Copy to clipboard"
-          @click="copy"
-        />
-      </UTooltip>
-    </template>
-  </UInput>
+      <UButton
+        :color="copied ? 'success' : 'neutral'"
+        variant="ghost"
+        :icon="copied ? 'i-lucide-copy-check' : 'i-lucide-copy'"
+        :aria-label="copied ? 'Command copied' : 'Copy installation command'"
+        @click="copy"
+      />
+    </div>
+    <p
+      role="status"
+      class="mt-2 text-sm text-muted"
+    >
+      {{ error ? 'Could not copy. Select the command and copy it manually.' : copied ? 'Copied to clipboard.' : '' }}
+    </p>
+  </div>
 </template>

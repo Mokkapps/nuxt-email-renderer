@@ -150,7 +150,10 @@ export default defineNuxtModule<ModuleOptions>({
 
     addServerImports([{
       name: 'renderEmailComponent',
-      from: resolver.resolve('./runtime/server/utils/email'),
+      from: {
+        nuxt: resolver.resolve('./runtime/server/utils/email'),
+        nitro2: resolver.resolve('./runtime/server/utils/email.legacy'),
+      },
     }])
 
     if (nuxt.options.dev) {
@@ -167,7 +170,10 @@ export default defineNuxtModule<ModuleOptions>({
       for (const [route, file] of [['templates', 'index.get'], ['render', 'render.post'], ['source', 'source.post']]) {
         addServerHandler({
           route: `${DEVTOOLS_API_ROUTE}/${route}`,
-          handler: resolver.resolve(`./runtime/server/api/emails/${file}`),
+          handler: {
+            nuxt: resolver.resolve(`./runtime/server/api/emails/${file}`),
+            nitro2: resolver.resolve(`./runtime/server/api/emails/${file}.legacy`),
+          },
         })
       }
       if (options.devtools) setupDevToolsUI(nuxt, resolver)
@@ -186,6 +192,14 @@ declare module 'vue' {
 
 declare module 'nitropack/types' {
   interface NitroRuntimeHooks {
+    'nuxt-email-renderer:devtools:resolveProps': (
+      context: import('nuxt-email-renderer').DevtoolsPreviewPropsContext
+    ) => void | Promise<void>
+  }
+}
+
+declare module 'nuxt/schema' {
+  interface NuxtServerHooks {
     'nuxt-email-renderer:devtools:resolveProps': (
       context: import('nuxt-email-renderer').DevtoolsPreviewPropsContext
     ) => void | Promise<void>

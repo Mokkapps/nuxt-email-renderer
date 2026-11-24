@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises'
-import { createError, defineEventHandler, readValidatedBody } from 'h3'
+import { createError, defineEventHandler, readValidatedBody } from 'nuxt/server'
 import z from 'zod'
 import { getEmailTemplateInfo } from '../../utils/email'
 
@@ -8,12 +8,12 @@ const bodySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const { name } = await readValidatedBody(event, bodySchema.parse)
+  const { name } = await readValidatedBody(event, bodySchema)
   const template = getEmailTemplateInfo(name)
   if (!template) {
     throw createError({
-      statusCode: 404,
-      statusMessage: `Email template "${name}" not found`,
+      status: 404,
+      statusText: `Email template "${name}" not found`,
     })
   }
 

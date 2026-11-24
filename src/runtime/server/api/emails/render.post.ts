@@ -1,6 +1,5 @@
-import { createError, defineEventHandler, readValidatedBody } from 'h3'
+import { createError, defineEventHandler, readValidatedBody, useServerHooks } from 'nuxt/server'
 import type { HtmlToTextOptions } from 'html-to-text'
-import { useNitroApp } from 'nitropack/runtime'
 import z from 'zod'
 import type { DevtoolsPreviewPropsContext } from '../../../types'
 import { renderEmailComponent } from '../../utils/email'
@@ -15,18 +14,18 @@ const bodySchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const { name, props, ...options } = await readValidatedBody(event, bodySchema.parse)
+  const { name, props, ...options } = await readValidatedBody(event, bodySchema)
 
   const context: DevtoolsPreviewPropsContext = {
     templateName: name.replace(/\.vue$/, ''),
     props: { ...props },
   }
-  await useNitroApp().hooks.callHook('nuxt-email-renderer:devtools:resolveProps', context)
+  await useServerHooks().callHook('nuxt-email-renderer:devtools:resolveProps', context)
 
   if (!isPlainObject(context.props)) {
     throw createError({
-      statusCode: 500,
-      statusMessage: '[nuxt-email-renderer] Invalid props returned by "nuxt-email-renderer:devtools:resolveProps" hook. Expected a plain object.',
+      status: 500,
+      statusText: '[nuxt-email-renderer] Invalid props returned by "nuxt-email-renderer:devtools:resolveProps" hook. Expected a plain object.',
     })
   }
 

@@ -1,6 +1,5 @@
 import type { Component } from 'vue'
-import { createError } from 'h3'
-import { useRuntimeConfig } from 'nitropack/runtime'
+import { createError, useRuntimeConfig } from 'nuxt/server'
 import { emailComponents } from '#email-components'
 import { emailTemplateInfos, emailTemplates } from '#email-templates'
 import type { EmailTemplateInfo } from '../../types'
@@ -29,8 +28,8 @@ export async function renderEmailComponent<T extends Component>(
   const component = emailTemplates[templateName(name)]
   if (!component) {
     throw createError({
-      statusCode: 404,
-      statusMessage: `Email template "${name}" not found`,
+      status: 404,
+      statusText: `Email template "${name}" not found`,
     })
   }
 

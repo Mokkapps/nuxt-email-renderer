@@ -1,5 +1,19 @@
 # Changelog
 
+## v4.1.1
+
+[compare changes](https://github.com/Mokkapps/nuxt-email-renderer/compare/v4.1.0...v4.1.1)
+
+### 🩹 Fixes
+
+- **docs:** Repair and restructure homepage ([29d7b6f](https://github.com/Mokkapps/nuxt-email-renderer/commit/29d7b6f))
+- Run the devtools handlers and renderEmailComponent on nuxt/server ([f96cc67](https://github.com/Mokkapps/nuxt-email-renderer/commit/f96cc67))
+
+### ❤️ Contributors
+
+- Jonas Thelemann <e-mail@jonas-thelemann.de>
+- Michael Hoffmann ([@Mokkapps](https://github.com/Mokkapps))
+
 ## v4.1.0
 
 [compare changes](https://github.com/Mokkapps/nuxt-email-renderer/compare/v4.0.0...v4.1.0)

@@ -1,4 +1,4 @@
-import { defineEventHandler } from 'h3'
+import { defineEventHandler } from 'nuxt/server'
 import type { EmailTemplate } from '../../../types'
 import { getEmailTemplateInfos } from '../../utils/email'
 
